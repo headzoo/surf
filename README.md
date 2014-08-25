@@ -31,7 +31,7 @@ fmt.Println(browser.Title())
 
 
 // Login to the site via their login form.
-fm, err := browser.Form("[class='login-form']")
+fm, err := browser.Form(".login-form")
 if err != nil { panic(err) }
 fm.Input("user", "JoeRedditor")
 fm.Input("passwd", "d234rlkasd")
