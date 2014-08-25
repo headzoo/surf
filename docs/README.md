@@ -16,13 +16,16 @@ const (
 
 ```go
 var (
-	DefaultUserAgent                string = fmt.Sprintf("%s/%s (%s; %s)", Name, Version, runtime.Version(), osRelease())
-	DefaultAttributeSendReferer     bool   = true
-	DefaultAttributeHandleRefresh   bool   = true
-	DefaultAttributeFollowRedirects bool   = true
+	// DefaultUserAgent is the global user agent value.
+	DefaultUserAgent string = fmt.Sprintf("%s/%s (%s; %s)", Name, Version, runtime.Version(), osRelease())
+	// DefaultAttributeSendReferer is the global value for the AttributeSendReferer attribute.
+	DefaultAttributeSendReferer bool = true
+	// DefaultAttributeHandleRefresh is the global value for the AttributeHandleRefresh attribute.
+	DefaultAttributeHandleRefresh bool = true
+	// DefaultAttributeFollowRedirects is the global value for the AttributeFollowRedirects attribute.
+	DefaultAttributeFollowRedirects bool = true
 )
 ```
-Default values.
 
 #### type Attribute
 
