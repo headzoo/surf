@@ -40,11 +40,11 @@ const (
 var (
 	// DefaultUserAgent is the global user agent value.
 	DefaultUserAgent string = fmt.Sprintf("%s/%s (%s; %s)", Name, Version, runtime.Version(), osRelease())
-	// DefaultAttributeSendReferer is the global value for the AttributeSendReferer attribute.
+	// DefaultSendRefererAttribute is the global value for the AttributeSendReferer attribute.
 	DefaultSendRefererAttribute bool = true
-	// DefaultAttributeHandleRefresh is the global value for the AttributeHandleRefresh attribute.
+	// DefaultMetaRefreshHandlingAttribute is the global value for the AttributeHandleRefresh attribute.
 	DefaultMetaRefreshHandlingAttribute bool = true
-	// DefaultAttributeFollowRedirects is the global value for the AttributeFollowRedirects attribute.
+	// DefaultFollowRedirectsAttribute is the global value for the AttributeFollowRedirects attribute.
 	DefaultFollowRedirectsAttribute bool = true
 )
 
