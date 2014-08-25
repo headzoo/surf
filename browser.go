@@ -125,8 +125,13 @@ func (b *Browser) PostForm(u string, data url.Values) error {
 	return b.Post(u, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
 }
 
-// FollowLink finds an anchor tag within the current page matching the expr,
-// and calls Get() on the anchor href attribute value.
+// FollowLink finds an anchor tag within the current document matching the expr,
+// and calls Get() using the anchor href attribute value.
+//
+// The expr can be any valid goquery expression, and the "a" tag is implied. The
+// method can be called using only ":contains('foo')" and the expr is automatically
+// converted to "a:contains('foo')". A complete expression can still be used, for
+// instance "p.title a.foo".
 func (b *Browser) FollowLink(expr string) error {
 	sel := b.Page.doc.Find(prefixSelection(expr, "a"))
 	if sel.Length() == 0 {
