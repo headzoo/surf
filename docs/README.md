@@ -10,7 +10,7 @@ const (
 	// Name is used as the browser name in the default user agent.
 	Name = "Surf"
 	// Version is used as the version in the default user agent.
-	Version = "0.4.1"
+	Version = "0.4.2"
 )
 ```
 
@@ -61,8 +61,10 @@ type Browsable interface {
 	Document
 	Get(url string) error
 	GetForm(url string, data url.Values) error
+	GetBookmark(name string) error
 	Post(url string, bodyType string, body io.Reader) error
 	PostForm(url string, data url.Values) error
+	Bookmark(name string) error
 	FollowLink(expr string) error
 	Links() []string
 	Form(expr string) (FormElement, error)
@@ -72,6 +74,7 @@ type Browsable interface {
 	Cookies() []*http.Cookie
 	SetAttribute(a Attribute, v bool)
 	ResolveUrl(u *url.URL) *url.URL
+	Stop() error
 }
 ```
 
@@ -83,7 +86,9 @@ Browsable represents an HTTP web browser.
 type Browser struct {
 	*Page
 	UserAgent string
-	Jar       http.CookieJar
+	CookieJar http.CookieJar
+	Bookmarks jars.BookmarksJar
+	History   *PageStack
 }
 ```
 
@@ -92,7 +97,7 @@ Browser is the default Browser implementation.
 #### func  NewBrowser
 
 ```go
-func NewBrowser() *Browser
+func NewBrowser() (*Browser, error)
 ```
 NewBrowser creates and returns a *Browser type.
 
@@ -102,6 +107,13 @@ NewBrowser creates and returns a *Browser type.
 func (b *Browser) Back() bool
 ```
 Back loads the previously requested page.
+
+#### func (*Browser) Bookmark
+
+```go
+func (b *Browser) Bookmark(name string) error
+```
+Bookmark saves the page URL in the bookmarks with the given name.
 
 #### func (*Browser) Cookies
 
@@ -143,6 +155,13 @@ Forms returns an array of every form in the page.
 func (b *Browser) Get(u string) error
 ```
 Get requests the given URL using the GET method.
+
+#### func (*Browser) GetBookmark
+
+```go
+func (b *Browser) GetBookmark(name string) error
+```
+GetBookmark calls Get() with the URL for the bookmark with the given name.
 
 #### func (*Browser) GetForm
 
@@ -192,6 +211,19 @@ ResolveUrl returns an absolute URL for a possibly relative URL.
 func (b *Browser) SetAttribute(a Attribute, v bool)
 ```
 SetAttribute sets a browser instruction attribute.
+
+#### func (*Browser) Stop
+
+```go
+func (b *Browser) Stop() error
+```
+Stop releases resources held by the browser.
+
+This method is called automatically by the runtime, but is safe to call
+repeatedly without any errors.
+
+The browser should not be used after Stop is called. Doing so will cause
+unexpected behavior.
 
 #### type Document
 
