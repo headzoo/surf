@@ -52,6 +52,13 @@ var (
 // exprPrefixesImplied are strings a selection expr may start with, and the tag is implied.
 var exprPrefixesImplied = []string{":", ".", "["}
 
+// Link stores the properties of a page link.
+type Link struct {
+	ID   string
+	Href string
+	Text string
+}
+
 // Browsable represents an HTTP web browser.
 type Browsable interface {
 	Document
@@ -62,7 +69,7 @@ type Browsable interface {
 	PostForm(url string, data url.Values) error
 	BookmarkPage(name string) error
 	FollowLink(expr string) error
-	Links() []string
+	Links() []*Link
 	Form(expr string) (FormElement, error)
 	Forms() []FormElement
 	Back() bool
@@ -70,6 +77,7 @@ type Browsable interface {
 	SiteCookies() []*http.Cookie
 	SetAttribute(a Attribute, v bool)
 	ResolveUrl(u *url.URL) *url.URL
+	ResolveStringUrl(u string) (string, error)
 }
 
 // Browser is the default Browser implementation.
@@ -164,25 +172,34 @@ func (b *Browser) FollowLink(expr string) error {
 
 	href, ok := sel.Attr("href")
 	if !ok {
-		return errors.NewLinkNotFound("No link found matching expr %s.", expr)
+		return errors.NewLinkNotFound(
+			"No link found matching expr '%s'.", expr)
 	}
-	hurl, err := url.Parse(href)
+	href, err := b.ResolveStringUrl(href)
 	if err != nil {
 		return err
 	}
-	hurl = b.ResolveUrl(hurl)
 
-	return b.sendGet(hurl.String(), b.Page)
+	return b.sendGet(href, b.Page)
 }
 
 // Links returns an array of every anchor tag href value found in the current page.
-func (b *Browser) Links() []string {
+func (b *Browser) Links() []*Link {
 	sel := b.Page.doc.Find("a")
-	links := make([]string, 0, sel.Length())
+	links := make([]*Link, 0, sel.Length())
+
 	sel.Each(func(_ int, s *goquery.Selection) {
+		id, _ := s.Attr("id")
 		href, ok := s.Attr("href")
 		if ok {
-			links = append(links, href)
+			href, err := b.ResolveStringUrl(href)
+			if err == nil {
+				links = append(links, &Link{
+					ID:   id,
+					Href: href,
+					Text: s.Text(),
+				})
+			}
 		}
 	})
 
@@ -249,6 +266,16 @@ func (b *Browser) SetAttribute(a Attribute, v bool) {
 // ResolveUrl returns an absolute URL for a possibly relative URL.
 func (b *Browser) ResolveUrl(u *url.URL) *url.URL {
 	return b.Url().ResolveReference(u)
+}
+
+// ResolveStringUrl works just like ResolveUrl, but the argument and return value are strings.
+func (b *Browser) ResolveStringUrl(u string) (string, error) {
+	pu, err := url.Parse(u)
+	if err != nil {
+		return "", err
+	}
+	pu = b.Url().ResolveReference(pu)
+	return pu.String(), nil
 }
 
 // client creates, configures, and returns a *http.Client type.

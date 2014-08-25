@@ -42,7 +42,7 @@ func TestBrowserBookmarks(t *testing.T) {
 	ut.AssertEquals("Surf", b.Title())
 }
 
-func TestBrowseFollowLink(t *testing.T) {
+func TestBrowserFollowLink(t *testing.T) {
 	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
@@ -62,7 +62,28 @@ func TestBrowseFollowLink(t *testing.T) {
 	ut.AssertContains("<p>Hello, Surf!</p>", b.Body())
 }
 
-func TestBrowseForm(t *testing.T) {
+func TestBrowserLinks(t *testing.T) {
+	ut.Run(t)
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		fmt.Fprint(w, htmlLinks)
+	}))
+	defer ts.Close()
+
+	b, _ := NewBrowser()
+	err := b.Get(ts.URL)
+	ut.AssertNil(err)
+
+	links := b.Links()
+	ut.AssertEquals(2, len(links))
+	ut.AssertEquals("", links[0].ID)
+	ut.AssertEquals(ts.URL+"/page2", links[0].Href)
+	ut.AssertEquals("click", links[0].Text)
+	ut.AssertEquals("page3", links[1].ID)
+	ut.AssertEquals(ts.URL+"/page3", links[1].Href)
+	ut.AssertEquals("no clicking", links[1].Text)
+}
+
+func TestBrowserForm(t *testing.T) {
 	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "GET" {
@@ -109,6 +130,7 @@ var htmlLinks = `<!doctype html>
 	<body>
 		<p>Click the link below.</p>
 		<a href="/page2">click</a>
+		<a href="/page3" id="page3">no clicking</a>
 	</body>
 </html>
 `

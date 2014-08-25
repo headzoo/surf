@@ -10,7 +10,7 @@ const (
 	// Name is used as the browser name in the default user agent.
 	Name = "Surf"
 	// Version is used as the version in the default user agent.
-	Version = "0.4.2"
+	Version = "0.4.3"
 )
 ```
 
@@ -64,9 +64,9 @@ type Browsable interface {
 	GetBookmark(name string) error
 	Post(url string, bodyType string, body io.Reader) error
 	PostForm(url string, data url.Values) error
-	Bookmark(name string) error
+	BookmarkPage(name string) error
 	FollowLink(expr string) error
-	Links() []string
+	Links() []*Link
 	Form(expr string) (FormElement, error)
 	Forms() []FormElement
 	Back() bool
@@ -74,6 +74,7 @@ type Browsable interface {
 	SiteCookies() []*http.Cookie
 	SetAttribute(a Attribute, v bool)
 	ResolveUrl(u *url.URL) *url.URL
+	ResolveStringUrl(u string) (string, error)
 }
 ```
 
@@ -107,12 +108,12 @@ func (b *Browser) Back() bool
 ```
 Back loads the previously requested page.
 
-#### func (*Browser) Bookmark
+#### func (*Browser) BookmarkPage
 
 ```go
-func (b *Browser) Bookmark(name string) error
+func (b *Browser) BookmarkPage(name string) error
 ```
-Bookmark saves the page URL in the bookmarks with the given name.
+BookmarkPage saves the page URL in the bookmarks with the given name.
 
 #### func (*Browser) FollowLink
 
@@ -165,7 +166,7 @@ GetForm appends the data values to the given URL and sends a GET request.
 #### func (*Browser) Links
 
 ```go
-func (b *Browser) Links() []string
+func (b *Browser) Links() []*Link
 ```
 Links returns an array of every anchor tag href value found in the current page.
 
@@ -189,6 +190,14 @@ PostForm requests the given URL using the POST method with the given data.
 func (b *Browser) Reload() error
 ```
 Reload duplicates the last successful request.
+
+#### func (*Browser) ResolveStringUrl
+
+```go
+func (b *Browser) ResolveStringUrl(u string) (string, error)
+```
+ResolveStringUrl works just like ResolveUrl, but the argument and return value
+are strings.
 
 #### func (*Browser) ResolveUrl
 
@@ -310,6 +319,18 @@ type FormElement interface {
 ```
 
 FormElement represents a single form element from a page.
+
+#### type Link
+
+```go
+type Link struct {
+	ID   string
+	Href string
+	Text string
+}
+```
+
+Link stores the properties of a page link.
 
 #### type Page
 
