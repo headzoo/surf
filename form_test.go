@@ -22,5 +22,4 @@ func TestFormAttribs(t *testing.T) {
 	unittest.AssertEquals(nil, err)
 	unittest.AssertEquals("POST", f.Method())
 	unittest.AssertEquals(ts.URL+"/", f.Action())
-
 }
