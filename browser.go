@@ -60,7 +60,7 @@ type Browsable interface {
 	GetBookmark(name string) error
 	Post(url string, bodyType string, body io.Reader) error
 	PostForm(url string, data url.Values) error
-	Bookmark(name string) error
+	BookmarkPage(name string) error
 	FollowLink(expr string) error
 	Links() []string
 	Form(expr string) (FormElement, error)
@@ -139,8 +139,8 @@ func (b *Browser) PostForm(u string, data url.Values) error {
 	return b.Post(u, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
 }
 
-// Bookmark saves the page URL in the bookmarks with the given name.
-func (b *Browser) Bookmark(name string) error {
+// BookmarkPage saves the page URL in the bookmarks with the given name.
+func (b *Browser) BookmarkPage(name string) error {
 	return b.Bookmarks.Save(name, b.ResolveUrl(b.Page.Url()).String())
 }
 

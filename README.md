@@ -35,7 +35,7 @@ fmt.Println(browser.Title())
 
 
 // Bookmark the page so we can come back to it later.
-err = browser.Bookmark("reddit-new")
+err = browser.BookmarkPage("reddit-new")
 if err != nil { panic(err) }
 
 
