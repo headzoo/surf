@@ -10,7 +10,7 @@ const (
 	// Name is used as the browser name in the default user agent.
 	Name = "Surf"
 	// Version is used as the version in the default user agent.
-	Version = "0.4"
+	Version = "0.4.1"
 )
 ```
 
@@ -18,12 +18,12 @@ const (
 var (
 	// DefaultUserAgent is the global user agent value.
 	DefaultUserAgent string = fmt.Sprintf("%s/%s (%s; %s)", Name, Version, runtime.Version(), osRelease())
-	// DefaultAttributeSendReferer is the global value for the AttributeSendReferer attribute.
-	DefaultAttributeSendReferer bool = true
-	// DefaultAttributeHandleRefresh is the global value for the AttributeHandleRefresh attribute.
-	DefaultAttributeHandleRefresh bool = true
-	// DefaultAttributeFollowRedirects is the global value for the AttributeFollowRedirects attribute.
-	DefaultAttributeFollowRedirects bool = true
+	// DefaultSendRefererAttribute is the global value for the AttributeSendReferer attribute.
+	DefaultSendRefererAttribute bool = true
+	// DefaultMetaRefreshHandlingAttribute is the global value for the AttributeHandleRefresh attribute.
+	DefaultMetaRefreshHandlingAttribute bool = true
+	// DefaultFollowRedirectsAttribute is the global value for the AttributeFollowRedirects attribute.
+	DefaultFollowRedirectsAttribute bool = true
 )
 ```
 
@@ -37,12 +37,12 @@ Attribute represents a Browser capability.
 
 ```go
 const (
-	// AttributeSendReferer instructs a Browser to send the Referer header.
-	AttributeSendReferer Attribute = iota
-	// AttributeHandleRefresh instructs a Browser to handle the refresh meta tag.
-	AttributeHandleRefresh
-	// AttributeFollowRedirects instructs a Browser to follow Location headers.
-	AttributeFollowRedirects
+	// SendRefererAttribute instructs a Browser to send the Referer header.
+	SendRefererAttribute Attribute = iota
+	// MetaRefreshHandlingAttribute instructs a Browser to handle the refresh meta tag.
+	MetaRefreshHandlingAttribute
+	// FollowRedirectsAttribute instructs a Browser to follow Location headers.
+	FollowRedirectsAttribute
 )
 ```
 
@@ -53,6 +53,29 @@ type AttributeMap map[Attribute]bool
 ```
 
 AttributeMap represents a map of Attribute values.
+
+#### type Browsable
+
+```go
+type Browsable interface {
+	Document
+	Get(url string) error
+	GetForm(url string, data url.Values) error
+	Post(url string, bodyType string, body io.Reader) error
+	PostForm(url string, data url.Values) error
+	FollowLink(expr string) error
+	Links() []string
+	Form(expr string) (FormElement, error)
+	Forms() []FormElement
+	Back() bool
+	Reload() error
+	Cookies() []*http.Cookie
+	SetAttribute(a Attribute, v bool)
+	ResolveUrl(u *url.URL) *url.URL
+}
+```
+
+Browsable represents an HTTP web browser.
 
 #### type Browser
 
@@ -92,8 +115,13 @@ Cookies returns the cookies for the current page.
 ```go
 func (b *Browser) FollowLink(expr string) error
 ```
-FollowLink finds an anchor tag within the current page matching the expr, and
-calls Get() on the anchor href attribute value.
+FollowLink finds an anchor tag within the current document matching the expr,
+and calls Get() using the anchor href attribute value.
+
+The expr can be any valid goquery expression, and the "a" tag is implied. The
+method can be called using only ":contains('foo')" and the expr is automatically
+converted to "a:contains('foo')". A complete expression can still be used, for
+instance "p.title a.foo".
 
 #### func (*Browser) Form
 
@@ -165,6 +193,21 @@ func (b *Browser) SetAttribute(a Attribute, v bool)
 ```
 SetAttribute sets a browser instruction attribute.
 
+#### type Document
+
+```go
+type Document interface {
+	Url() *url.URL
+	StatusCode() int
+	Title() string
+	Headers() http.Header
+	Body() string
+	Query() *goquery.Document
+}
+```
+
+Document represents a web document loaded in a browser.
+
 #### type Element
 
 ```go
@@ -188,7 +231,7 @@ Form is the default form element.
 #### func  NewForm
 
 ```go
-func NewForm(b WebBrowser, s *goquery.Selection) *Form
+func NewForm(b Browsable, s *goquery.Selection) *Form
 ```
 NewForm creates and returns a *Form type.
 
@@ -257,7 +300,7 @@ type Page struct {
 }
 ```
 
-Page represents the attributes of a single web page.
+Page represents a web page document.
 
 #### func  NewPage
 
@@ -351,41 +394,3 @@ Push adds a new Page at the front of the stack.
 func (stack *PageStack) Top() *Page
 ```
 Top returns the Page at the front of the stack without removing it.
-
-#### type WebBrowser
-
-```go
-type WebBrowser interface {
-	WebPage
-	Get(url string) error
-	GetForm(url string, data url.Values) error
-	Post(url string, bodyType string, body io.Reader) error
-	PostForm(url string, data url.Values) error
-	FollowLink(expr string) error
-	Links() []string
-	Form(expr string) (FormElement, error)
-	Forms() []FormElement
-	Back() bool
-	Reload() error
-	Cookies() []*http.Cookie
-	SetAttribute(a Attribute, v bool)
-	ResolveUrl(u *url.URL) *url.URL
-}
-```
-
-WebBrowser represents an HTTP browser.
-
-#### type WebPage
-
-```go
-type WebPage interface {
-	Url() *url.URL
-	StatusCode() int
-	Title() string
-	Headers() http.Header
-	Body() string
-	Query() *goquery.Document
-}
-```
-
-WebPage represents a single web page.
