@@ -35,6 +35,11 @@ func TestBrowserBookmarks(t *testing.T) {
 	b.GetBookmark("test1")
 	ut.AssertEquals("Surf", b.Title())
 	ut.AssertContains("<p>Hello, Surf!</p>", b.Body())
+
+	err := b.Bookmark("test2")
+	ut.AssertNil(err)
+	b.GetBookmark("test2")
+	ut.AssertEquals("Surf", b.Title())
 }
 
 func TestBrowseFollowLink(t *testing.T) {

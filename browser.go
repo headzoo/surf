@@ -57,8 +57,10 @@ type Browsable interface {
 	Document
 	Get(url string) error
 	GetForm(url string, data url.Values) error
+	GetBookmark(name string) error
 	Post(url string, bodyType string, body io.Reader) error
 	PostForm(url string, data url.Values) error
+	Bookmark(name string) error
 	FollowLink(expr string) error
 	Links() []string
 	Form(expr string) (FormElement, error)
@@ -163,6 +165,12 @@ func (b *Browser) Post(u string, bodyType string, body io.Reader) error {
 // PostForm requests the given URL using the POST method with the given data.
 func (b *Browser) PostForm(u string, data url.Values) error {
 	return b.Post(u, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
+}
+
+// Bookmark saves the page URL in the bookmarks with the given name.
+func (b *Browser) Bookmark(name string) error {
+	url := b.ResolveUrl(b.Page.Url())
+	return b.Bookmarks.Save(name, url.String())
 }
 
 // FollowLink finds an anchor tag within the current document matching the expr,
