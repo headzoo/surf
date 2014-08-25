@@ -23,14 +23,17 @@ fmt.Println(browser.Title())
 // Outputs: "reddit: the front page of the internet"
 
 
-// Follow a link on the page where the link text is "new".
+// Follow a link on the page where the link text is "new". GoSurf uses the selector
+// engine from goquery, which has a similar syntax to jQuery. With the FollowLink()
+// method the "a" is explicit. The selector below is actually "a:contains('new')".
 err = browser.FollowLink(":contains('new')")
 if err != nil { panic(err) }
 fmt.Println(browser.Title())
 // Outputs: "newest submissions: reddit.com"
 
 
-// Login to the site via their login form.
+// Login to the site via their login form. Again, we're using the goquery selector
+// syntax. The "form" is explicit. The selector below is actually "form.login-form".
 fm, err := browser.Form(".login-form")
 if err != nil { panic(err) }
 fm.Input("user", "JoeRedditor")
