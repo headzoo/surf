@@ -141,8 +141,7 @@ func (b *Browser) PostForm(u string, data url.Values) error {
 
 // Bookmark saves the page URL in the bookmarks with the given name.
 func (b *Browser) Bookmark(name string) error {
-	url := b.ResolveUrl(b.Page.Url())
-	return b.Bookmarks.Save(name, url.String())
+	return b.Bookmarks.Save(name, b.ResolveUrl(b.Page.Url()).String())
 }
 
 // FollowLink finds an anchor tag within the current document matching the expr,
