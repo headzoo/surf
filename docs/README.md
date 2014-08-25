@@ -10,7 +10,7 @@ const (
 	// Name is used as the browser name in the default user agent.
 	Name = "Surf"
 	// Version is used as the version in the default user agent.
-	Version = "0.3"
+	Version = "0.4"
 )
 ```
 
