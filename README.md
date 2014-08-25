@@ -96,9 +96,9 @@ surf.DefaultFollowRedirectsAttribute = false
 
 
 // Override the build in cookie jar.
-jar, err := cookiejar.New(nil)
+cookies, err := cookiejar.New(nil)
 if err != nil { panic(err) }
-browser.CookieJar = jar
+browser.Cookies = cookies
 
 // Override the build in bookmarks container.
 bookmarks, err := jars.NewMemoryBookmarks()
