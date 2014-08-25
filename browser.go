@@ -70,7 +70,6 @@ type Browsable interface {
 	Cookies() []*http.Cookie
 	SetAttribute(a Attribute, v bool)
 	ResolveUrl(u *url.URL) *url.URL
-	Stop() error
 }
 
 // Browser is the default Browser implementation.
@@ -83,7 +82,6 @@ type Browser struct {
 	lastRequest *http.Request
 	attributes  AttributeMap
 	refresh     *time.Timer
-	closed      bool
 }
 
 // NewBrowser creates and returns a *Browser type.
@@ -92,44 +90,18 @@ func NewBrowser() (*Browser, error) {
 	if err != nil {
 		return nil, err
 	}
-	bookmarks := jars.NewMemoryBookmarks()
-	err = bookmarks.Open()
-	if err != nil {
-		return nil, err
-	}
 
-	b := &Browser{
+	return &Browser{
 		UserAgent: DefaultUserAgent,
 		CookieJar: cookies,
-		Bookmarks: bookmarks,
+		Bookmarks: jars.NewMemoryBookmarks(),
 		History:   NewPageStack(),
 		attributes: AttributeMap{
 			SendRefererAttribute:         DefaultSendRefererAttribute,
 			MetaRefreshHandlingAttribute: DefaultMetaRefreshHandlingAttribute,
 			FollowRedirectsAttribute:     DefaultFollowRedirectsAttribute,
 		},
-	}
-	runtime.SetFinalizer(b, b.Stop())
-
-	return b, nil
-}
-
-// Stop releases resources held by the browser.
-//
-// This method is called automatically by the runtime, but is safe to call repeatedly
-// without any errors.
-//
-// The browser should not be used after Stop is called. Doing so will cause
-// unexpected behavior.
-func (b *Browser) Stop() error {
-	if !b.closed {
-		err := b.Bookmarks.Close()
-		if err != nil {
-			return err
-		}
-		b.closed = true
-	}
-	return nil
+	}, nil
 }
 
 // Get requests the given URL using the GET method.
