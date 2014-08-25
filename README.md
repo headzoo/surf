@@ -70,10 +70,20 @@ browser := surf.NewBrowser()
 // Override the default user agent.
 browser.UserAgent = "MyBrowser"
 
+// Set the user agent globally. Each Browser instance you create will use this.
+surf.DefaultUserAgent = "MyBrowser"
+
+
 // Attributes control how the browser behaves.
 browser.SetAttribute(surf.AttributeSendReferer, false)
 browser.SetAttribute(surf.AttributeHandleRefresh, false)
 browser.SetAttribute(surf.AttributeRollowRedirects, false)
+
+// The attributes may also be set globally.
+surf.DefaultAttributeSendReferer = false
+surf.DefaultAttributeHandleRefresh = false
+surf.DefaultAttributeFollowRedirects = false
+
 
 // Override the build in cookie jar.
 jar, err := cookiejar.New(nil)
