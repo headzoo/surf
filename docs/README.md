@@ -89,7 +89,7 @@ Cookies returns the cookies for the current page.
 func (b *Browser) FollowLink(expr string) error
 ```
 FollowLink finds an anchor tag within the current page matching the expr, and
-calls Open() on the anchor href attribute value.
+calls Get() on the anchor href attribute value.
 
 #### func (*Browser) Form
 

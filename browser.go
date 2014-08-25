@@ -118,7 +118,7 @@ func (b *Browser) PostForm(u string, data url.Values) error {
 }
 
 // FollowLink finds an anchor tag within the current page matching the expr,
-// and calls Open() on the anchor href attribute value.
+// and calls Get() on the anchor href attribute value.
 func (b *Browser) FollowLink(expr string) error {
 	sel := b.Page.doc.Find("a" + expr)
 	href, ok := sel.Attr("href")
