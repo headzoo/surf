@@ -72,7 +72,7 @@ type Browser struct {
 	refresh     *time.Timer
 }
 
-// NewBrowser creates and returns a *DefaultBrowser type.
+// NewBrowser creates and returns a *Browser type.
 func NewBrowser() *Browser {
 	jar, err := cookiejar.New(nil)
 	if err != nil {
