@@ -48,9 +48,9 @@ var (
 	DefaultFollowRedirectsAttribute bool = true
 )
 
-// WebBrowser represents an HTTP browser.
-type WebBrowser interface {
-	WebPage
+// Browsable represents an HTTP web browser.
+type Browsable interface {
+	Document
 	Get(url string) error
 	GetForm(url string, data url.Values) error
 	Post(url string, bodyType string, body io.Reader) error

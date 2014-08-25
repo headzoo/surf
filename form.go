@@ -19,7 +19,7 @@ type FormElement interface {
 
 // Form is the default form element.
 type Form struct {
-	browser   WebBrowser
+	browser   Browsable
 	selection *goquery.Selection
 	method    string
 	action    string
@@ -28,7 +28,7 @@ type Form struct {
 }
 
 // NewForm creates and returns a *Form type.
-func NewForm(b WebBrowser, s *goquery.Selection) *Form {
+func NewForm(b Browsable, s *goquery.Selection) *Form {
 	fields, buttons := serializeForm(s)
 	method, action := formAttributes(b, s)
 
@@ -156,7 +156,7 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
 	return fields, buttons
 }
 
-func formAttributes(b WebBrowser, s *goquery.Selection) (string, string) {
+func formAttributes(b Browsable, s *goquery.Selection) (string, string) {
 	method, ok := s.Attr("method")
 	if !ok {
 		method = "GET"

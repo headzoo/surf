@@ -6,8 +6,8 @@ import (
 	"net/url"
 )
 
-// WebPage represents a single web page.
-type WebPage interface {
+// Document represents a web document loaded in a browser.
+type Document interface {
 	Url() *url.URL
 	StatusCode() int
 	Title() string
@@ -16,7 +16,7 @@ type WebPage interface {
 	Query() *goquery.Document
 }
 
-// Page represents the attributes of a single web page.
+// Page represents a web page document.
 type Page struct {
 	resp *http.Response
 	doc  *goquery.Document
