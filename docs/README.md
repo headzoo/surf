@@ -67,7 +67,7 @@ Browser is the default Browser implementation.
 ```go
 func NewBrowser() *Browser
 ```
-NewBrowser creates and returns a *DefaultBrowser type.
+NewBrowser creates and returns a *Browser type.
 
 #### func (*Browser) Back
 
