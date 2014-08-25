@@ -1,6 +1,6 @@
-# gosurf
+# surf
 --
-    import "github.com/headzoo/gosurf"
+    import "github.com/headzoo/surf"
 
 
 ## Usage
@@ -8,9 +8,9 @@
 ```go
 const (
 	// Name is used as the browser name in the default user agent.
-	Name = "GoSurf"
+	Name = "Surf"
 	// Version is used as the version in the default user agent.
-	Version = "0.2"
+	Version = "0.3"
 )
 ```
 

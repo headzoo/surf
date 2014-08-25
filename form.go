@@ -1,8 +1,8 @@
-package gosurf
+package surf
 
 import (
 	"github.com/PuerkitoBio/goquery"
-	"github.com/headzoo/gosurf/errors"
+	"github.com/headzoo/surf/errors"
 	"net/url"
 	"strings"
 )

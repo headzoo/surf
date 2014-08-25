@@ -1,9 +1,9 @@
-package gosurf
+package surf
 
 import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
-	"github.com/headzoo/gosurf/errors"
+	"github.com/headzoo/surf/errors"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -17,9 +17,9 @@ import (
 
 const (
 	// Name is used as the browser name in the default user agent.
-	Name = "GoSurf"
+	Name = "Surf"
 	// Version is used as the version in the default user agent.
-	Version = "0.2"
+	Version = "0.3"
 )
 
 // Attribute represents a Browser capability.

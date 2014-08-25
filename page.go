@@ -1,4 +1,4 @@
-package gosurf
+package surf
 
 import (
 	"github.com/PuerkitoBio/goquery"

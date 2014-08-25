@@ -1,8 +1,8 @@
-package gosurf
+package surf
 
 import (
 	"fmt"
-	"github.com/headzoo/gosurf/unittest"
+	"github.com/headzoo/surf/unittest"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -11,7 +11,7 @@ import (
 func TestFormAttribs(t *testing.T) {
 	unittest.Run(t)
 	unittest.Run(t)
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprint(w, htmlForm)
 	}))
 	defer ts.Close()

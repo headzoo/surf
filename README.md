@@ -1,20 +1,20 @@
-GoSurf
-======
+Surf
+====
 Stateful programmatic web browsing in Go, modeled after John J. Lee's Python library [mechanize](https://github.com/jjlee/mechanize).
 
 
 ### Installation
 Download the library using go.  
-`go get github.com/headzoo/gosurf`
+`go get github.com/headzoo/surf`
 
 Import the library into your project.  
-`import "github.com/headzoo/gosurf"`
+`import "github.com/headzoo/surf"`
 
 
 ### Usage
 ```go
 // Start by creating a new browser.
-browser := gosurf.NewBrowser()
+browser := surf.NewBrowser()
 
 // Requesting a page.
 err := browser.Get("http://www.reddit.com")
@@ -23,7 +23,7 @@ fmt.Println(browser.Title())
 // Outputs: "reddit: the front page of the internet"
 
 
-// Follow a link on the page where the link text is "new". GoSurf uses the selector
+// Follow a link on the page where the link text is "new". Surf uses the selector
 // engine from goquery, which has a similar syntax to jQuery. With the FollowLink()
 // method the "a" is explicit. The selector below is actually "a:contains('new')".
 err = browser.FollowLink(":contains('new')")
@@ -60,31 +60,31 @@ browser.Query().Find("a.title").Each(func(_ int, s *goquery.Selection) {
     fmt.Println(s.Text())
 })
 ```
-See the [API documentation](https://github.com/headzoo/gosurf/tree/master/docs) for more information.
+See the [API documentation](https://github.com/headzoo/surf/tree/master/docs) for more information.
 
 
 ### Settings
 ```go
-browser := gosurf.NewBrowser()
+browser := surf.NewBrowser()
 
 // Override the default user agent.
 browser.UserAgent = "MyBrowser"
 
 // Attributes control how the browser behaves.
-browser.SetAttribute(gosurf.AttributeSendReferer, false)
-browser.SetAttribute(gosurf.AttributeHandleRefresh, false)
-browser.SetAttribute(gosurf.AttributeRollowRedirects, false)
+browser.SetAttribute(surf.AttributeSendReferer, false)
+browser.SetAttribute(surf.AttributeHandleRefresh, false)
+browser.SetAttribute(surf.AttributeRollowRedirects, false)
 
 // Override the build in cookie jar.
 jar, err := cookiejar.New(nil)
 if err != nil { panic(err) }
 browser.Jar = jar
 ```
-See the [API documentation](https://github.com/headzoo/gosurf/tree/master/docs) for more information.
+See the [API documentation](https://github.com/headzoo/surf/tree/master/docs) for more information.
 
 
 ### Credits
-GoSurf uses the awesome [goquery](https://github.com/PuerkitoBio/goquery) by Martin Angers, and was written using [Intellij](http://www.jetbrains.com/idea/) and the [golang plugin](http://plugins.jetbrains.com/plugin/5047). API documentation was created using [godocdown](https://github.com/robertkrimen/godocdown) by Robert Krimen.
+Surf uses the awesome [goquery](https://github.com/PuerkitoBio/goquery) by Martin Angers, and was written using [Intellij](http://www.jetbrains.com/idea/) and the [golang plugin](http://plugins.jetbrains.com/plugin/5047). API documentation was created using [godocdown](https://github.com/robertkrimen/godocdown) by Robert Krimen.
 
 
 ### TODO

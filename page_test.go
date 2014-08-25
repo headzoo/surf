@@ -1,7 +1,7 @@
-package gosurf
+package surf
 
 import (
-	"github.com/headzoo/gosurf/unittest"
+	"github.com/headzoo/surf/unittest"
 	"testing"
 )
 

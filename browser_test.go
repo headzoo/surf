@@ -1,8 +1,8 @@
-package gosurf
+package surf
 
 import (
 	"fmt"
-	"github.com/headzoo/gosurf/unittest"
+	"github.com/headzoo/surf/unittest"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -10,7 +10,7 @@ import (
 
 func TestBrowserGet(t *testing.T) {
 	unittest.Run(t)
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprint(w, html)
 	}))
 	defer ts.Close()
@@ -18,8 +18,8 @@ func TestBrowserGet(t *testing.T) {
 	b := NewBrowser()
 	err := b.Get(ts.URL)
 	unittest.AssertEquals(nil, err)
-	unittest.AssertEquals("GoSurf", b.Title())
-	unittest.AssertContains("<p>Hello, GoSurf!</p>", b.Body())
+	unittest.AssertEquals("Surf", b.Title())
+	unittest.AssertContains("<p>Hello, Surf!</p>", b.Body())
 
 }
 
@@ -40,7 +40,7 @@ func TestBrowseFollowLink(t *testing.T) {
 
 	err = b.FollowLink(":contains('click')")
 	unittest.AssertEquals(nil, err)
-	unittest.AssertContains("<p>Hello, GoSurf!</p>", b.Body())
+	unittest.AssertContains("<p>Hello, Surf!</p>", b.Body())
 }
 
 func TestBrowseForm(t *testing.T) {
@@ -74,10 +74,10 @@ func TestBrowseForm(t *testing.T) {
 var html = `<!doctype html>
 <html>
 	<head>
-		<title>GoSurf</title>
+		<title>Surf</title>
 	</head>
 	<body>
-		<p>Hello, GoSurf!</p>
+		<p>Hello, Surf!</p>
 	</body>
 </html>
 `
@@ -85,7 +85,7 @@ var html = `<!doctype html>
 var htmlLinks = `<!doctype html>
 <html>
 	<head>
-		<title>GoSurf</title>
+		<title>Surf</title>
 	</head>
 	<body>
 		<p>Click the link below.</p>
