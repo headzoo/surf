@@ -48,6 +48,9 @@ var (
 	DefaultFollowRedirectsAttribute bool = true
 )
 
+// exprPrefixesImplied are strings a selection expr may start with, and the tag is implied.
+var exprPrefixesImplied = []string{":", ".", "["}
+
 // Browsable represents an HTTP web browser.
 type Browsable interface {
 	Document
@@ -337,8 +340,7 @@ func (b *Browser) shouldRedirect(req *http.Request, _ []*http.Request) error {
 
 // prefixSelection prefixes sel with elm when sel starts with an element selector.
 func prefixSelection(sel, elm string) string {
-	prefixes := []string{":", ".", "["}
-	for _, prefix := range prefixes {
+	for _, prefix := range exprPrefixesImplied {
 		if strings.HasPrefix(sel, prefix) {
 			return elm + sel
 		}
