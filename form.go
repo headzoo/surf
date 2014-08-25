@@ -40,7 +40,7 @@ func (f *Form) Input(name, value string) error {
 		return nil
 	}
 	return errors.NewElementNotFound(
-		"No input[type='text'][name='%s'] found with name '%s'.", name, name)
+		"No input found with name '%s'.", name)
 }
 
 // Submit submits the form.
