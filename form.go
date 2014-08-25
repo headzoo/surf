@@ -21,8 +21,8 @@ type FormElement interface {
 type Form struct {
 	browser   WebBrowser
 	selection *goquery.Selection
-	method string
-	action string
+	method    string
+	action    string
 	fields    url.Values
 	buttons   url.Values
 }
@@ -35,8 +35,8 @@ func NewForm(b WebBrowser, s *goquery.Selection) *Form {
 	return &Form{
 		browser:   b,
 		selection: s,
-		method: method,
-		action: action,
+		method:    method,
+		action:    action,
 		fields:    fields,
 		buttons:   buttons,
 	}

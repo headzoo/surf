@@ -1,11 +1,11 @@
 package gosurf
 
 import (
-	"github.com/headzoo/gosurf/unittest"
-	"testing"
 	"fmt"
-	"net/http/httptest"
+	"github.com/headzoo/gosurf/unittest"
 	"net/http"
+	"net/http/httptest"
+	"testing"
 )
 
 func TestFormAttribs(t *testing.T) {
