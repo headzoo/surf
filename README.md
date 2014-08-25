@@ -34,6 +34,11 @@ fmt.Println(browser.Title())
 // Outputs: "newest submissions: reddit.com"
 
 
+// Bookmark the page so we can come back to it later.
+err = browser.Bookmark("reddit-new")
+if err != nil { panic(err) }
+
+
 // Login to the site via their login form. Again, we're using the goquery selector
 // syntax. The "form" is explicit. The selector below is actually "form.login-form".
 fm, err := browser.Form(".login-form")
@@ -55,9 +60,12 @@ err = browser.Back()
 if err != nil { panic(err) }
 fmt.Println(browser.Body())
 
+
 // The underlying goquery.Selection is exposed and can be used to parse
-// values from the body. Lets print the titles for each submission on the
-// reddit home page.
+// values from the body. Load our previously saved bookmark, and print
+// the titles for each submission on the reddit home page.
+err = browser.GetBookmark("reddit-new")
+if err != nil { panic(err) }
 browser.Query().Find("a.title").Each(func(_ int, s *goquery.Selection) {
     fmt.Println(s.Text())
 })
@@ -91,6 +99,11 @@ surf.DefaultFollowRedirectsAttribute = false
 jar, err := cookiejar.New(nil)
 if err != nil { panic(err) }
 browser.CookieJar = jar
+
+// Override the build in bookmarks container.
+bookmarks, err := jars.NewMemoryBookmarks()
+if err != nil { panic(err) }
+browser.Bookmarks = bookmarks
 ```
 See the [API documentation](https://github.com/headzoo/surf/tree/master/docs) for more information.
 
