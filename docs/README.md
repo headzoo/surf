@@ -7,11 +7,12 @@
 
 ```go
 const (
-	Name    = "GoSurf"
+	// Name is used as the browser name in the default user agent.
+	Name = "GoSurf"
+	// Version is used as the version in the default user agent.
 	Version = "0.1"
 )
 ```
-The browser name and version.
 
 ```go
 var (

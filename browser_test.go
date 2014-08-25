@@ -1,11 +1,11 @@
 package gosurf
 
 import (
-	"github.com/headzoo/gosurf/unittest"
-	"testing"
 	"fmt"
+	"github.com/headzoo/gosurf/unittest"
 	"net/http"
 	"net/http/httptest"
+	"testing"
 )
 
 func TestBrowserGet(t *testing.T) {

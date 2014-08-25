@@ -15,9 +15,10 @@ import (
 	"time"
 )
 
-// The browser name and version.
 const (
-	Name    = "GoSurf"
+	// Name is used as the browser name in the default user agent.
+	Name = "GoSurf"
+	// Version is used as the version in the default user agent.
 	Version = "0.1"
 )
 

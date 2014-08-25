@@ -19,14 +19,14 @@ type WebPage interface {
 // Page represents the attributes of a single web page.
 type Page struct {
 	resp *http.Response
-	doc *goquery.Document
+	doc  *goquery.Document
 }
 
 // NewPage creates and returns a *Page type.
 func NewPage(r *http.Response, d *goquery.Document) *Page {
 	return &Page{
 		resp: r,
-		doc: d,
+		doc:  d,
 	}
 }
 
