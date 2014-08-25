@@ -31,7 +31,8 @@ fmt.Println(browser.Title())
 
 
 // Login to the site via their login form.
-fm := browser.Form("[class='login-form']")
+fm, err := browser.Form("[class='login-form']")
+if err != nil { panic(err) }
 fm.Input("user", "JoeRedditor")
 fm.Input("passwd", "d234rlkasd")
 err = fm.Submit()
@@ -45,7 +46,8 @@ fmt.Println(browser.Title())
 // Outputs: "overview for JoeRedditor"
 
 // Move back to the home page, and print the page body.
-browser.Back()
+err = browser.Back()
+if err != nil { panic(err) }
 fmt.Println(browser.Body())
 ```
 See the [API documentation](https://github.com/headzoo/gosurf/tree/master/docs) for more information.
