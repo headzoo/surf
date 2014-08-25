@@ -9,15 +9,20 @@ import (
 
 // FormElement represents a single form element from a page.
 type FormElement interface {
+	Method() string
+	Action() string
 	Input(name, value string) error
 	Click(button string) error
 	Submit() error
+	Query() *goquery.Selection
 }
 
 // Form is the default form element.
 type Form struct {
 	browser   WebBrowser
 	selection *goquery.Selection
+	method string
+	action string
 	fields    url.Values
 	buttons   url.Values
 }
@@ -25,12 +30,27 @@ type Form struct {
 // NewForm creates and returns a *Form type.
 func NewForm(b WebBrowser, s *goquery.Selection) *Form {
 	fields, buttons := serializeForm(s)
+	method, action := formAttributes(b, s)
+
 	return &Form{
 		browser:   b,
 		selection: s,
+		method: method,
+		action: action,
 		fields:    fields,
 		buttons:   buttons,
 	}
+}
+
+// Method returns the form method, eg "GET" or "POST".
+func (f *Form) Method() string {
+	return f.method
+}
+
+// Action returns the form action URL.
+// The URL will always be absolute.
+func (f *Form) Action() string {
+	return f.action
 }
 
 // Input sets the value of a form field.
@@ -62,6 +82,11 @@ func (f *Form) Click(button string) error {
 			"Form does not contain a button with the name '%s'.", button)
 	}
 	return f.send(button, f.buttons[button][0])
+}
+
+// Query returns the inner *goquery.Selection.
+func (f *Form) Query() *goquery.Selection {
+	return f.selection
 }
 
 // send submits the form.
@@ -129,4 +154,22 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
 	})
 
 	return fields, buttons
+}
+
+func formAttributes(b WebBrowser, s *goquery.Selection) (string, string) {
+	method, ok := s.Attr("method")
+	if !ok {
+		method = "GET"
+	}
+	action, ok := s.Attr("action")
+	if !ok {
+		action = b.Url().String()
+	}
+	aurl, err := url.Parse(action)
+	if err != nil {
+		return "", ""
+	}
+	aurl = b.ResolveUrl(aurl)
+
+	return strings.ToUpper(method), aurl.String()
 }
