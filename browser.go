@@ -19,7 +19,7 @@ const (
 	// Name is used as the browser name in the default user agent.
 	Name = "GoSurf"
 	// Version is used as the version in the default user agent.
-	Version = "0.1"
+	Version = "0.2"
 )
 
 // Attribute represents a Browser capability.
@@ -58,6 +58,7 @@ type WebBrowser interface {
 	FollowLink(expr string) error
 	Links() []string
 	Form(expr string) (FormElement, error)
+	Forms() []FormElement
 	Back() bool
 	Reload() error
 	Cookies() []*http.Cookie
@@ -164,6 +165,21 @@ func (b *Browser) Form(expr string) (FormElement, error) {
 		return nil, errors.NewElementNotFound("Form not found matching expr '%s'.", expr)
 	}
 	return NewForm(b, sel), nil
+}
+
+// Forms returns an array of every form in the page.
+func (b *Browser) Forms() []FormElement {
+	sel := b.Page.doc.Find("form")
+	len := sel.Length()
+	if len == 0 {
+		return nil
+	}
+
+	forms := make([]FormElement, len)
+	sel.Each(func(_ int, s *goquery.Selection) {
+		forms = append(forms, NewForm(b, s))
+	})
+	return forms
 }
 
 // Back loads the previously requested page.
