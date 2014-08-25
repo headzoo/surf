@@ -52,6 +52,13 @@ fmt.Println(browser.Title())
 err = browser.Back()
 if err != nil { panic(err) }
 fmt.Println(browser.Body())
+
+// The underlying goquery.Selection is exposed and can be used to parse
+// values from the body. Lets print the titles for each submission on the
+// reddit home page.
+browser.Query().Find("a.title").Each(func(_ int, s *goquery.Selection) {
+    fmt.Println(s.Text())
+})
 ```
 See the [API documentation](https://github.com/headzoo/gosurf/tree/master/docs) for more information.
 
