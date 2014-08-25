@@ -125,7 +125,16 @@ func (b *Browser) PostForm(u string, data url.Values) error {
 // FollowLink finds an anchor tag within the current page matching the expr,
 // and calls Get() on the anchor href attribute value.
 func (b *Browser) FollowLink(expr string) error {
-	sel := b.Page.doc.Find("a" + expr)
+	sel := b.Page.doc.Find(prefixSelection(expr, "a"))
+	if sel.Length() == 0 {
+		return errors.NewElementNotFound(
+			"Anchor not found matching expr '%s'.", expr)
+	}
+	if !sel.Is("a") {
+		return errors.NewElementNotFound(
+			"Expr '%s' does not match an anchor tag.", expr)
+	}
+
 	href, ok := sel.Attr("href")
 	if !ok {
 		return errors.NewLinkNotFound("No link found matching expr %s.", expr)
@@ -160,10 +169,16 @@ func (b *Browser) Cookies() []*http.Cookie {
 
 // Form returns the form in the current page that matches the given expr.
 func (b *Browser) Form(expr string) (FormElement, error) {
-	sel := b.Page.doc.Find("form" + expr)
+	sel := b.Page.doc.Find(prefixSelection(expr, "form"))
 	if sel.Length() == 0 {
-		return nil, errors.NewElementNotFound("Form not found matching expr '%s'.", expr)
+		return nil, errors.NewElementNotFound(
+			"Form not found matching expr '%s'.", expr)
 	}
+	if !sel.Is("form") {
+		return nil, errors.NewElementNotFound(
+			"Expr '%s' does not match a form tag.", expr)
+	}
+
 	return NewForm(b, sel), nil
 }
 
@@ -318,6 +333,17 @@ func (b *Browser) shouldRedirect(req *http.Request, _ []*http.Request) error {
 		return nil
 	}
 	return errors.NewLocation("Redirects are disabled. Cannot follow '%s'.", req.URL.String())
+}
+
+// prefixSelection prefixes sel with elm when sel starts with an element selector.
+func prefixSelection(sel, elm string) string {
+	prefixes := []string{":", ".", "["}
+	for _, prefix := range prefixes {
+		if strings.HasPrefix(sel, prefix) {
+			return elm + sel
+		}
+	}
+	return sel
 }
 
 // osRelease returns the name of the OS and it's release version.
