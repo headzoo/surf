@@ -25,6 +25,9 @@ const (
 // Attribute represents a Browser capability.
 type Attribute int
 
+// AttributeMap represents a map of Attribute values.
+type AttributeMap map[Attribute]bool
+
 const (
 	// AttributeSendReferer instructs a Browser to send the Referer header.
 	AttributeSendReferer Attribute = iota
@@ -44,9 +47,6 @@ var (
 	// DefaultAttributeFollowRedirects is the global value for the AttributeFollowRedirects attribute.
 	DefaultAttributeFollowRedirects bool = true
 )
-
-// AttributeMap represents a map of Attribute values.
-type AttributeMap map[Attribute]bool
 
 // WebBrowser represents an HTTP browser.
 type WebBrowser interface {
