@@ -19,7 +19,7 @@ const (
 	// Name is used as the browser name in the default user agent.
 	Name = "Surf"
 	// Version is used as the version in the default user agent.
-	Version = "0.4"
+	Version = "0.4.1"
 )
 
 // Attribute represents a Browser capability.
@@ -29,23 +29,23 @@ type Attribute int
 type AttributeMap map[Attribute]bool
 
 const (
-	// AttributeSendReferer instructs a Browser to send the Referer header.
-	AttributeSendReferer Attribute = iota
-	// AttributeHandleRefresh instructs a Browser to handle the refresh meta tag.
-	AttributeHandleRefresh
-	// AttributeFollowRedirects instructs a Browser to follow Location headers.
-	AttributeFollowRedirects
+	// SendRefererAttribute instructs a Browser to send the Referer header.
+	SendRefererAttribute Attribute = iota
+	// MetaRefreshHandlingAttribute instructs a Browser to handle the refresh meta tag.
+	MetaRefreshHandlingAttribute
+	// FollowRedirectsAttribute instructs a Browser to follow Location headers.
+	FollowRedirectsAttribute
 )
 
 var (
 	// DefaultUserAgent is the global user agent value.
 	DefaultUserAgent string = fmt.Sprintf("%s/%s (%s; %s)", Name, Version, runtime.Version(), osRelease())
 	// DefaultAttributeSendReferer is the global value for the AttributeSendReferer attribute.
-	DefaultAttributeSendReferer bool = true
+	DefaultSendRefererAttribute bool = true
 	// DefaultAttributeHandleRefresh is the global value for the AttributeHandleRefresh attribute.
-	DefaultAttributeHandleRefresh bool = true
+	DefaultMetaRefreshHandlingAttribute bool = true
 	// DefaultAttributeFollowRedirects is the global value for the AttributeFollowRedirects attribute.
-	DefaultAttributeFollowRedirects bool = true
+	DefaultFollowRedirectsAttribute bool = true
 )
 
 // WebBrowser represents an HTTP browser.
@@ -88,9 +88,9 @@ func NewBrowser() *Browser {
 		UserAgent: DefaultUserAgent,
 		Jar:       jar,
 		attributes: AttributeMap{
-			AttributeSendReferer:     DefaultAttributeSendReferer,
-			AttributeHandleRefresh:   DefaultAttributeHandleRefresh,
-			AttributeFollowRedirects: DefaultAttributeFollowRedirects,
+			SendRefererAttribute:         DefaultSendRefererAttribute,
+			MetaRefreshHandlingAttribute: DefaultMetaRefreshHandlingAttribute,
+			FollowRedirectsAttribute:     DefaultFollowRedirectsAttribute,
 		},
 		pages: NewPageStack(),
 	}
@@ -252,7 +252,7 @@ func (b *Browser) sendGet(url string, via *Page) error {
 	if err != nil {
 		return err
 	}
-	if b.attributes[AttributeSendReferer] && via != nil {
+	if b.attributes[SendRefererAttribute] && via != nil {
 		req.Header["Referer"] = []string{via.Url().String()}
 	}
 
@@ -273,7 +273,7 @@ func (b *Browser) sendPost(url string, bodyType string, body io.Reader, via *Pag
 	}
 	req.Body = rc
 	req.Header["Content-Type"] = []string{bodyType}
-	if b.attributes[AttributeSendReferer] && via != nil {
+	if b.attributes[SendRefererAttribute] && via != nil {
 		req.Header["Referer"] = []string{via.Url().String()}
 	}
 
@@ -309,7 +309,7 @@ func (b *Browser) preSend() {
 
 // postSend sets browser state after sending a request.
 func (b *Browser) postSend() {
-	if b.attributes[AttributeHandleRefresh] {
+	if b.attributes[MetaRefreshHandlingAttribute] {
 		sel := b.Page.doc.Find("meta[http-equiv='refresh']")
 		if sel.Length() > 0 {
 			attr, ok := sel.Attr("content")
@@ -329,7 +329,7 @@ func (b *Browser) postSend() {
 
 // shouldRedirect is used as the value to http.Client.CheckRedirect.
 func (b *Browser) shouldRedirect(req *http.Request, _ []*http.Request) error {
-	if b.attributes[AttributeFollowRedirects] {
+	if b.attributes[FollowRedirectsAttribute] {
 		return nil
 	}
 	return errors.NewLocation("Redirects are disabled. Cannot follow '%s'.", req.URL.String())

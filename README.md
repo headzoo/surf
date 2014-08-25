@@ -75,14 +75,14 @@ surf.DefaultUserAgent = "MyBrowser"
 
 
 // Attributes control how the browser behaves.
-browser.SetAttribute(surf.AttributeSendReferer, false)
-browser.SetAttribute(surf.AttributeHandleRefresh, false)
-browser.SetAttribute(surf.AttributeRollowRedirects, false)
+browser.SetAttribute(surf.SendRefererAttribute, false)
+browser.SetAttribute(surf.MetaRefreshHandlingAttribute, false)
+browser.SetAttribute(surf.FollowRedirectsAttribute, false)
 
 // The attributes may also be set globally.
-surf.DefaultAttributeSendReferer = false
-surf.DefaultAttributeHandleRefresh = false
-surf.DefaultAttributeFollowRedirects = false
+surf.DefaultSendRefererAttribute = false
+surf.DefaultMetaRefreshHandlingAttribute = false
+surf.DefaultFollowRedirectsAttribute = false
 
 
 // Override the build in cookie jar.
