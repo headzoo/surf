@@ -76,7 +76,7 @@ type Browsable interface {
 type Browser struct {
 	*Page
 	UserAgent   string
-	Cookies   http.CookieJar
+	Cookies     http.CookieJar
 	Bookmarks   jars.BookmarksJar
 	History     *PageStack
 	lastRequest *http.Request
@@ -93,7 +93,7 @@ func NewBrowser() (*Browser, error) {
 
 	return &Browser{
 		UserAgent: DefaultUserAgent,
-		Cookies: cookies,
+		Cookies:   cookies,
 		Bookmarks: jars.NewMemoryBookmarks(),
 		History:   NewPageStack(),
 		attributes: AttributeMap{
