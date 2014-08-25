@@ -39,7 +39,7 @@ if err != nil { panic(err) }
 
 
 // Now that we're logged in, follow the link to our profile.
-err = browser.FollowLink(":contains('JoeRedditor'))
+err = browser.FollowLink(":contains('JoeRedditor')")
 if err != nil { panic(err) }
 fmt.Println(browser.Title())
 // Outputs: "overview for JoeRedditor"
