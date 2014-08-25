@@ -97,6 +97,12 @@ See the [API documentation](https://github.com/headzoo/surf/tree/master/docs) fo
 Surf uses the awesome [goquery](https://github.com/PuerkitoBio/goquery) by Martin Angers, and was written using [Intellij](http://www.jetbrains.com/idea/) and the [golang plugin](http://plugins.jetbrains.com/plugin/5047). API documentation was created using [godocdown](https://github.com/robertkrimen/godocdown) by Robert Krimen.
 
 
+### Use Cases
+* Interacting with sites that do not have public APIs.
+* Testing/Stressing your sites.
+* Creating a web crawler.
+
+
 ### TODO
 * Add user authentication.
 * Run JavaScript found in the page?
