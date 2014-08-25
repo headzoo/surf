@@ -74,7 +74,6 @@ type Browsable interface {
 	Cookies() []*http.Cookie
 	SetAttribute(a Attribute, v bool)
 	ResolveUrl(u *url.URL) *url.URL
-	Stop() error
 }
 ```
 
@@ -211,19 +210,6 @@ ResolveUrl returns an absolute URL for a possibly relative URL.
 func (b *Browser) SetAttribute(a Attribute, v bool)
 ```
 SetAttribute sets a browser instruction attribute.
-
-#### func (*Browser) Stop
-
-```go
-func (b *Browser) Stop() error
-```
-Stop releases resources held by the browser.
-
-This method is called automatically by the runtime, but is safe to call
-repeatedly without any errors.
-
-The browser should not be used after Stop is called. Doing so will cause
-unexpected behavior.
 
 #### type Document
 
