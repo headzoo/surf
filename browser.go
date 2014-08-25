@@ -335,7 +335,8 @@ func (b *Browser) shouldRedirect(req *http.Request, _ []*http.Request) error {
 	if b.attributes[FollowRedirectsAttribute] {
 		return nil
 	}
-	return errors.NewLocation("Redirects are disabled. Cannot follow '%s'.", req.URL.String())
+	return errors.NewLocation(
+		"Redirects are disabled. Cannot follow '%s'.", req.URL.String())
 }
 
 // prefixSelection prefixes a selection expr with elm when sel is prefixed with
