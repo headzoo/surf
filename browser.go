@@ -19,7 +19,7 @@ const (
 	// Name is used as the browser name in the default user agent.
 	Name = "Surf"
 	// Version is used as the version in the default user agent.
-	Version = "0.4.1"
+	Version = "0.4.2"
 )
 
 // Attribute represents a Browser capability.
@@ -73,7 +73,7 @@ type Browsable interface {
 type Browser struct {
 	*Page
 	UserAgent   string
-	Jar         http.CookieJar
+	CookieJar   http.CookieJar
 	lastRequest *http.Request
 	attributes  AttributeMap
 	pages       *PageStack
@@ -89,7 +89,7 @@ func NewBrowser() *Browser {
 
 	return &Browser{
 		UserAgent: DefaultUserAgent,
-		Jar:       jar,
+		CookieJar: jar,
 		attributes: AttributeMap{
 			SendRefererAttribute:         DefaultSendRefererAttribute,
 			MetaRefreshHandlingAttribute: DefaultMetaRefreshHandlingAttribute,
@@ -172,7 +172,7 @@ func (b *Browser) Links() []string {
 
 // Cookies returns the cookies for the current page.
 func (b *Browser) Cookies() []*http.Cookie {
-	return b.Jar.Cookies(b.Page.Url())
+	return b.CookieJar.Cookies(b.Page.Url())
 }
 
 // Form returns the form in the current page that matches the given expr.
@@ -235,7 +235,7 @@ func (b *Browser) ResolveUrl(u *url.URL) *url.URL {
 // client creates, configures, and returns a *http.Client type.
 func (b *Browser) client() *http.Client {
 	client := &http.Client{}
-	client.Jar = b.Jar
+	client.Jar = b.CookieJar
 	client.CheckRedirect = b.shouldRedirect
 	return client
 }

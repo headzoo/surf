@@ -88,7 +88,7 @@ surf.DefaultFollowRedirectsAttribute = false
 // Override the build in cookie jar.
 jar, err := cookiejar.New(nil)
 if err != nil { panic(err) }
-browser.Jar = jar
+browser.CookieJar = jar
 ```
 See the [API documentation](https://github.com/headzoo/surf/tree/master/docs) for more information.
 
