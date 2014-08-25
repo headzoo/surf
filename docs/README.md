@@ -110,6 +110,8 @@ type Browser struct {
 	Bookmarks jars.BookmarksJar
 	// History stores the visited pages.
 	History *PageStack
+	// RequestHeaders are additional headers to send with each request.
+	RequestHeaders http.Header
 }
 ```
 

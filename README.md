@@ -17,6 +17,10 @@ Import the library into your project.
 browser, err := surf.NewBrowser()
 if err != nil { panic(err) }
 
+// Set additional request headers.
+browser.RequestHeaders.Add("Accept", "text/html")
+browser.RequestHeaders.Add("Accept-Charset", "utf8")
+
 
 // Requesting a page.
 err = browser.Get("http://www.reddit.com")

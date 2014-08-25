@@ -111,6 +111,8 @@ type Browser struct {
 	Bookmarks jars.BookmarksJar
 	// History stores the visited pages.
 	History *PageStack
+	// RequestHeaders are additional headers to send with each request.
+	RequestHeaders http.Header
 	// lastRequest is the *http.Request for the last successful request.
 	lastRequest *http.Request
 	// attributes is the set browser attributes.
@@ -127,10 +129,11 @@ func NewBrowser() (*Browser, error) {
 	}
 
 	return &Browser{
-		UserAgent: DefaultUserAgent,
-		Cookies:   cookies,
-		Bookmarks: jars.NewMemoryBookmarks(),
-		History:   NewPageStack(),
+		UserAgent:      DefaultUserAgent,
+		Cookies:        cookies,
+		Bookmarks:      jars.NewMemoryBookmarks(),
+		History:        NewPageStack(),
+		RequestHeaders: make(http.Header, 10),
 		attributes: AttributeMap{
 			SendRefererAttribute:         DefaultSendRefererAttribute,
 			MetaRefreshHandlingAttribute: DefaultMetaRefreshHandlingAttribute,
@@ -325,8 +328,8 @@ func (b *Browser) request(method, url string) (*http.Request, error) {
 	if err != nil {
 		return nil, err
 	}
+	req.Header = b.RequestHeaders
 	req.Header["User-Agent"] = []string{b.UserAgent}
-
 	return req, nil
 }
 
