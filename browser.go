@@ -20,7 +20,7 @@ const (
 	// Name is used as the browser name in the default user agent.
 	Name = "Surf"
 	// Version is used as the version in the default user agent.
-	Version = "0.4.2"
+	Version = "0.4.3"
 )
 
 // Attribute represents a Browser capability.
