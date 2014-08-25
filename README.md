@@ -80,3 +80,5 @@ GoSurf uses the awesome [goquery](https://github.com/PuerkitoBio/goquery) by Mar
 ### TODO
 * Add user authentication.
 * Write more tests. 
+* File uploading in forms.
+* Handle checkboxes correctly.
