@@ -168,7 +168,7 @@ GetForm appends the data values to the given URL and sends a GET request.
 ```go
 func (b *Browser) Links() []*Link
 ```
-Links returns an array of every anchor tag href value found in the current page.
+Links returns an array of every link found in the page.
 
 #### func (*Browser) Post
 

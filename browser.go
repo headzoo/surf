@@ -183,7 +183,7 @@ func (b *Browser) FollowLink(expr string) error {
 	return b.sendGet(href, b.Page)
 }
 
-// Links returns an array of every anchor tag href value found in the current page.
+// Links returns an array of every link found in the page.
 func (b *Browser) Links() []*Link {
 	sel := b.Page.doc.Find("a")
 	links := make([]*Link, 0, sel.Length())
