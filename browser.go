@@ -81,6 +81,7 @@ type Browser struct {
 	lastRequest  *http.Request
 	attributes   AttributeMap
 	refresh      *time.Timer
+	closed       bool
 }
 
 // NewBrowser creates and returns a *Browser type.
@@ -99,12 +100,12 @@ func NewBrowser() (*Browser, error) {
 		UserAgent:    DefaultUserAgent,
 		CookieJar:    cookies,
 		Bookmarks: bookmarks,
+		History: NewPageStack(),
 		attributes: AttributeMap{
 			SendRefererAttribute:         DefaultSendRefererAttribute,
 			MetaRefreshHandlingAttribute: DefaultMetaRefreshHandlingAttribute,
 			FollowRedirectsAttribute:     DefaultFollowRedirectsAttribute,
 		},
-		History: NewPageStack(),
 	}
 	runtime.SetFinalizer(b, b.Stop())
 	
@@ -119,7 +120,13 @@ func NewBrowser() (*Browser, error) {
 // The browser should not be used after Stop is called. Doing so will cause
 // unexpected behavior. 
 func (b *Browser) Stop() error {
-	b.Bookmarks.Close()
+	if !b.closed {
+		err := b.Bookmarks.Close()
+		if err != nil {
+			return err
+		}
+		b.closed = true
+	}
 	return nil
 }
 
