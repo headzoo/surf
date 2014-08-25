@@ -54,42 +54,69 @@ var exprPrefixesImplied = []string{":", ".", "["}
 
 // Link stores the properties of a page link.
 type Link struct {
-	ID   string
+	// ID is the value of the id attribute or empty when there is no id.
+	ID string
+	// Href is the value of the href attribute.
 	Href string
+	// Text is the text appearing between the opening and closing anchor tag.
 	Text string
 }
 
 // Browsable represents an HTTP web browser.
 type Browsable interface {
 	Document
+	// Get requests the given URL using the GET method.
 	Get(url string) error
+	// GetForm appends the data values to the given URL and sends a GET request.
 	GetForm(url string, data url.Values) error
+	// GetBookmark calls Get() with the URL for the bookmark with the given name.
 	GetBookmark(name string) error
+	// Post requests the given URL using the POST method.
 	Post(url string, bodyType string, body io.Reader) error
+	// PostForm requests the given URL using the POST method with the given data.
 	PostForm(url string, data url.Values) error
+	// BookmarkPage saves the page URL in the bookmarks with the given name.
 	BookmarkPage(name string) error
+	// FollowLink finds an anchor tag within the current document matching the expr,
+	// and calls Get() using the anchor href attribute value.
 	FollowLink(expr string) error
+	// Links returns an array of every link found in the page.
 	Links() []*Link
+	// Form returns the form in the current page that matches the given expr.
 	Form(expr string) (FormElement, error)
+	// Forms returns an array of every form in the page.
 	Forms() []FormElement
+	// Back loads the previously requested page.
 	Back() bool
+	// Reload duplicates the last successful request.
 	Reload() error
+	// SiteCookies returns the cookies for the current site.
 	SiteCookies() []*http.Cookie
+	// SetAttribute sets a browser instruction attribute.
 	SetAttribute(a Attribute, v bool)
+	// ResolveUrl returns an absolute URL for a possibly relative URL.
 	ResolveUrl(u *url.URL) *url.URL
+	// ResolveStringUrl works just like ResolveUrl, but the argument and return value are strings.
 	ResolveStringUrl(u string) (string, error)
 }
 
 // Browser is the default Browser implementation.
 type Browser struct {
 	*Page
-	UserAgent   string
-	Cookies     http.CookieJar
-	Bookmarks   jars.BookmarksJar
-	History     *PageStack
+	// UserAgent is the User-Agent header value sent with requests.
+	UserAgent string
+	// Cookies stores cookies for every site visited by the browser.
+	Cookies http.CookieJar
+	// Bookmarks stores the saved bookmarks.
+	Bookmarks jars.BookmarksJar
+	// History stores the visited pages.
+	History *PageStack
+	// lastRequest is the *http.Request for the last successful request.
 	lastRequest *http.Request
-	attributes  AttributeMap
-	refresh     *time.Timer
+	// attributes is the set browser attributes.
+	attributes AttributeMap
+	// refresh is a timer used to meta refresh pages.
+	refresh *time.Timer
 }
 
 // NewBrowser creates and returns a *Browser type.
@@ -212,6 +239,11 @@ func (b *Browser) SiteCookies() []*http.Cookie {
 }
 
 // Form returns the form in the current page that matches the given expr.
+//
+// The expr can be any valid goquery expression, and the "form" tag is implied. The
+// method can be called using only ".login-form" and the expr is automatically
+// converted to "form.login-form". A complete expression can still be used, for
+// instance "div.login form".
 func (b *Browser) Form(expr string) (FormElement, error) {
 	sel := b.Page.doc.Find(prefixSelection(expr, "form"))
 	if sel.Length() == 0 {
