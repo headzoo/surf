@@ -10,7 +10,7 @@ const (
 	// Name is used as the browser name in the default user agent.
 	Name = "GoSurf"
 	// Version is used as the version in the default user agent.
-	Version = "0.1"
+	Version = "0.2"
 )
 ```
 
@@ -102,6 +102,13 @@ func (b *Browser) Form(expr string) (FormElement, error)
 ```
 Form returns the form in the current page that matches the given expr.
 
+#### func (*Browser) Forms
+
+```go
+func (b *Browser) Forms() []FormElement
+```
+Forms returns an array of every form in the page.
+
 #### func (*Browser) Get
 
 ```go
@@ -185,6 +192,13 @@ func NewForm(b WebBrowser, s *goquery.Selection) *Form
 ```
 NewForm creates and returns a *Form type.
 
+#### func (*Form) Action
+
+```go
+func (f *Form) Action() string
+```
+Action returns the form action URL. The URL will always be absolute.
+
 #### func (*Form) Click
 
 ```go
@@ -199,6 +213,20 @@ func (f *Form) Input(name, value string) error
 ```
 Input sets the value of a form field.
 
+#### func (*Form) Method
+
+```go
+func (f *Form) Method() string
+```
+Method returns the form method, eg "GET" or "POST".
+
+#### func (*Form) Query
+
+```go
+func (f *Form) Query() *goquery.Selection
+```
+Query returns the inner *goquery.Selection.
+
 #### func (*Form) Submit
 
 ```go
@@ -211,9 +239,12 @@ form without using any button when the form does not contain any buttons.
 
 ```go
 type FormElement interface {
+	Method() string
+	Action() string
 	Input(name, value string) error
 	Click(button string) error
 	Submit() error
+	Query() *goquery.Selection
 }
 ```
 
@@ -333,6 +364,7 @@ type WebBrowser interface {
 	FollowLink(expr string) error
 	Links() []string
 	Form(expr string) (FormElement, error)
+	Forms() []FormElement
 	Back() bool
 	Reload() error
 	Cookies() []*http.Cookie
