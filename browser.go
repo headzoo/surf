@@ -74,9 +74,9 @@ type Browser struct {
 	*Page
 	UserAgent   string
 	CookieJar   http.CookieJar
+	History     *PageStack
 	lastRequest *http.Request
 	attributes  AttributeMap
-	pages       *PageStack
 	refresh     *time.Timer
 }
 
@@ -95,7 +95,7 @@ func NewBrowser() *Browser {
 			MetaRefreshHandlingAttribute: DefaultMetaRefreshHandlingAttribute,
 			FollowRedirectsAttribute:     DefaultFollowRedirectsAttribute,
 		},
-		pages: NewPageStack(),
+		History: NewPageStack(),
 	}
 }
 
@@ -207,8 +207,8 @@ func (b *Browser) Forms() []FormElement {
 
 // Back loads the previously requested page.
 func (b *Browser) Back() bool {
-	if b.pages.Len() > 0 {
-		b.Page = b.pages.Pop()
+	if b.History.Len() > 0 {
+		b.Page = b.History.Pop()
 		return true
 	}
 	return false
@@ -301,7 +301,7 @@ func (b *Browser) send(req *http.Request) error {
 	}
 
 	b.lastRequest = req
-	b.pages.Push(b.Page)
+	b.History.Push(b.Page)
 	b.Page = NewPage(resp, body)
 	b.postSend()
 
