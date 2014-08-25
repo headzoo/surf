@@ -44,10 +44,30 @@ if err != nil { panic(err) }
 fmt.Println(browser.Title())
 // Outputs: "overview for JoeRedditor"
 
-// Finally print the page body.
+// Move back to the home page, and print the page body.
+browser.Back()
 fmt.Println(browser.Body())
 ```
+See the [API documentation](https://github.com/headzoo/gosurf/tree/master/docs) for more information.
 
+
+### Settings
+```go
+browser := gosurf.NewBrowser()
+
+// Override the default user agent.
+browser.UserAgent = "MyBrowser"
+
+// Attributes control how the browser behaves.
+browser.SetAttribute(gosurf.AttributeSendReferer, false)
+browser.SetAttribute(gosurf.AttributeHandleRefresh, false)
+browser.SetAttribute(gosurf.AttributeRollowRedirects, false)
+
+// Override the build in cookie jar.
+jar, err := cookiejar.New(nil)
+if err != nil { panic(err) }
+browser.Jar = jar
+```
 See the [API documentation](https://github.com/headzoo/gosurf/tree/master/docs) for more information.
 
 
@@ -55,3 +75,6 @@ See the [API documentation](https://github.com/headzoo/gosurf/tree/master/docs) 
 GoSurf uses the awesome [goquery](https://github.com/PuerkitoBio/goquery) by Martin Angers, and was written using [Intellij](http://www.jetbrains.com/idea/) and the [golang plugin](http://plugins.jetbrains.com/plugin/5047). API documentation was created using [godocdown](https://github.com/robertkrimen/godocdown) by Robert Krimen.
 
 
+### TODO
+* Add user authentication.
+* Write more tests. 
