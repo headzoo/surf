@@ -14,10 +14,12 @@ Import the library into your project.
 ### Usage
 ```go
 // Start by creating a new browser.
-browser := surf.NewBrowser()
+browser, err := surf.NewBrowser()
+if err != nil { panic(err) }
+
 
 // Requesting a page.
-err := browser.Get("http://www.reddit.com")
+err = browser.Get("http://www.reddit.com")
 if err != nil { panic(err) }
 fmt.Println(browser.Title())
 // Outputs: "reddit: the front page of the internet"
@@ -65,7 +67,7 @@ See the [API documentation](https://github.com/headzoo/surf/tree/master/docs) fo
 
 ### Settings
 ```go
-browser := surf.NewBrowser()
+browser, err := surf.NewBrowser()
 
 // Override the default user agent.
 browser.UserAgent = "MyBrowser"

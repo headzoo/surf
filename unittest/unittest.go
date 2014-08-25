@@ -25,7 +25,6 @@ func AssertTrue(actual bool) bool {
 		test.Errorf("Failed asserting %q is true.", actual)
 		return false
 	}
-
 	return true
 }
 
@@ -35,7 +34,24 @@ func AssertFalse(actual bool) bool {
 		test.Errorf("Failed asserting %q is false.", actual)
 		return false
 	}
+	return true
+}
 
+// AssertNotNil tests whether the given value is not nil.
+func AssertNotNil(actual interface{}) bool {
+	if actual == nil {
+		test.Errorf("Failed asserting the value is not nil.")
+		return false
+	}
+	return true
+}
+
+// AssertNil tests whether the given value is nil.
+func AssertNil(actual interface{}) bool {
+	if actual != nil {
+		test.Errorf("Failed asserting %T is nil.", actual)
+		return false
+	}
 	return true
 }
 
@@ -46,7 +62,6 @@ func AssertEmpty(actual interface{}) bool {
 		test.Errorf("Failed asserting %q is empty.", actual)
 		return false
 	}
-
 	return true
 }
 
@@ -57,7 +72,6 @@ func AssertNotEmpty(actual interface{}) bool {
 		test.Errorf("Failed asserting %q is not empty.", actual)
 		return false
 	}
-
 	return true
 }
 
@@ -67,7 +81,6 @@ func AssertEquals(expected, actual interface{}) bool {
 		test.Errorf("Failed asserting %q equals %q.", expected, actual)
 		return false
 	}
-
 	return true
 }
 
@@ -77,7 +90,6 @@ func AssertNotEquals(expected, actual interface{}) bool {
 		test.Errorf("Failed asserting %q is not equal to %q.", expected, actual)
 		return false
 	}
-
 	return true
 }
 
@@ -87,7 +99,6 @@ func AssertContains(expected, actual string) bool {
 		test.Errorf("Failed asserting %q contains %q.", actual, expected)
 		return false
 	}
-
 	return true
 }
 

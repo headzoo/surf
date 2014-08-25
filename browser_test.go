@@ -2,29 +2,44 @@ package surf
 
 import (
 	"fmt"
-	"github.com/headzoo/surf/unittest"
+	ut "github.com/headzoo/surf/unittest"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 )
 
 func TestBrowserGet(t *testing.T) {
-	unittest.Run(t)
+	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprint(w, html)
 	}))
 	defer ts.Close()
 
-	b := NewBrowser()
+	b, _ := NewBrowser()
 	err := b.Get(ts.URL)
-	unittest.AssertEquals(nil, err)
-	unittest.AssertEquals("Surf", b.Title())
-	unittest.AssertContains("<p>Hello, Surf!</p>", b.Body())
+	ut.AssertNil(err)
+	ut.AssertEquals("Surf", b.Title())
+	ut.AssertContains("<p>Hello, Surf!</p>", b.Body())
+
 
 }
 
+func TestBrowserBookmarks(t *testing.T) {
+	ut.Run(t)
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		fmt.Fprint(w, html)
+	}))
+	defer ts.Close()
+	
+	b, _ := NewBrowser()
+	b.Bookmarks.Save("test1", ts.URL)
+	b.GetBookmark("test1")
+	ut.AssertEquals("Surf", b.Title())
+	ut.AssertContains("<p>Hello, Surf!</p>", b.Body())
+}
+
 func TestBrowseFollowLink(t *testing.T) {
-	unittest.Run(t)
+	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
 			fmt.Fprint(w, htmlLinks)
@@ -34,17 +49,17 @@ func TestBrowseFollowLink(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	b := NewBrowser()
+	b, _ := NewBrowser()
 	err := b.Get(ts.URL)
-	unittest.AssertEquals(nil, err)
+	ut.AssertNil(err)
 
 	err = b.FollowLink(":contains('click')")
-	unittest.AssertEquals(nil, err)
-	unittest.AssertContains("<p>Hello, Surf!</p>", b.Body())
+	ut.AssertNil(err)
+	ut.AssertContains("<p>Hello, Surf!</p>", b.Body())
 }
 
 func TestBrowseForm(t *testing.T) {
-	unittest.Run(t)
+	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "GET" {
 			fmt.Fprint(w, htmlForm)
@@ -55,20 +70,20 @@ func TestBrowseForm(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	b := NewBrowser()
+	b, _ := NewBrowser()
 	err := b.Get(ts.URL)
-	unittest.AssertEquals(nil, err)
+	ut.AssertNil(err)
 
 	f, err := b.Form("[name='default']")
-	unittest.AssertEquals(nil, err)
+	ut.AssertNil(err)
 
 	f.Input("age", "55")
 	f.Input("gender", "male")
 	err = f.Click("submit2")
-	unittest.AssertEquals(nil, err)
-	unittest.AssertContains("age=55", b.Body())
-	unittest.AssertContains("gender=male", b.Body())
-	unittest.AssertContains("submit2=submitted2", b.Body())
+	ut.AssertNil(err)
+	ut.AssertContains("age=55", b.Body())
+	ut.AssertContains("gender=male", b.Body())
+	ut.AssertContains("submit2=submitted2", b.Body())
 }
 
 var html = `<!doctype html>

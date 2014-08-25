@@ -5,6 +5,19 @@ import (
 	"fmt"
 )
 
+// Error represents any generic error.
+type Error struct {
+	error
+}
+
+// New creates and returns an Error type.
+func New(msg string, a ...interface{}) Error {
+	msg = fmt.Sprintf(msg, a...)
+	return Error{
+		error: errors.New(msg),
+	}
+}
+
 // PageNotFound represents a failed attempt to visit a page because the page
 // does not exist.
 type PageNotFound struct {

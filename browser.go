@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/headzoo/surf/errors"
+	"github.com/headzoo/surf/jars"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -67,29 +68,37 @@ type Browsable interface {
 	Cookies() []*http.Cookie
 	SetAttribute(a Attribute, v bool)
 	ResolveUrl(u *url.URL) *url.URL
+	Stop() error
 }
 
 // Browser is the default Browser implementation.
 type Browser struct {
 	*Page
-	UserAgent   string
-	CookieJar   http.CookieJar
-	History     *PageStack
-	lastRequest *http.Request
-	attributes  AttributeMap
-	refresh     *time.Timer
+	UserAgent    string
+	CookieJar    http.CookieJar
+	Bookmarks jars.BookmarksJar
+	History      *PageStack
+	lastRequest  *http.Request
+	attributes   AttributeMap
+	refresh      *time.Timer
 }
 
 // NewBrowser creates and returns a *Browser type.
-func NewBrowser() *Browser {
-	jar, err := cookiejar.New(nil)
+func NewBrowser() (*Browser, error) {
+	cookies, err := cookiejar.New(nil)
 	if err != nil {
-		panic(err)
+		return nil, err
+	}
+	bookmarks := jars.NewMemoryBookmarks()
+	err = bookmarks.Open()
+	if err != nil {
+		return nil, err
 	}
 
-	return &Browser{
-		UserAgent: DefaultUserAgent,
-		CookieJar: jar,
+	b := &Browser{
+		UserAgent:    DefaultUserAgent,
+		CookieJar:    cookies,
+		Bookmarks: bookmarks,
 		attributes: AttributeMap{
 			SendRefererAttribute:         DefaultSendRefererAttribute,
 			MetaRefreshHandlingAttribute: DefaultMetaRefreshHandlingAttribute,
@@ -97,6 +106,21 @@ func NewBrowser() *Browser {
 		},
 		History: NewPageStack(),
 	}
+	runtime.SetFinalizer(b, b.Stop())
+	
+	return b, nil
+}
+
+// Stop releases resources held by the browser.
+//
+// This method is called automatically by the runtime, but is safe to call repeatedly
+// without any errors.
+//
+// The browser should not be used after Stop is called. Doing so will cause
+// unexpected behavior. 
+func (b *Browser) Stop() error {
+	b.Bookmarks.Close()
+	return nil
 }
 
 // Get requests the given URL using the GET method.
@@ -113,6 +137,15 @@ func (b *Browser) GetForm(u string, data url.Values) error {
 	ul.RawQuery = data.Encode()
 
 	return b.Get(ul.String())
+}
+
+// GetBookmark calls Get() with the URL for the bookmark with the given name.
+func (b *Browser) GetBookmark(name string) error {
+	url, err := b.Bookmarks.Read(name)
+	if err != nil {
+		return err
+	}
+	return b.Get(url)
 }
 
 // Post requests the given URL using the POST method.
