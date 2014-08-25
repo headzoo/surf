@@ -9,10 +9,8 @@ func TestMemoryBookmarks(t *testing.T) {
 	ut.Run(t)
 
 	b := NewMemoryBookmarks()
-	err := b.Open()
-	ut.AssertNil(err)
 
-	err = b.Save("test1", "http://localhost")
+	err := b.Save("test1", "http://localhost")
 	ut.AssertNil(err)
 	err = b.Save("test2", "http://127.0.0.1")
 	ut.AssertNil(err)
@@ -36,7 +34,4 @@ func TestMemoryBookmarks(t *testing.T) {
 	ut.AssertTrue(r)
 	r = b.Has("test4")
 	ut.AssertFalse(r)
-
-	err = b.Close()
-	ut.AssertNil(err)
 }

@@ -4,8 +4,6 @@ import "github.com/headzoo/surf/errors"
 
 // BookmarksJar is a container for storage and retrieval of bookmarks.
 type BookmarksJar interface {
-	Open() error
-	Close() error
 	Save(name, url string) error
 	Read(name string) (string, error)
 	Remove(name string) bool
@@ -22,22 +20,6 @@ func NewMemoryBookmarks() *MemoryBookmarks {
 	return &MemoryBookmarks{
 		bookmarks: make(map[string]string, 20),
 	}
-}
-
-// Open opens the bookmark jar for reading and writing.
-//
-// This method does nothing when called on this in-memory jar, and will never
-// return an error.
-func (b *MemoryBookmarks) Open() error {
-	return nil
-}
-
-// Close closes the bookmark jar for reading and writing.
-//
-// This method does nothing when called on this in-memory jar, and will never
-// return an error.
-func (b *MemoryBookmarks) Close() error {
-	return nil
 }
 
 // Save saves a bookmark with the given name.
