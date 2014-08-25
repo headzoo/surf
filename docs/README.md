@@ -71,7 +71,7 @@ type Browsable interface {
 	Forms() []FormElement
 	Back() bool
 	Reload() error
-	Cookies() []*http.Cookie
+	SiteCookies() []*http.Cookie
 	SetAttribute(a Attribute, v bool)
 	ResolveUrl(u *url.URL) *url.URL
 }
@@ -85,7 +85,7 @@ Browsable represents an HTTP web browser.
 type Browser struct {
 	*Page
 	UserAgent string
-	CookieJar http.CookieJar
+	Cookies   http.CookieJar
 	Bookmarks jars.BookmarksJar
 	History   *PageStack
 }
@@ -113,13 +113,6 @@ Back loads the previously requested page.
 func (b *Browser) Bookmark(name string) error
 ```
 Bookmark saves the page URL in the bookmarks with the given name.
-
-#### func (*Browser) Cookies
-
-```go
-func (b *Browser) Cookies() []*http.Cookie
-```
-Cookies returns the cookies for the current page.
 
 #### func (*Browser) FollowLink
 
@@ -210,6 +203,13 @@ ResolveUrl returns an absolute URL for a possibly relative URL.
 func (b *Browser) SetAttribute(a Attribute, v bool)
 ```
 SetAttribute sets a browser instruction attribute.
+
+#### func (*Browser) SiteCookies
+
+```go
+func (b *Browser) SiteCookies() []*http.Cookie
+```
+SiteCookies returns the cookies for the current site.
 
 #### type Document
 

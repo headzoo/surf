@@ -67,7 +67,7 @@ type Browsable interface {
 	Forms() []FormElement
 	Back() bool
 	Reload() error
-	Cookies() []*http.Cookie
+	SiteCookies() []*http.Cookie
 	SetAttribute(a Attribute, v bool)
 	ResolveUrl(u *url.URL) *url.URL
 }
@@ -76,7 +76,7 @@ type Browsable interface {
 type Browser struct {
 	*Page
 	UserAgent   string
-	CookieJar   http.CookieJar
+	Cookies   http.CookieJar
 	Bookmarks   jars.BookmarksJar
 	History     *PageStack
 	lastRequest *http.Request
@@ -93,7 +93,7 @@ func NewBrowser() (*Browser, error) {
 
 	return &Browser{
 		UserAgent: DefaultUserAgent,
-		CookieJar: cookies,
+		Cookies: cookies,
 		Bookmarks: jars.NewMemoryBookmarks(),
 		History:   NewPageStack(),
 		attributes: AttributeMap{
@@ -190,9 +190,9 @@ func (b *Browser) Links() []string {
 	return links
 }
 
-// Cookies returns the cookies for the current page.
-func (b *Browser) Cookies() []*http.Cookie {
-	return b.CookieJar.Cookies(b.Page.Url())
+// SiteCookies returns the cookies for the current site.
+func (b *Browser) SiteCookies() []*http.Cookie {
+	return b.Cookies.Cookies(b.Page.Url())
 }
 
 // Form returns the form in the current page that matches the given expr.
@@ -255,7 +255,7 @@ func (b *Browser) ResolveUrl(u *url.URL) *url.URL {
 // client creates, configures, and returns a *http.Client type.
 func (b *Browser) client() *http.Client {
 	client := &http.Client{}
-	client.Jar = b.CookieJar
+	client.Jar = b.Cookies
 	client.CheckRedirect = b.shouldRedirect
 	return client
 }
