@@ -21,7 +21,6 @@ func TestBrowserGet(t *testing.T) {
 	ut.AssertEquals("Surf", b.Title())
 	ut.AssertContains("<p>Hello, Surf!</p>", b.Body())
 
-
 }
 
 func TestBrowserBookmarks(t *testing.T) {
@@ -30,7 +29,7 @@ func TestBrowserBookmarks(t *testing.T) {
 		fmt.Fprint(w, html)
 	}))
 	defer ts.Close()
-	
+
 	b, _ := NewBrowser()
 	b.Bookmarks.Save("test1", ts.URL)
 	b.GetBookmark("test1")

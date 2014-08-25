@@ -74,14 +74,14 @@ type Browsable interface {
 // Browser is the default Browser implementation.
 type Browser struct {
 	*Page
-	UserAgent    string
-	CookieJar    http.CookieJar
-	Bookmarks jars.BookmarksJar
-	History      *PageStack
-	lastRequest  *http.Request
-	attributes   AttributeMap
-	refresh      *time.Timer
-	closed       bool
+	UserAgent   string
+	CookieJar   http.CookieJar
+	Bookmarks   jars.BookmarksJar
+	History     *PageStack
+	lastRequest *http.Request
+	attributes  AttributeMap
+	refresh     *time.Timer
+	closed      bool
 }
 
 // NewBrowser creates and returns a *Browser type.
@@ -97,10 +97,10 @@ func NewBrowser() (*Browser, error) {
 	}
 
 	b := &Browser{
-		UserAgent:    DefaultUserAgent,
-		CookieJar:    cookies,
+		UserAgent: DefaultUserAgent,
+		CookieJar: cookies,
 		Bookmarks: bookmarks,
-		History: NewPageStack(),
+		History:   NewPageStack(),
 		attributes: AttributeMap{
 			SendRefererAttribute:         DefaultSendRefererAttribute,
 			MetaRefreshHandlingAttribute: DefaultMetaRefreshHandlingAttribute,
@@ -108,7 +108,7 @@ func NewBrowser() (*Browser, error) {
 		},
 	}
 	runtime.SetFinalizer(b, b.Stop())
-	
+
 	return b, nil
 }
 
@@ -118,7 +118,7 @@ func NewBrowser() (*Browser, error) {
 // without any errors.
 //
 // The browser should not be used after Stop is called. Doing so will cause
-// unexpected behavior. 
+// unexpected behavior.
 func (b *Browser) Stop() error {
 	if !b.closed {
 		err := b.Bookmarks.Close()
