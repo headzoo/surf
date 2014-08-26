@@ -1,0 +1,5 @@
+#### v0.4.4
+* Renamed Browser.FollowLink() to Click().
+* Renamed Browser.Get() to Open().
+* Renamed Browser.GetForm() to OpenForm().
+* Renamed Browser.GetBookmark() to OpenBookmark().
