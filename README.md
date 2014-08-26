@@ -114,7 +114,7 @@ if err != nil { panic(err) }
 browser.Cookies = cookies
 
 // Override the build in bookmarks container.
-bookmarks, err := jars.NewMemoryBookmarks()
+bookmarks, err := jar.NewMemoryBookmarks()
 if err != nil { panic(err) }
 browser.Bookmarks = bookmarks
 ```
