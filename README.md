@@ -38,8 +38,7 @@ fmt.Println(browser.Title())
 
 
 // Follow a link on the page where the link text is "new". Surf uses the selector
-// engine from goquery, which has a similar syntax to jQuery. With the FollowLink()
-// method the "a" is explicit. The selector below is actually "a:contains('new')".
+// engine from goquery, which has a similar syntax to jQuery.
 err = browser.Click("a:contains('new')")
 if err != nil { panic(err) }
 fmt.Println(browser.Title())
