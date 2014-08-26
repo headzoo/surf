@@ -199,6 +199,9 @@ func (b *Browser) PostForm(u string, data url.Values) error {
 }
 
 // Back loads the previously requested page.
+//
+// Returns a boolean value indicating whether a previous page existed, and was
+// successfully loaded.
 func (b *Browser) Back() bool {
 	if b.History.Len() > 0 {
 		b.Page = b.History.Pop()
@@ -270,6 +273,8 @@ func (b *Browser) Form(expr string) (FormElement, error) {
 }
 
 // Forms returns an array of every form in the page.
+//
+// Returns nil when the page does not contain any forms.
 func (b *Browser) Forms() []FormElement {
 	sel := b.Page.doc.Find("form")
 	len := sel.Length()
