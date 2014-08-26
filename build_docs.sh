@@ -1,5 +1,6 @@
 #!/bin/bash
 godocdown . > docs/surf.md
 godocdown agents/ > docs/agents.md
-godocdown errors/ > docs/errors.md
-godocdown jars/ > docs/jars.md
+godocdown attrib/ > docs/attrib.md
+godocdown element/ > docs/element.md
+godocdown jar/ > docs/jar.md
