@@ -2,8 +2,8 @@ package surf
 
 import (
 	"fmt"
-	ut "github.com/headzoo/surf/unittest"
 	"github.com/headzoo/surf/element"
+	ut "github.com/headzoo/surf/unittest"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -17,7 +17,7 @@ func TestBrowserGet(t *testing.T) {
 	defer ts.Close()
 
 	b, _ := NewBrowser()
-	var _ element.Browsable = b;
+	var _ element.Browsable = b
 
 	err := b.Open(ts.URL)
 	ut.AssertNil(err)

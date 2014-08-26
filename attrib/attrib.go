@@ -32,4 +32,3 @@ var (
 	// DefaultFollowRedirectsAttribute is the global value for the AttributeFollowRedirects attribute.
 	DefaultFollowRedirects = true
 )
-

@@ -2,6 +2,8 @@ package surf
 
 import (
 	"github.com/PuerkitoBio/goquery"
+	"github.com/headzoo/surf/attrib"
+	"github.com/headzoo/surf/element"
 	"github.com/headzoo/surf/errors"
 	"github.com/headzoo/surf/jar"
 	"io"
@@ -11,8 +13,6 @@ import (
 	"net/url"
 	"strings"
 	"time"
-	"github.com/headzoo/surf/element"
-	"github.com/headzoo/surf/attrib"
 )
 
 // exprPrefixesImplied are strings a selection expr may start with, and the tag is implied.

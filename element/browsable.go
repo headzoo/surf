@@ -1,10 +1,10 @@
 package element
 
 import (
-	"net/url"
+	"github.com/headzoo/surf/attrib"
 	"io"
 	"net/http"
-	"github.com/headzoo/surf/attrib"
+	"net/url"
 )
 
 // Browsable represents an HTTP web browser.

@@ -15,12 +15,12 @@ func TestFormAttribs(t *testing.T) {
 	}))
 	defer ts.Close()
 	/*
-	b, _ := NewBrowser()
-	b.Open(ts.URL)
-	f, err := b.Form("[name='default']")
-	ut.AssertNil(err)
-	ut.AssertEquals("POST", f.Method())
-	ut.AssertEquals(ts.URL+"/", f.Action())
+		b, _ := NewBrowser()
+		b.Open(ts.URL)
+		f, err := b.Form("[name='default']")
+		ut.AssertNil(err)
+		ut.AssertEquals("POST", f.Method())
+		ut.AssertEquals(ts.URL+"/", f.Action())
 	*/
 }
 
