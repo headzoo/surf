@@ -1,8 +1,8 @@
 package surf
 
 import (
-	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"github.com/headzoo/surf/agents"
 	"github.com/headzoo/surf/errors"
 	"github.com/headzoo/surf/jars"
 	"io"
@@ -10,17 +10,8 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
-	"runtime"
 	"strings"
-	"syscall"
 	"time"
-)
-
-const (
-	// Name is used as the browser name in the default user agent.
-	Name = "Surf"
-	// Version is used as the version in the default user agent.
-	Version = "0.4.3"
 )
 
 // Attribute represents a Browser capability.
@@ -40,13 +31,13 @@ const (
 
 var (
 	// DefaultUserAgent is the global user agent value.
-	DefaultUserAgent string = fmt.Sprintf("%s/%s (%s; %s)", Name, Version, runtime.Version(), osRelease())
+	DefaultUserAgent = agents.Create()
 	// DefaultSendRefererAttribute is the global value for the AttributeSendReferer attribute.
-	DefaultSendRefererAttribute bool = true
+	DefaultSendRefererAttribute = true
 	// DefaultMetaRefreshHandlingAttribute is the global value for the AttributeHandleRefresh attribute.
-	DefaultMetaRefreshHandlingAttribute bool = true
+	DefaultMetaRefreshHandlingAttribute = true
 	// DefaultFollowRedirectsAttribute is the global value for the AttributeFollowRedirects attribute.
-	DefaultFollowRedirectsAttribute bool = true
+	DefaultFollowRedirectsAttribute = true
 )
 
 // exprPrefixesImplied are strings a selection expr may start with, and the tag is implied.
@@ -434,28 +425,4 @@ func prefixSelection(sel, elm string) string {
 		}
 	}
 	return sel
-}
-
-// osRelease returns the name of the OS and it's release version.
-func osRelease() string {
-	buf := &syscall.Utsname{}
-	err := syscall.Uname(buf)
-	if err != nil {
-		return "0.0"
-	}
-
-	return charsToString(buf.Sysname) + "/" + charsToString(buf.Release)
-}
-
-// charsToString converts a [65]int8 byte array into a string.
-func charsToString(ca [65]int8) string {
-	s := make([]byte, len(ca))
-	var lens int
-	for ; lens < len(ca); lens++ {
-		if ca[lens] == 0 {
-			break
-		}
-		s[lens] = uint8(ca[lens])
-	}
-	return string(s[0:lens])
 }

@@ -80,6 +80,7 @@ See the [API documentation](https://github.com/headzoo/surf/tree/master/docs) fo
 ### Settings
 ```go
 browser, err := surf.NewBrowser()
+if err != nil { panic(err) }
 
 // Override the default user agent.
 browser.UserAgent = "MyBrowser"
@@ -110,6 +111,43 @@ if err != nil { panic(err) }
 browser.Bookmarks = bookmarks
 ```
 See the [API documentation](https://github.com/headzoo/surf/tree/master/docs) for more information.
+
+
+### User Agents
+The agents package contains a number of methods for creating user agent strings for popular browsers and crawlers, and for generating your own user agents.
+```go
+browser, err := surf.NewBrowser()
+if err != nil { panic(err) }
+
+// Use the Google Chrome user agent. The Chrome() method returns:
+// "Mozilla/5.0 (Windows NT 6.3; x64) Chrome/37.0.2049.0 Safari/537.36".
+browser.UserAgent = agents.Chrome()
+
+// The Firefox() method returns:
+// "Mozilla/5.0 (Windows NT 6.3; x64; rv:31.0) Gecko/20100101 Firefox/31.0".
+browser.UserAgent = agents.Firefox()
+
+// The Safari() method returns:
+// "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Safari/8536.25".
+browser.UserAgent = agents.Safari()
+
+// There are methods for a number of browsers and crawlers. For example
+// Opera(), MSIE(), AOL(), GoogleBot(), and many more. You can even choose
+// the browser version. This will create:
+// "Mozilla/5.0 (Windows NT 6.3; x64) Chrome/35 Safari/537.36".
+browser.UserAgent = agents.CreateVersion("chrome", "35")
+
+// Creating your own custom user agent is just as easy. The following code
+// generates the user agent:
+// "MyBrowser/1.0 (Windows NT 6.1; WOW64; x64)".
+agents.Name = "MyBrowser"
+agents.Version = "1.0"
+agents.OSName = "Windows NT"
+agents.OSVersion = "6.1"
+agents.Comments = []string{"WOW64", "x64"}
+browser.UserAgent = agents.Create()
+```
+The agents package has an internal database for many different versions of many different browsers. See the [API documentation](https://github.com/headzoo/surf/tree/master/docs) for more information.
 
 
 ### Credits

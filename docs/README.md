@@ -6,24 +6,15 @@
 ## Usage
 
 ```go
-const (
-	// Name is used as the browser name in the default user agent.
-	Name = "Surf"
-	// Version is used as the version in the default user agent.
-	Version = "0.4.3"
-)
-```
-
-```go
 var (
 	// DefaultUserAgent is the global user agent value.
-	DefaultUserAgent string = fmt.Sprintf("%s/%s (%s; %s)", Name, Version, runtime.Version(), osRelease())
+	DefaultUserAgent = agents.Create()
 	// DefaultSendRefererAttribute is the global value for the AttributeSendReferer attribute.
-	DefaultSendRefererAttribute bool = true
+	DefaultSendRefererAttribute = true
 	// DefaultMetaRefreshHandlingAttribute is the global value for the AttributeHandleRefresh attribute.
-	DefaultMetaRefreshHandlingAttribute bool = true
+	DefaultMetaRefreshHandlingAttribute = true
 	// DefaultFollowRedirectsAttribute is the global value for the AttributeFollowRedirects attribute.
-	DefaultFollowRedirectsAttribute bool = true
+	DefaultFollowRedirectsAttribute = true
 )
 ```
 
