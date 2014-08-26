@@ -23,7 +23,6 @@ func TestBrowserGet(t *testing.T) {
 	ut.AssertNil(err)
 	ut.AssertEquals("Surf", b.Title())
 	ut.AssertContains("<p>Hello, Surf!</p>", b.Body())
-
 }
 
 func TestBrowserBookmarks(t *testing.T) {
@@ -45,7 +44,7 @@ func TestBrowserBookmarks(t *testing.T) {
 	ut.AssertEquals("Surf", b.Title())
 }
 
-func TestBrowserFollowLink(t *testing.T) {
+func TestBrowserClick(t *testing.T) {
 	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
