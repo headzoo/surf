@@ -1,6 +1,6 @@
 package attrib
 
-import "github.com/headzoo/surf/agents"
+import "github.com/headzoo/surf/agent"
 
 // Attribute represents a Browser capability.
 type Attribute int
@@ -21,7 +21,7 @@ const (
 
 var (
 	// DefaultUserAgent is the global user agent value.
-	DefaultUserAgent = agents.Create()
+	DefaultUserAgent = agent.Create()
 
 	// DefaultSendRefererAttribute is the global value for the AttributeSendReferer attribute.
 	DefaultSendReferer = true

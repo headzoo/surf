@@ -38,8 +38,9 @@ fmt.Println(browser.Title())
 
 
 // Follow a link on the page where the link text is "new". Surf uses the selector
-// engine from goquery, which has a similar syntax to jQuery.
-err = browser.Click("a:contains('new')")
+// engine from goquery, which has a similar syntax to jQuery. With the FollowLink()
+// method the "a" is explicit. The selector below is actually "a:contains('new')".
+err = browser.FollowLink(":contains('new')")
 if err != nil { panic(err) }
 fmt.Println(browser.Title())
 // Outputs: "newest submissions: reddit.com"
@@ -61,7 +62,7 @@ if err != nil { panic(err) }
 
 
 // Now that we're logged in, follow the link to our profile.
-err = browser.Click("a:contains('JoeRedditor')")
+err = browser.FollowLink(":contains('JoeRedditor')")
 if err != nil { panic(err) }
 fmt.Println(browser.Title())
 // Outputs: "overview for JoeRedditor"
@@ -94,18 +95,18 @@ if err != nil { panic(err) }
 browser.UserAgent = "MyBrowser"
 
 // Set the user agent globally. Each Browser instance you create will use this.
-attrib.DefaultUserAgent = "MyBrowser"
+surf.DefaultUserAgent = "MyBrowser"
 
 
 // Attributes control how the browser behaves.
-browser.SetAttribute(attrib.SendReferer, false)
-browser.SetAttribute(attrib.MetaRefreshHandling, false)
-browser.SetAttribute(attrib.FollowRedirects, false)
+browser.SetAttribute(surf.SendRefererAttribute, false)
+browser.SetAttribute(surf.MetaRefreshHandlingAttribute, false)
+browser.SetAttribute(surf.FollowRedirectsAttribute, false)
 
 // The attributes may also be set globally.
-attrib.DefaultSendReferer = false
-attrib.DefaultMetaRefreshHandling = false
-attrib.DefaultFollowRedirects = false
+surf.DefaultSendRefererAttribute = false
+surf.DefaultMetaRefreshHandlingAttribute = false
+surf.DefaultFollowRedirectsAttribute = false
 
 
 // Override the build in cookie jar.
@@ -122,40 +123,40 @@ See the [API documentation](https://github.com/headzoo/surf/tree/master/docs) fo
 
 
 ### User Agents
-The agents package contains a number of methods for creating user agent strings for popular browsers and crawlers, and for generating your own user agents.
+The agent package contains a number of methods for creating user agent strings for popular browsers and crawlers, and for generating your own user agents.
 ```go
 browser, err := surf.NewBrowser()
 if err != nil { panic(err) }
 
 // Use the Google Chrome user agent. The Chrome() method returns:
 // "Mozilla/5.0 (Windows NT 6.3; x64) Chrome/37.0.2049.0 Safari/537.36".
-browser.UserAgent = agents.Chrome()
+browser.UserAgent = agent.Chrome()
 
 // The Firefox() method returns:
 // "Mozilla/5.0 (Windows NT 6.3; x64; rv:31.0) Gecko/20100101 Firefox/31.0".
-browser.UserAgent = agents.Firefox()
+browser.UserAgent = agent.Firefox()
 
 // The Safari() method returns:
 // "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Safari/8536.25".
-browser.UserAgent = agents.Safari()
+browser.UserAgent = agent.Safari()
 
 // There are methods for a number of browsers and crawlers. For example
 // Opera(), MSIE(), AOL(), GoogleBot(), and many more. You can even choose
 // the browser version. This will create:
 // "Mozilla/5.0 (Windows NT 6.3; x64) Chrome/35 Safari/537.36".
-browser.UserAgent = agents.CreateVersion("chrome", "35")
+browser.UserAgent = agent.CreateVersion("chrome", "35")
 
 // Creating your own custom user agent is just as easy. The following code
 // generates the user agent:
 // "MyBrowser/1.0 (Windows NT 6.1; WOW64; x64)".
-agents.Name = "MyBrowser"
-agents.Version = "1.0"
-agents.OSName = "Windows NT"
-agents.OSVersion = "6.1"
-agents.Comments = []string{"WOW64", "x64"}
-browser.UserAgent = agents.Create()
+agent.Name = "MyBrowser"
+agent.Version = "1.0"
+agent.OSName = "Windows NT"
+agent.OSVersion = "6.1"
+agent.Comments = []string{"WOW64", "x64"}
+browser.UserAgent = agent.Create()
 ```
-The agents package has an internal database for many different versions of many different browsers. See the [API documentation](https://github.com/headzoo/surf/tree/master/docs) for more information.
+The agent package has an internal database for many different versions of many different browsers. See the [API documentation](https://github.com/headzoo/surf/tree/master/docs) for more information.
 
 
 ### Credits

@@ -1,4 +1,4 @@
-package agents
+package agent
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ import (
 
 func TestCreate(t *testing.T) {
 	ut.Run(t)
-	println(CreateVersion("chrome", "35"))
+
 	ut.AssertEquals(fmt.Sprintf("Surf/%s (%s %s; %s)", Version, osName(), osVersion(), runtime.Version()), Create())
 
 	Name = "Chrome"

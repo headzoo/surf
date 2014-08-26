@@ -4,7 +4,7 @@
 // When submitting patches to add user agents formats, please *always* include
 // "{{.Coms}}" between the opening ( and closing ) braces, even if you're
 // sure the browser would never have additional comments.
-package agents
+package agent
 
 import (
 	"bytes"

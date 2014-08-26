@@ -8,7 +8,7 @@
 ```go
 var (
 	// DefaultUserAgent is the global user agent value.
-	DefaultUserAgent = agents.Create()
+	DefaultUserAgent = agent.Create()
 
 	// DefaultSendRefererAttribute is the global value for the AttributeSendReferer attribute.
 	DefaultSendReferer = true
