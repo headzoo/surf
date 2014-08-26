@@ -1,6 +1,6 @@
 Surf
 ====
-Surf is a Go (golang) library that implements a virtual browser that you can control pragmatically. Just like a real browser you can open pages, follow links, bookmark pages, submit forms, and many other things. Surf is modeled after John J. Lee's Python library [mechanize](https://github.com/jjlee/mechanize).
+Surf is a Go (golang) library that implements a virtual browser that you can control pragmatically. Just like a real browser you can open pages, follow links, bookmark pages, submit forms, and many other things. Surf is modeled after Andy Lester's Perl module [WWW::Mechanize](http://search.cpan.org/~ether/WWW-Mechanize-1.73/lib/WWW/Mechanize.pm).
 
 
 * [Installation](#installation)
