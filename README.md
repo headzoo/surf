@@ -2,6 +2,13 @@ Surf
 ====
 Stateful programmatic web browsing in Go, modeled after John J. Lee's Python library [mechanize](https://github.com/jjlee/mechanize).
 
+* [Installation](#installation)
+* [Usage](#usage)
+* [Settings](#settings)
+* [User Agents](#user-agents)
+* [Credits](#credits)
+* [Use Cases](#use-cases)
+* [TODO](#todo)
 
 ### Installation
 Download the library using go.  
