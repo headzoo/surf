@@ -23,8 +23,10 @@ type AttributeMap map[Attribute]bool
 const (
 	// SendRefererAttribute instructs a Browser to send the Referer header.
 	SendRefererAttribute Attribute = iota
+
 	// MetaRefreshHandlingAttribute instructs a Browser to handle the refresh meta tag.
 	MetaRefreshHandlingAttribute
+
 	// FollowRedirectsAttribute instructs a Browser to follow Location headers.
 	FollowRedirectsAttribute
 )
@@ -32,10 +34,13 @@ const (
 var (
 	// DefaultUserAgent is the global user agent value.
 	DefaultUserAgent = agents.Create()
+
 	// DefaultSendRefererAttribute is the global value for the AttributeSendReferer attribute.
 	DefaultSendRefererAttribute = true
+
 	// DefaultMetaRefreshHandlingAttribute is the global value for the AttributeHandleRefresh attribute.
 	DefaultMetaRefreshHandlingAttribute = true
+
 	// DefaultFollowRedirectsAttribute is the global value for the AttributeFollowRedirects attribute.
 	DefaultFollowRedirectsAttribute = true
 )
@@ -47,8 +52,10 @@ var exprPrefixesImplied = []string{":", ".", "["}
 type Link struct {
 	// ID is the value of the id attribute or empty when there is no id.
 	ID string
+
 	// Href is the value of the href attribute.
 	Href string
+
 	// Text is the text appearing between the opening and closing anchor tag.
 	Text string
 }
@@ -56,36 +63,52 @@ type Link struct {
 // Browsable represents an HTTP web browser.
 type Browsable interface {
 	Document
+
 	// Open requests the given URL using the GET method.
 	Open(url string) error
+
 	// OpenForm appends the data values to the given URL and sends a GET request.
 	OpenForm(url string, data url.Values) error
+
 	// OpenBookmark calls Get() with the URL for the bookmark with the given name.
 	OpenBookmark(name string) error
+
 	// Post requests the given URL using the POST method.
 	Post(url string, bodyType string, body io.Reader) error
+
 	// PostForm requests the given URL using the POST method with the given data.
 	PostForm(url string, data url.Values) error
+
 	// Back loads the previously requested page.
 	Back() bool
+
 	// Reload duplicates the last successful request.
 	Reload() error
+
 	// BookmarkPage saves the page URL in the bookmarks with the given name.
 	BookmarkPage(name string) error
+
 	// Click clicks on the page element matched by the given expression.
 	Click(expr string) error
+
 	// Form returns the form in the current page that matches the given expr.
 	Form(expr string) (FormElement, error)
+
 	// Forms returns an array of every form in the page.
 	Forms() []FormElement
+
 	// Links returns an array of every link found in the page.
 	Links() []*Link
+
 	// SiteCookies returns the cookies for the current site.
 	SiteCookies() []*http.Cookie
+
 	// SetAttribute sets a browser instruction attribute.
 	SetAttribute(a Attribute, v bool)
+
 	// ResolveUrl returns an absolute URL for a possibly relative URL.
 	ResolveUrl(u *url.URL) *url.URL
+
 	// ResolveStringUrl works just like ResolveUrl, but the argument and return value are strings.
 	ResolveStringUrl(u string) (string, error)
 }
@@ -93,20 +116,28 @@ type Browsable interface {
 // Browser is the default Browser implementation.
 type Browser struct {
 	*Page
+
 	// UserAgent is the User-Agent header value sent with requests.
 	UserAgent string
+
 	// Cookies stores cookies for every site visited by the browser.
 	Cookies http.CookieJar
+
 	// Bookmarks stores the saved bookmarks.
 	Bookmarks jars.BookmarksJar
+
 	// History stores the visited pages.
 	History *PageStack
+
 	// RequestHeaders are additional headers to send with each request.
 	RequestHeaders http.Header
+
 	// lastRequest is the *http.Request for the last successful request.
 	lastRequest *http.Request
+
 	// attributes is the set browser attributes.
 	attributes AttributeMap
+
 	// refresh is a timer used to meta refresh pages.
 	refresh *time.Timer
 }
@@ -167,6 +198,23 @@ func (b *Browser) PostForm(u string, data url.Values) error {
 	return b.Post(u, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
 }
 
+// Back loads the previously requested page.
+func (b *Browser) Back() bool {
+	if b.History.Len() > 0 {
+		b.Page = b.History.Pop()
+		return true
+	}
+	return false
+}
+
+// Reload duplicates the last successful request.
+func (b *Browser) Reload() error {
+	if b.lastRequest != nil {
+		return b.send(b.lastRequest)
+	}
+	return errors.NewPageNotLoaded("Cannot reload, the previous request failed.")
+}
+
 // BookmarkPage saves the page URL in the bookmarks with the given name.
 func (b *Browser) BookmarkPage(name string) error {
 	return b.Bookmarks.Save(name, b.ResolveUrl(b.Page.Url()).String())
@@ -199,34 +247,6 @@ func (b *Browser) Click(expr string) error {
 	}
 
 	return b.sendGet(href, b.Page)
-}
-
-// Links returns an array of every link found in the page.
-func (b *Browser) Links() []*Link {
-	sel := b.Page.doc.Find("a")
-	links := make([]*Link, 0, sel.Length())
-
-	sel.Each(func(_ int, s *goquery.Selection) {
-		id, _ := s.Attr("id")
-		href, ok := s.Attr("href")
-		if ok {
-			href, err := b.ResolveStringUrl(href)
-			if err == nil {
-				links = append(links, &Link{
-					ID:   id,
-					Href: href,
-					Text: s.Text(),
-				})
-			}
-		}
-	})
-
-	return links
-}
-
-// SiteCookies returns the cookies for the current site.
-func (b *Browser) SiteCookies() []*http.Cookie {
-	return b.Cookies.Cookies(b.Page.Url())
 }
 
 // Form returns the form in the current page that matches the given expr.
@@ -264,21 +284,32 @@ func (b *Browser) Forms() []FormElement {
 	return forms
 }
 
-// Back loads the previously requested page.
-func (b *Browser) Back() bool {
-	if b.History.Len() > 0 {
-		b.Page = b.History.Pop()
-		return true
-	}
-	return false
+// Links returns an array of every link found in the page.
+func (b *Browser) Links() []*Link {
+	sel := b.Page.doc.Find("a")
+	links := make([]*Link, 0, sel.Length())
+
+	sel.Each(func(_ int, s *goquery.Selection) {
+		id, _ := s.Attr("id")
+		href, ok := s.Attr("href")
+		if ok {
+			href, err := b.ResolveStringUrl(href)
+			if err == nil {
+				links = append(links, &Link{
+					ID:   id,
+					Href: href,
+					Text: s.Text(),
+				})
+			}
+		}
+	})
+
+	return links
 }
 
-// Reload duplicates the last successful request.
-func (b *Browser) Reload() error {
-	if b.lastRequest != nil {
-		return b.send(b.lastRequest)
-	}
-	return errors.NewPageNotLoaded("Cannot reload, the previous request failed.")
+// SiteCookies returns the cookies for the current site.
+func (b *Browser) SiteCookies() []*http.Cookie {
+	return b.Cookies.Cookies(b.Page.Url())
 }
 
 // SetAttribute sets a browser instruction attribute.
