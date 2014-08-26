@@ -1,6 +1,7 @@
 Surf
 ====
-Stateful programmatic web browsing in Go, modeled after John J. Lee's Python library [mechanize](https://github.com/jjlee/mechanize).
+Surf is a Go (golang) library that implements a virtual browser that you can control pragmatically. Just like a real browser you can open pages, follow links, bookmark pages, submit forms, and many other things. Surf is modeled after John J. Lee's Python library [mechanize](https://github.com/jjlee/mechanize).
+
 
 * [Installation](#installation)
 * [Usage](#usage)
