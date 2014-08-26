@@ -1,6 +1,6 @@
-# jars
+# jar
 --
-    import "github.com/headzoo/surf/jars"
+    import "github.com/headzoo/surf/jar"
 
 
 ## Usage
