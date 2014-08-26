@@ -1,4 +1,4 @@
-package surf
+package element
 
 import (
 	"github.com/PuerkitoBio/goquery"
@@ -13,7 +13,7 @@ type Document interface {
 	Title() string
 	Headers() http.Header
 	Body() string
-	Query() *goquery.Document
+	Dom() *goquery.Selection
 }
 
 // Page represents a web page document.
@@ -56,9 +56,9 @@ func (p *Page) Body() string {
 	return body
 }
 
-// Query returns the inner *goquery.Document.
-func (p *Page) Query() *goquery.Document {
-	return p.doc
+// Dom returns the inner *goquery.Selection.
+func (p *Page) Dom() *goquery.Selection {
+	return p.doc.First()
 }
 
 // PageStack stores Page types in a LIFO stack.

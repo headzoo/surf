@@ -1,4 +1,4 @@
-package jars
+package jar
 
 import "github.com/headzoo/surf/errors"
 

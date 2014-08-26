@@ -73,12 +73,13 @@ if err != nil { panic(err) }
 fmt.Println(browser.Body())
 
 
-// The underlying goquery.Selection is exposed and can be used to parse
-// values from the body. Load our previously saved bookmark, and print
+// The underlying goquery.Selection is exposed via the Dom() method, which
+// can be used to parse values from the body.
+// Load our previously saved bookmark, and print
 // the titles for each submission on the reddit home page.
 err = browser.GetBookmark("reddit-new")
 if err != nil { panic(err) }
-browser.Query().Find("a.title").Each(func(_ int, s *goquery.Selection) {
+browser.Dom().Find("a.title").Each(func(_ int, s *goquery.Selection) {
     fmt.Println(s.Text())
 })
 ```

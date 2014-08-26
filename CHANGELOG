@@ -3,3 +3,6 @@
 * Renamed Browser.Get() to Open().
 * Renamed Browser.GetForm() to OpenForm().
 * Renamed Browser.GetBookmark() to OpenBookmark().
+* Moved attributes to their own package.
+* Renamed Query() methods to Dom().
+* Renamed jars package to jar.

@@ -1,4 +1,4 @@
-package jars
+package jar
 
 import (
 	ut "github.com/headzoo/surf/unittest"

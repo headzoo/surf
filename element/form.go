@@ -1,4 +1,4 @@
-package surf
+package element
 
 import (
 	"github.com/PuerkitoBio/goquery"
@@ -7,14 +7,14 @@ import (
 	"strings"
 )
 
-// FormElement represents a single form element from a page.
-type FormElement interface {
+// Submittable represents an element that may be submitted, such as a form.
+type Submittable interface {
 	Method() string
 	Action() string
 	Input(name, value string) error
 	Click(button string) error
 	Submit() error
-	Query() *goquery.Selection
+	Dom() *goquery.Selection
 }
 
 // Form is the default form element.
@@ -84,8 +84,8 @@ func (f *Form) Click(button string) error {
 	return f.send(button, f.buttons[button][0])
 }
 
-// Query returns the inner *goquery.Selection.
-func (f *Form) Query() *goquery.Selection {
+// Dom returns the inner *goquery.Selection.
+func (f *Form) Dom() *goquery.Selection {
 	return f.selection
 }
 

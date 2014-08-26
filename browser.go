@@ -2,9 +2,8 @@ package surf
 
 import (
 	"github.com/PuerkitoBio/goquery"
-	"github.com/headzoo/surf/agents"
 	"github.com/headzoo/surf/errors"
-	"github.com/headzoo/surf/jars"
+	"github.com/headzoo/surf/jar"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -12,110 +11,16 @@ import (
 	"net/url"
 	"strings"
 	"time"
-)
-
-// Attribute represents a Browser capability.
-type Attribute int
-
-// AttributeMap represents a map of Attribute values.
-type AttributeMap map[Attribute]bool
-
-const (
-	// SendRefererAttribute instructs a Browser to send the Referer header.
-	SendRefererAttribute Attribute = iota
-
-	// MetaRefreshHandlingAttribute instructs a Browser to handle the refresh meta tag.
-	MetaRefreshHandlingAttribute
-
-	// FollowRedirectsAttribute instructs a Browser to follow Location headers.
-	FollowRedirectsAttribute
-)
-
-var (
-	// DefaultUserAgent is the global user agent value.
-	DefaultUserAgent = agents.Create()
-
-	// DefaultSendRefererAttribute is the global value for the AttributeSendReferer attribute.
-	DefaultSendRefererAttribute = true
-
-	// DefaultMetaRefreshHandlingAttribute is the global value for the AttributeHandleRefresh attribute.
-	DefaultMetaRefreshHandlingAttribute = true
-
-	// DefaultFollowRedirectsAttribute is the global value for the AttributeFollowRedirects attribute.
-	DefaultFollowRedirectsAttribute = true
+	"github.com/headzoo/surf/element"
+	"github.com/headzoo/surf/attrib"
 )
 
 // exprPrefixesImplied are strings a selection expr may start with, and the tag is implied.
 var exprPrefixesImplied = []string{":", ".", "["}
 
-// Link stores the properties of a page link.
-type Link struct {
-	// ID is the value of the id attribute or empty when there is no id.
-	ID string
-
-	// Href is the value of the href attribute.
-	Href string
-
-	// Text is the text appearing between the opening and closing anchor tag.
-	Text string
-}
-
-// Browsable represents an HTTP web browser.
-type Browsable interface {
-	Document
-
-	// Open requests the given URL using the GET method.
-	Open(url string) error
-
-	// OpenForm appends the data values to the given URL and sends a GET request.
-	OpenForm(url string, data url.Values) error
-
-	// OpenBookmark calls Get() with the URL for the bookmark with the given name.
-	OpenBookmark(name string) error
-
-	// Post requests the given URL using the POST method.
-	Post(url string, bodyType string, body io.Reader) error
-
-	// PostForm requests the given URL using the POST method with the given data.
-	PostForm(url string, data url.Values) error
-
-	// Back loads the previously requested page.
-	Back() bool
-
-	// Reload duplicates the last successful request.
-	Reload() error
-
-	// BookmarkPage saves the page URL in the bookmarks with the given name.
-	BookmarkPage(name string) error
-
-	// Click clicks on the page element matched by the given expression.
-	Click(expr string) error
-
-	// Form returns the form in the current page that matches the given expr.
-	Form(expr string) (FormElement, error)
-
-	// Forms returns an array of every form in the page.
-	Forms() []FormElement
-
-	// Links returns an array of every link found in the page.
-	Links() []*Link
-
-	// SiteCookies returns the cookies for the current site.
-	SiteCookies() []*http.Cookie
-
-	// SetAttribute sets a browser instruction attribute.
-	SetAttribute(a Attribute, v bool)
-
-	// ResolveUrl returns an absolute URL for a possibly relative URL.
-	ResolveUrl(u *url.URL) *url.URL
-
-	// ResolveStringUrl works just like ResolveUrl, but the argument and return value are strings.
-	ResolveStringUrl(u string) (string, error)
-}
-
 // Browser is the default Browser implementation.
 type Browser struct {
-	*Page
+	*element.Page
 
 	// UserAgent is the User-Agent header value sent with requests.
 	UserAgent string
@@ -124,10 +29,10 @@ type Browser struct {
 	Cookies http.CookieJar
 
 	// Bookmarks stores the saved bookmarks.
-	Bookmarks jars.BookmarksJar
+	Bookmarks jar.BookmarksJar
 
 	// History stores the visited pages.
-	History *PageStack
+	History *element.PageStack
 
 	// RequestHeaders are additional headers to send with each request.
 	RequestHeaders http.Header
@@ -136,7 +41,7 @@ type Browser struct {
 	lastRequest *http.Request
 
 	// attributes is the set browser attributes.
-	attributes AttributeMap
+	attributes attrib.AttributeMap
 
 	// refresh is a timer used to meta refresh pages.
 	refresh *time.Timer
@@ -150,15 +55,15 @@ func NewBrowser() (*Browser, error) {
 	}
 
 	return &Browser{
-		UserAgent:      DefaultUserAgent,
+		UserAgent:      attrib.DefaultUserAgent,
 		Cookies:        cookies,
-		Bookmarks:      jars.NewMemoryBookmarks(),
-		History:        NewPageStack(),
+		Bookmarks:      jar.NewMemoryBookmarks(),
+		History:        element.NewPageStack(),
 		RequestHeaders: make(http.Header, 10),
-		attributes: AttributeMap{
-			SendRefererAttribute:         DefaultSendRefererAttribute,
-			MetaRefreshHandlingAttribute: DefaultMetaRefreshHandlingAttribute,
-			FollowRedirectsAttribute:     DefaultFollowRedirectsAttribute,
+		attributes: attrib.AttributeMap{
+			attrib.SendReferer:         attrib.DefaultSendReferer,
+			attrib.MetaRefreshHandling: attrib.DefaultMetaRefreshHandling,
+			attrib.FollowRedirects:     attrib.DefaultFollowRedirects,
 		},
 	}, nil
 }
@@ -229,7 +134,7 @@ func (b *Browser) BookmarkPage(name string) error {
 // to load the page pointed at by the link. Future versions of Surf may support
 // JavaScript and clicking on elements will fire the click event.
 func (b *Browser) Click(expr string) error {
-	sel := b.Page.doc.Find(prefixSelection(expr, "a"))
+	sel := b.Dom().Find(prefixSelection(expr, "a"))
 	if sel.Length() == 0 {
 		return errors.NewElementNotFound(
 			"Element not found matching expr '%s'.", expr)
@@ -258,8 +163,8 @@ func (b *Browser) Click(expr string) error {
 // method can be called using only ".login-form" and the expr is automatically
 // converted to "form.login-form". A complete expression can still be used, for
 // instance "div.login form".
-func (b *Browser) Form(expr string) (FormElement, error) {
-	sel := b.Page.doc.Find(prefixSelection(expr, "form"))
+func (b *Browser) Form(expr string) (element.Submittable, error) {
+	sel := b.Dom().Find(prefixSelection(expr, "form"))
 	if sel.Length() == 0 {
 		return nil, errors.NewElementNotFound(
 			"Form not found matching expr '%s'.", expr)
@@ -269,30 +174,30 @@ func (b *Browser) Form(expr string) (FormElement, error) {
 			"Expr '%s' does not match a form tag.", expr)
 	}
 
-	return NewForm(b, sel), nil
+	return element.NewForm(b, sel), nil
 }
 
 // Forms returns an array of every form in the page.
 //
 // Returns nil when the page does not contain any forms.
-func (b *Browser) Forms() []FormElement {
-	sel := b.Page.doc.Find("form")
+func (b *Browser) Forms() []element.Submittable {
+	sel := b.Dom().Find("form")
 	len := sel.Length()
 	if len == 0 {
 		return nil
 	}
 
-	forms := make([]FormElement, len)
+	forms := make([]element.Submittable, len)
 	sel.Each(func(_ int, s *goquery.Selection) {
-		forms = append(forms, NewForm(b, s))
+		forms = append(forms, element.NewForm(b, s))
 	})
 	return forms
 }
 
 // Links returns an array of every link found in the page.
-func (b *Browser) Links() []*Link {
-	sel := b.Page.doc.Find("a")
-	links := make([]*Link, 0, sel.Length())
+func (b *Browser) Links() []*element.Link {
+	sel := b.Dom().Find("a")
+	links := make([]*element.Link, 0, sel.Length())
 
 	sel.Each(func(_ int, s *goquery.Selection) {
 		id, _ := s.Attr("id")
@@ -300,7 +205,7 @@ func (b *Browser) Links() []*Link {
 		if ok {
 			href, err := b.ResolveStringUrl(href)
 			if err == nil {
-				links = append(links, &Link{
+				links = append(links, &element.Link{
 					ID:   id,
 					Href: href,
 					Text: s.Text(),
@@ -318,7 +223,7 @@ func (b *Browser) SiteCookies() []*http.Cookie {
 }
 
 // SetAttribute sets a browser instruction attribute.
-func (b *Browser) SetAttribute(a Attribute, v bool) {
+func (b *Browser) SetAttribute(a attrib.Attribute, v bool) {
 	b.attributes[a] = v
 }
 
@@ -360,12 +265,12 @@ func (b *Browser) request(method, url string) (*http.Request, error) {
 // sendGet makes an HTTP GET request for the given URL.
 // When via is not nil, and AttributeSendReferer is true, the Referer header will
 // be set to via's URL.
-func (b *Browser) sendGet(url string, via *Page) error {
+func (b *Browser) sendGet(url string, via *element.Page) error {
 	req, err := b.request("GET", url)
 	if err != nil {
 		return err
 	}
-	if b.attributes[SendRefererAttribute] && via != nil {
+	if b.attributes[attrib.SendReferer] && via != nil {
 		req.Header["Referer"] = []string{via.Url().String()}
 	}
 
@@ -375,7 +280,7 @@ func (b *Browser) sendGet(url string, via *Page) error {
 // sendPost makes an HTTP POST request for the given URL.
 // When via is not nil, and AttributeSendReferer is true, the Referer header will
 // be set to via's URL.
-func (b *Browser) sendPost(url string, bodyType string, body io.Reader, via *Page) error {
+func (b *Browser) sendPost(url string, bodyType string, body io.Reader, via *element.Page) error {
 	req, err := b.request("POST", url)
 	if err != nil {
 		return err
@@ -386,7 +291,7 @@ func (b *Browser) sendPost(url string, bodyType string, body io.Reader, via *Pag
 	}
 	req.Body = rc
 	req.Header["Content-Type"] = []string{bodyType}
-	if b.attributes[SendRefererAttribute] && via != nil {
+	if b.attributes[attrib.SendReferer] && via != nil {
 		req.Header["Referer"] = []string{via.Url().String()}
 	}
 
@@ -407,7 +312,7 @@ func (b *Browser) send(req *http.Request) error {
 
 	b.lastRequest = req
 	b.History.Push(b.Page)
-	b.Page = NewPage(resp, body)
+	b.Page = element.NewPage(resp, body)
 	b.postSend()
 
 	return nil
@@ -422,8 +327,8 @@ func (b *Browser) preSend() {
 
 // postSend sets browser state after sending a request.
 func (b *Browser) postSend() {
-	if b.attributes[MetaRefreshHandlingAttribute] {
-		sel := b.Page.doc.Find("meta[http-equiv='refresh']")
+	if b.attributes[attrib.MetaRefreshHandling] {
+		sel := b.Dom().Find("meta[http-equiv='refresh']")
 		if sel.Length() > 0 {
 			attr, ok := sel.Attr("content")
 			if ok {
@@ -442,7 +347,7 @@ func (b *Browser) postSend() {
 
 // shouldRedirect is used as the value to http.Client.CheckRedirect.
 func (b *Browser) shouldRedirect(req *http.Request, _ []*http.Request) error {
-	if b.attributes[FollowRedirectsAttribute] {
+	if b.attributes[attrib.FollowRedirects] {
 		return nil
 	}
 	return errors.NewLocation(

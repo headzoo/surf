@@ -3,6 +3,7 @@ package surf
 import (
 	"fmt"
 	ut "github.com/headzoo/surf/unittest"
+	"github.com/headzoo/surf/element"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -16,6 +17,8 @@ func TestBrowserGet(t *testing.T) {
 	defer ts.Close()
 
 	b, _ := NewBrowser()
+	var _ element.Browsable = b;
+
 	err := b.Open(ts.URL)
 	ut.AssertNil(err)
 	ut.AssertEquals("Surf", b.Title())
