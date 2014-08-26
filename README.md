@@ -38,9 +38,8 @@ fmt.Println(browser.Title())
 
 
 // Follow a link on the page where the link text is "new". Surf uses the selector
-// engine from goquery, which has a similar syntax to jQuery. With the FollowLink()
-// method the "a" is explicit. The selector below is actually "a:contains('new')".
-err = browser.FollowLink(":contains('new')")
+// engine from goquery, which has a similar syntax to jQuery.
+err = browser.Click("a:contains('new')")
 if err != nil { panic(err) }
 fmt.Println(browser.Title())
 // Outputs: "newest submissions: reddit.com"
@@ -62,7 +61,7 @@ if err != nil { panic(err) }
 
 
 // Now that we're logged in, follow the link to our profile.
-err = browser.FollowLink(":contains('JoeRedditor')")
+err = browser.Click("a:contains('JoeRedditor')")
 if err != nil { panic(err) }
 fmt.Println(browser.Title())
 // Outputs: "overview for JoeRedditor"
@@ -95,18 +94,18 @@ if err != nil { panic(err) }
 browser.UserAgent = "MyBrowser"
 
 // Set the user agent globally. Each Browser instance you create will use this.
-surf.DefaultUserAgent = "MyBrowser"
+attrib.DefaultUserAgent = "MyBrowser"
 
 
 // Attributes control how the browser behaves.
-browser.SetAttribute(surf.SendRefererAttribute, false)
-browser.SetAttribute(surf.MetaRefreshHandlingAttribute, false)
-browser.SetAttribute(surf.FollowRedirectsAttribute, false)
+browser.SetAttribute(attrib.SendReferer, false)
+browser.SetAttribute(attrib.MetaRefreshHandling, false)
+browser.SetAttribute(attrib.FollowRedirects, false)
 
 // The attributes may also be set globally.
-surf.DefaultSendRefererAttribute = false
-surf.DefaultMetaRefreshHandlingAttribute = false
-surf.DefaultFollowRedirectsAttribute = false
+attrib.DefaultSendReferer = false
+attrib.DefaultMetaRefreshHandling = false
+attrib.DefaultFollowRedirects = false
 
 
 // Override the build in cookie jar.
