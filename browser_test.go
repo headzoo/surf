@@ -16,7 +16,7 @@ func TestBrowserGet(t *testing.T) {
 	defer ts.Close()
 
 	b, _ := NewBrowser()
-	err := b.Get(ts.URL)
+	err := b.Open(ts.URL)
 	ut.AssertNil(err)
 	ut.AssertEquals("Surf", b.Title())
 	ut.AssertContains("<p>Hello, Surf!</p>", b.Body())
@@ -32,13 +32,13 @@ func TestBrowserBookmarks(t *testing.T) {
 
 	b, _ := NewBrowser()
 	b.Bookmarks.Save("test1", ts.URL)
-	b.GetBookmark("test1")
+	b.OpenBookmark("test1")
 	ut.AssertEquals("Surf", b.Title())
 	ut.AssertContains("<p>Hello, Surf!</p>", b.Body())
 
 	err := b.BookmarkPage("test2")
 	ut.AssertNil(err)
-	b.GetBookmark("test2")
+	b.OpenBookmark("test2")
 	ut.AssertEquals("Surf", b.Title())
 }
 
@@ -54,10 +54,10 @@ func TestBrowserFollowLink(t *testing.T) {
 	defer ts.Close()
 
 	b, _ := NewBrowser()
-	err := b.Get(ts.URL)
+	err := b.Open(ts.URL)
 	ut.AssertNil(err)
 
-	err = b.FollowLink(":contains('click')")
+	err = b.Click("a:contains('click')")
 	ut.AssertNil(err)
 	ut.AssertContains("<p>Hello, Surf!</p>", b.Body())
 }
@@ -70,7 +70,7 @@ func TestBrowserLinks(t *testing.T) {
 	defer ts.Close()
 
 	b, _ := NewBrowser()
-	err := b.Get(ts.URL)
+	err := b.Open(ts.URL)
 	ut.AssertNil(err)
 
 	links := b.Links()
@@ -96,7 +96,7 @@ func TestBrowserForm(t *testing.T) {
 	defer ts.Close()
 
 	b, _ := NewBrowser()
-	err := b.Get(ts.URL)
+	err := b.Open(ts.URL)
 	ut.AssertNil(err)
 
 	f, err := b.Form("[name='default']")

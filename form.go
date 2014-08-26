@@ -114,7 +114,7 @@ func (f *Form) send(buttonName, buttonValue string) error {
 	}
 
 	if strings.ToUpper(method) == "GET" {
-		return f.browser.GetForm(aurl.String(), values)
+		return f.browser.OpenForm(aurl.String(), values)
 	} else {
 		return f.browser.PostForm(aurl.String(), values)
 	}

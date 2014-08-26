@@ -56,31 +56,30 @@ type Link struct {
 // Browsable represents an HTTP web browser.
 type Browsable interface {
 	Document
-	// Get requests the given URL using the GET method.
-	Get(url string) error
-	// GetForm appends the data values to the given URL and sends a GET request.
-	GetForm(url string, data url.Values) error
-	// GetBookmark calls Get() with the URL for the bookmark with the given name.
-	GetBookmark(name string) error
+	// Open requests the given URL using the GET method.
+	Open(url string) error
+	// OpenForm appends the data values to the given URL and sends a GET request.
+	OpenForm(url string, data url.Values) error
+	// OpenBookmark calls Get() with the URL for the bookmark with the given name.
+	OpenBookmark(name string) error
 	// Post requests the given URL using the POST method.
 	Post(url string, bodyType string, body io.Reader) error
 	// PostForm requests the given URL using the POST method with the given data.
 	PostForm(url string, data url.Values) error
-	// BookmarkPage saves the page URL in the bookmarks with the given name.
-	BookmarkPage(name string) error
-	// FollowLink finds an anchor tag within the current document matching the expr,
-	// and calls Get() using the anchor href attribute value.
-	FollowLink(expr string) error
-	// Links returns an array of every link found in the page.
-	Links() []*Link
-	// Form returns the form in the current page that matches the given expr.
-	Form(expr string) (FormElement, error)
-	// Forms returns an array of every form in the page.
-	Forms() []FormElement
 	// Back loads the previously requested page.
 	Back() bool
 	// Reload duplicates the last successful request.
 	Reload() error
+	// BookmarkPage saves the page URL in the bookmarks with the given name.
+	BookmarkPage(name string) error
+	// Click clicks on the page element matched by the given expression.
+	Click(expr string) error
+	// Form returns the form in the current page that matches the given expr.
+	Form(expr string) (FormElement, error)
+	// Forms returns an array of every form in the page.
+	Forms() []FormElement
+	// Links returns an array of every link found in the page.
+	Links() []*Link
 	// SiteCookies returns the cookies for the current site.
 	SiteCookies() []*http.Cookie
 	// SetAttribute sets a browser instruction attribute.
@@ -133,29 +132,29 @@ func NewBrowser() (*Browser, error) {
 	}, nil
 }
 
-// Get requests the given URL using the GET method.
-func (b *Browser) Get(u string) error {
+// Open requests the given URL using the GET method.
+func (b *Browser) Open(u string) error {
 	return b.sendGet(u, nil)
 }
 
-// GetForm appends the data values to the given URL and sends a GET request.
-func (b *Browser) GetForm(u string, data url.Values) error {
+// OpenForm appends the data values to the given URL and sends a GET request.
+func (b *Browser) OpenForm(u string, data url.Values) error {
 	ul, err := url.Parse(u)
 	if err != nil {
 		return err
 	}
 	ul.RawQuery = data.Encode()
 
-	return b.Get(ul.String())
+	return b.Open(ul.String())
 }
 
-// GetBookmark calls Get() with the URL for the bookmark with the given name.
-func (b *Browser) GetBookmark(name string) error {
+// OpenBookmark calls Open() with the URL for the bookmark with the given name.
+func (b *Browser) OpenBookmark(name string) error {
 	url, err := b.Bookmarks.Read(name)
 	if err != nil {
 		return err
 	}
-	return b.Get(url)
+	return b.Open(url)
 }
 
 // Post requests the given URL using the POST method.
@@ -173,22 +172,20 @@ func (b *Browser) BookmarkPage(name string) error {
 	return b.Bookmarks.Save(name, b.ResolveUrl(b.Page.Url()).String())
 }
 
-// FollowLink finds an anchor tag within the current document matching the expr,
-// and calls Get() using the anchor href attribute value.
+// Click clicks on the page element matched by the given expression.
 //
-// The expr can be any valid goquery expression, and the "a" tag is implied. The
-// method can be called using only ":contains('foo')" and the expr is automatically
-// converted to "a:contains('foo')". A complete expression can still be used, for
-// instance "p.title a.foo".
-func (b *Browser) FollowLink(expr string) error {
+// Currently this is only useful for click on links, which will cause the browser
+// to load the page pointed at by the link. Future versions of Surf may support
+// JavaScript and clicking on elements will fire the click event.
+func (b *Browser) Click(expr string) error {
 	sel := b.Page.doc.Find(prefixSelection(expr, "a"))
 	if sel.Length() == 0 {
 		return errors.NewElementNotFound(
-			"Anchor not found matching expr '%s'.", expr)
+			"Element not found matching expr '%s'.", expr)
 	}
 	if !sel.Is("a") {
 		return errors.NewElementNotFound(
-			"Expr '%s' does not match an anchor tag.", expr)
+			"Expr '%s' must match an anchor tag.", expr)
 	}
 
 	href, ok := sel.Attr("href")
