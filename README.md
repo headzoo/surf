@@ -81,6 +81,13 @@ if err != nil { panic(err) }
 browser.Dom().Find("a.title").Each(func(_ int, s *goquery.Selection) {
     fmt.Println(s.Text())
 })
+
+// Last, but not least, write the document to a file using the Write()
+// method. The Write() method accepts any io.Writer.
+file, err := os.Create("reddit.html")
+if err != nil { panic(err) }
+defer file.Close()
+browser.Write(file)
 ```
 See the [API documentation](https://github.com/headzoo/surf/tree/master/docs) for more information.
 
