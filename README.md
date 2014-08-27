@@ -2,6 +2,8 @@ Surf
 ====
 Surf is a Go (golang) library that implements a virtual browser that you can control pragmatically. Just like a real browser you can open pages, follow links, bookmark pages, submit forms, and many other things. Surf is modeled after Andy Lester's Perl module [WWW::Mechanize](http://search.cpan.org/~ether/WWW-Mechanize-1.73/lib/WWW/Mechanize.pm).
 
+[Complete API documentation is available from the GoDoc website.](http://godoc.org/github.com/headzoo/surf)
+
 _This project is very young, and the API is bound to change often. Use at your own risk. The master branch is the stable branch, while future work is being done on the dev branch._
 
 * [Installation](#installation)
@@ -90,7 +92,6 @@ if err != nil { panic(err) }
 defer file.Close()
 browser.Download(file)
 ```
-See the [API documentation](http://godoc.org/github.com/headzoo/surf) for more information.
 
 
 ### Settings
@@ -126,7 +127,6 @@ bookmarks, err := jar.NewMemoryBookmarks()
 if err != nil { panic(err) }
 browser.Bookmarks = bookmarks
 ```
-See the [API documentation](http://godoc.org/github.com/headzoo/surf) for more information.
 
 
 ### User Agents
@@ -173,6 +173,7 @@ Surf uses the awesome [goquery](https://github.com/PuerkitoBio/goquery) by Marti
 ### Use Cases
 * Interacting with sites that do not have public APIs.
 * Testing/Stressing your sites.
+* Scraping sites.
 * Creating a web crawler.
 
 
