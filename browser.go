@@ -268,13 +268,14 @@ func (b *Browser) ResolveStringUrl(u string) (string, error) {
 	return pu.String(), nil
 }
 
-// Write writes the document to the given writer.
-func (b *Browser) Write(o io.Writer) (int, error) {
+// Download writes the contents of the document to the given writer.
+func (b *Browser) Download(o io.Writer) (int64, error) {
 	h, err := b.Page.Dom().Html()
 	if err != nil {
 		return 0, err
 	}
-	return io.WriteString(o, h)
+	l, err := io.WriteString(o, h)
+	return int64(l), err
 }
 
 // client creates, configures, and returns a *http.Client type.

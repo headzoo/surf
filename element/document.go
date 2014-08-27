@@ -31,6 +31,12 @@ type Document interface {
 	Dom() *goquery.Selection
 }
 
+// Downloadable represents an element that may be downloaded.
+type Downloadable interface {
+	// Download writes the contents of the element to the given writer.
+	Download(out io.Writer) (int64, error)
+}
+
 // Browsable represents an HTTP web browser.
 type Browsable interface {
 	Document
@@ -86,8 +92,8 @@ type Browsable interface {
 	// ResolveStringUrl works just like ResolveUrl, but the argument and return value are strings.
 	ResolveStringUrl(u string) (string, error)
 
-	// Write writes the document to the given writer.
-	Write(o io.Writer) (int, error)
+	// Download writes the contents of the document to the given writer.
+	Download(o io.Writer) (int64, error)
 }
 
 // Link stores the properties of a page link.
@@ -100,12 +106,6 @@ type Link struct {
 
 	// Text is the text appearing between the opening and closing anchor tag.
 	Text string
-}
-
-// Downloadable represents an element that may be downloaded.
-type Downloadable interface {
-	// Download writes the contents of the element to the given writer.
-	Download(out io.Writer) (int64, error)
 }
 
 // Image stores the properties of an image.

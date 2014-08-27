@@ -26,10 +26,10 @@ func TestBrowserGet(t *testing.T) {
 	ut.AssertContains("<p>Hello, Surf!</p>", b.Body())
 
 	buff := &bytes.Buffer{}
-	l, err := b.Write(buff)
+	l, err := b.Download(buff)
 	ut.AssertNil(err)
-	ut.AssertGreaterThan(0, l)
-	ut.AssertEquals(l, buff.Len())
+	ut.AssertGreaterThan(0, int(l))
+	ut.AssertEquals(int(l), buff.Len())
 }
 
 func TestBrowserBookmarks(t *testing.T) {

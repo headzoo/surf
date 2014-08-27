@@ -1,4 +1,8 @@
 #### v0.4.5 - 2014/08/xx
+* Created type Downloadable.
+* Renamed Browser.Write() to Browser.Download().
+* Created type Image.
+* Added Browser.Images() method.
 * Removed generated docs. API docs are viewable from godoc.org.
 
 
