@@ -163,3 +163,10 @@ SetAttribute sets a browser instruction attribute.
 func (b *Browser) SiteCookies() []*http.Cookie
 ```
 SiteCookies returns the cookies for the current site.
+
+#### func (*Browser) Write
+
+```go
+func (b *Browser) Write(o io.Writer) (int, error)
+```
+Write writes the document to the given writer.

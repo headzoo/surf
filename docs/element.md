@@ -58,6 +58,9 @@ type Browsable interface {
 
 	// ResolveStringUrl works just like ResolveUrl, but the argument and return value are strings.
 	ResolveStringUrl(u string) (string, error)
+
+	// Write writes the document to the given writer.
+	Write(o io.Writer) (int, error)
 }
 ```
 
