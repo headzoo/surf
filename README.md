@@ -83,12 +83,12 @@ browser.Dom().Find("a.title").Each(func(_ int, s *goquery.Selection) {
     fmt.Println(s.Text())
 })
 
-// Last, but not least, write the document to a file using the Write()
-// method. The Write() method accepts any io.Writer.
+// Last, but not least, write the document to a file using the Download()
+// method. The Download() method accepts any io.Writer.
 file, err := os.Create("reddit.html")
 if err != nil { panic(err) }
 defer file.Close()
-browser.Write(file)
+browser.Download(file)
 ```
 See the [API documentation](http://godoc.org/github.com/headzoo/surf) for more information.
 
