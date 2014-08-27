@@ -1,3 +1,5 @@
+// Package element contains types related to web documents
+// and document elements.
 package element
 
 import (

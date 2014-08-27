@@ -1,3 +1,5 @@
+// Package errors contains error types specific to the Surf
+// library.
 package errors
 
 import (

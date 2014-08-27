@@ -1,3 +1,4 @@
+// Package unittest has assert methods to make testing easier.
 package unittest
 
 import (
