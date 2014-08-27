@@ -231,10 +231,10 @@ func (b *Browser) Images() []*element.Image {
 			src, err := b.ResolveStringUrl(src)
 			if err == nil {
 				images = append(images, &element.Image{
-						ID: id,
-						Src: src,
-						Alt: alt,
-						Title: title,
+					ID:    id,
+					Src:   src,
+					Alt:   alt,
+					Title: title,
 				})
 			}
 		}

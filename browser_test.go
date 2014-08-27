@@ -1,13 +1,13 @@
 package surf
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/headzoo/surf/element"
 	ut "github.com/headzoo/surf/unittest"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"bytes"
 )
 
 func TestBrowserGet(t *testing.T) {
@@ -111,7 +111,7 @@ func TestBrowserImages(t *testing.T) {
 	ut.AssertEquals("It's a...", images[0].Title)
 
 	ut.AssertEquals("", images[1].ID)
-	ut.AssertEquals(ts.URL + "/Cxagv.jpg", images[1].Src)
+	ut.AssertEquals(ts.URL+"/Cxagv.jpg", images[1].Src)
 	ut.AssertEquals("A picture", images[1].Alt)
 	ut.AssertEquals("", images[1].Title)
 

@@ -122,8 +122,14 @@ cookies, err := cookiejar.New(nil)
 if err != nil { panic(err) }
 browser.Cookies = cookies
 
-// Override the build in bookmarks container.
+// Override the build in bookmarks with an in-memory container.
+// This is actually the bookmarks jar used by default.
 bookmarks, err := jar.NewMemoryBookmarks()
+if err != nil { panic(err) }
+browser.Bookmarks = bookmarks
+
+// You can also save your bookmarks to a file.
+bookmarks, err := jar.NewFileBookmarks("/home/joe/bookmarks.json")
 if err != nil { panic(err) }
 browser.Bookmarks = bookmarks
 ```
