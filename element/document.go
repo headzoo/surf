@@ -71,6 +71,9 @@ type Browsable interface {
 	// Links returns an array of every link found in the page.
 	Links() []*Link
 
+	// Images returns an array of every image found in the page.
+	Images() []*Image
+
 	// SiteCookies returns the cookies for the current site.
 	SiteCookies() []*http.Cookie
 
@@ -89,7 +92,7 @@ type Browsable interface {
 
 // Link stores the properties of a page link.
 type Link struct {
-	// ID is the value of the id attribute or empty when there is no id.
+	// ID is the value of the id attribute if available.
 	ID string
 
 	// Href is the value of the href attribute.
@@ -97,6 +100,21 @@ type Link struct {
 
 	// Text is the text appearing between the opening and closing anchor tag.
 	Text string
+}
+
+// Image stores the properties of an image.
+type Image struct {
+	// ID is the value of the id attribute if available.
+	ID string
+
+	// Src is the value of the image src attribute.
+	Src string
+
+	// Alt is the value of the image alt attribute if available.
+	Alt string
+
+	// Title is the value of the image title attribute if available.
+	Title string
 }
 
 // Page represents a web page document.

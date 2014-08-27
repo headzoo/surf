@@ -92,6 +92,30 @@ func TestBrowserLinks(t *testing.T) {
 	ut.AssertEquals("no clicking", links[1].Text)
 }
 
+func TestBrowserImages(t *testing.T) {
+	ut.Run(t)
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		fmt.Fprint(w, html)
+	}))
+	defer ts.Close()
+
+	b, _ := NewBrowser()
+	err := b.Open(ts.URL)
+	ut.AssertNil(err)
+
+	images := b.Images()
+	ut.AssertEquals(2, len(images))
+	ut.AssertEquals("imgur-image", images[0].ID)
+	ut.AssertEquals("http://i.imgur.com/HW4bJtY.jpg", images[0].Src)
+	ut.AssertEquals("", images[0].Alt)
+	ut.AssertEquals("It's a...", images[0].Title)
+
+	ut.AssertEquals("", images[1].ID)
+	ut.AssertEquals(ts.URL + "/Cxagv.jpg", images[1].Src)
+	ut.AssertEquals("A picture", images[1].Alt)
+	ut.AssertEquals("", images[1].Title)
+}
+
 func TestBrowserForm(t *testing.T) {
 	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -126,7 +150,9 @@ var html = `<!doctype html>
 		<title>Surf</title>
 	</head>
 	<body>
+		<img src="http://i.imgur.com/HW4bJtY.jpg" id="imgur-image" title="It's a..." />
 		<p>Hello, Surf!</p>
+		<img src="/Cxagv.jpg" alt="A picture" />
 	</body>
 </html>
 `
