@@ -1,4 +1,4 @@
-#### v0.4.4
+#### v0.4.4 - 2014/08/25
 * Renamed Browser.FollowLink() to Click().
 * Renamed Browser.Get() to Open().
 * Renamed Browser.GetForm() to OpenForm().
@@ -6,3 +6,4 @@
 * Moved attributes to their own package.
 * Renamed Query() methods to Dom().
 * Renamed jars package to jar.
+* Added the Browser.Write() method.

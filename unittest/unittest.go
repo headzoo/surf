@@ -93,6 +93,15 @@ func AssertNotEquals(expected, actual interface{}) bool {
 	return true
 }
 
+// AssertGreaterThan tests whether the actual value is greater than the expected value.
+func AssertGreaterThan(expected, actual int) bool {
+	if expected >= actual {
+		test.Errorf("Failed asserting %q is greater than %q.", actual, expected)
+		return false
+	}
+	return true
+}
+
 // AssertContains tests whether the expected value contains the actual value.
 func AssertContains(expected, actual string) bool {
 	if !strings.Contains(actual, expected) {

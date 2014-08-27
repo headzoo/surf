@@ -242,6 +242,15 @@ func (b *Browser) ResolveStringUrl(u string) (string, error) {
 	return pu.String(), nil
 }
 
+// Write writes the document to the given writer.
+func (b *Browser) Write(o io.Writer) (int, error) {
+	h, err := b.Page.Dom().Html()
+	if err != nil {
+		return 0, err
+	}
+	return io.WriteString(o, h)
+}
+
 // client creates, configures, and returns a *http.Client type.
 func (b *Browser) client() *http.Client {
 	client := &http.Client{}

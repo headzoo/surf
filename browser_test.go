@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"bytes"
 )
 
 func TestBrowserGet(t *testing.T) {
@@ -23,6 +24,12 @@ func TestBrowserGet(t *testing.T) {
 	ut.AssertNil(err)
 	ut.AssertEquals("Surf", b.Title())
 	ut.AssertContains("<p>Hello, Surf!</p>", b.Body())
+
+	buff := &bytes.Buffer{}
+	l, err := b.Write(buff)
+	ut.AssertNil(err)
+	ut.AssertGreaterThan(0, l)
+	ut.AssertEquals(l, buff.Len())
 }
 
 func TestBrowserBookmarks(t *testing.T) {
