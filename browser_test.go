@@ -114,6 +114,12 @@ func TestBrowserImages(t *testing.T) {
 	ut.AssertEquals(ts.URL + "/Cxagv.jpg", images[1].Src)
 	ut.AssertEquals("A picture", images[1].Alt)
 	ut.AssertEquals("", images[1].Title)
+
+	buff := &bytes.Buffer{}
+	l, err := images[0].Download(buff)
+	ut.AssertNil(err)
+	ut.AssertGreaterThan(0, buff.Len())
+	ut.AssertEquals(int(l), buff.Len())
 }
 
 func TestBrowserForm(t *testing.T) {
