@@ -1,6 +1,7 @@
 #### v0.4.5 - 2014/08/xx
 * Removed generated docs. API docs are viewable from godoc.org.
 
+
 #### v0.4.4 - 2014/08/25
 * Renamed Browser.FollowLink() to Click().
 * Renamed Browser.Get() to Open().
