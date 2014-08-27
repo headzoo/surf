@@ -1,3 +1,5 @@
+// Package element contains types related to web documents
+// and document elements.
 package element
 
 import (
@@ -27,6 +29,12 @@ type Document interface {
 
 	// Dom returns the inner *goquery.Selection.
 	Dom() *goquery.Selection
+}
+
+// Downloadable represents an element that may be downloaded.
+type Downloadable interface {
+	// Download writes the contents of the element to the given writer.
+	Download(out io.Writer) (int64, error)
 }
 
 // Browsable represents an HTTP web browser.
@@ -69,6 +77,9 @@ type Browsable interface {
 	// Links returns an array of every link found in the page.
 	Links() []*Link
 
+	// Images returns an array of every image found in the page.
+	Images() []*Image
+
 	// SiteCookies returns the cookies for the current site.
 	SiteCookies() []*http.Cookie
 
@@ -81,8 +92,40 @@ type Browsable interface {
 	// ResolveStringUrl works just like ResolveUrl, but the argument and return value are strings.
 	ResolveStringUrl(u string) (string, error)
 
-	// Write writes the document to the given writer.
-	Write(o io.Writer) (int, error)
+	// Download writes the contents of the document to the given writer.
+	Download(o io.Writer) (int64, error)
+}
+
+// Link stores the properties of a page link.
+type Link struct {
+	// ID is the value of the id attribute if available.
+	ID string
+
+	// Href is the value of the href attribute.
+	Href string
+
+	// Text is the text appearing between the opening and closing anchor tag.
+	Text string
+}
+
+// Image stores the properties of an image.
+type Image struct {
+	// ID is the value of the id attribute if available.
+	ID string
+
+	// Src is the value of the image src attribute.
+	Src string
+
+	// Alt is the value of the image alt attribute if available.
+	Alt string
+
+	// Title is the value of the image title attribute if available.
+	Title string
+}
+
+// Download writes the image to the given io.Writer type.
+func (i *Image) Download(out io.Writer) (int64, error) {
+	return download(i.Src, out)
 }
 
 // Page represents a web page document.
@@ -177,4 +220,14 @@ func (stack *PageStack) Top() *Page {
 		return nil
 	}
 	return stack.top.Value
+}
+
+// download copies a remote file to the given writer.
+func download(url string, out io.Writer) (int64, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return 0, err
+	}
+	defer resp.Body.Close()
+	return io.Copy(out, resp.Body)
 }

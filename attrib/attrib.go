@@ -1,3 +1,5 @@
+// Package attrib contains types related to configuring a
+// Surf browser.
 package attrib
 
 import "github.com/headzoo/surf/agent"

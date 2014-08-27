@@ -83,14 +83,14 @@ browser.Dom().Find("a.title").Each(func(_ int, s *goquery.Selection) {
     fmt.Println(s.Text())
 })
 
-// Last, but not least, write the document to a file using the Write()
-// method. The Write() method accepts any io.Writer.
+// Last, but not least, write the document to a file using the Download()
+// method. The Download() method accepts any io.Writer.
 file, err := os.Create("reddit.html")
 if err != nil { panic(err) }
 defer file.Close()
-browser.Write(file)
+browser.Download(file)
 ```
-See the [API documentation](https://github.com/headzoo/surf/tree/master/docs) for more information.
+See the [API documentation](http://godoc.org/github.com/headzoo/surf) for more information.
 
 
 ### Settings
@@ -126,7 +126,7 @@ bookmarks, err := jar.NewMemoryBookmarks()
 if err != nil { panic(err) }
 browser.Bookmarks = bookmarks
 ```
-See the [API documentation](https://github.com/headzoo/surf/tree/master/docs) for more information.
+See the [API documentation](http://godoc.org/github.com/headzoo/surf) for more information.
 
 
 ### User Agents
@@ -163,7 +163,7 @@ agent.OSVersion = "6.1"
 agent.Comments = []string{"WOW64", "x64"}
 browser.UserAgent = agent.Create()
 ```
-The agent package has an internal database for many different versions of many different browsers. See the [API documentation](https://github.com/headzoo/surf/tree/master/docs) for more information.
+The agent package has an internal database for many different versions of many different browsers. See the [agent package API documentation](http://godoc.org/github.com/headzoo/surf/agent) for more information.
 
 
 ### Credits

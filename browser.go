@@ -217,6 +217,32 @@ func (b *Browser) Links() []*element.Link {
 	return links
 }
 
+// Images returns an array of every image found in the page.
+func (b *Browser) Images() []*element.Image {
+	sel := b.Dom().Find("img")
+	images := make([]*element.Image, 0, sel.Length())
+
+	sel.Each(func(_ int, s *goquery.Selection) {
+		id, _ := s.Attr("id")
+		alt, _ := s.Attr("alt")
+		title, _ := s.Attr("title")
+		src, ok := s.Attr("src")
+		if ok {
+			src, err := b.ResolveStringUrl(src)
+			if err == nil {
+				images = append(images, &element.Image{
+						ID: id,
+						Src: src,
+						Alt: alt,
+						Title: title,
+				})
+			}
+		}
+	})
+
+	return images
+}
+
 // SiteCookies returns the cookies for the current site.
 func (b *Browser) SiteCookies() []*http.Cookie {
 	return b.Cookies.Cookies(b.Page.Url())
@@ -242,13 +268,14 @@ func (b *Browser) ResolveStringUrl(u string) (string, error) {
 	return pu.String(), nil
 }
 
-// Write writes the document to the given writer.
-func (b *Browser) Write(o io.Writer) (int, error) {
+// Download writes the contents of the document to the given writer.
+func (b *Browser) Download(o io.Writer) (int64, error) {
 	h, err := b.Page.Dom().Html()
 	if err != nil {
 		return 0, err
 	}
-	return io.WriteString(o, h)
+	l, err := io.WriteString(o, h)
+	return int64(l), err
 }
 
 // client creates, configures, and returns a *http.Client type.
