@@ -102,6 +102,12 @@ type Link struct {
 	Text string
 }
 
+// Downloadable represents an element that may be downloaded.
+type Downloadable interface {
+	// Download writes the contents of the element to the given writer.
+	Download(out io.Writer) (int64, error)
+}
+
 // Image stores the properties of an image.
 type Image struct {
 	// ID is the value of the id attribute if available.
@@ -115,6 +121,11 @@ type Image struct {
 
 	// Title is the value of the image title attribute if available.
 	Title string
+}
+
+// Download writes the image to the given io.Writer type.
+func (i *Image) Download(out io.Writer) (int64, error) {
+	return download(i.Src, out)
 }
 
 // Page represents a web page document.
@@ -209,4 +220,14 @@ func (stack *PageStack) Top() *Page {
 		return nil
 	}
 	return stack.top.Value
+}
+
+// download copies a remote file to the given writer.
+func download(url string, out io.Writer) (int64, error) {
+	resp, err := http.Get(url)
+	if err != nil {
+		return 0, err
+	}
+	defer resp.Body.Close()
+	return io.Copy(out, resp.Body)
 }
