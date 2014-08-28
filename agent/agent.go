@@ -1,4 +1,4 @@
-// Package agent is used to generate user agents strings for well known browsers
+// Package agent generates user agents strings for well known browsers
 // and for custom browsers.
 //
 // When submitting patches to add user agents formats, please *always* include
