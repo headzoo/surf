@@ -33,8 +33,8 @@ Import the library into your project.
 bow := surf.NewBrowser()
 
 // Add additional request headers.
-bow.AddHeader("Accept", "text/html")
-bow.AddHeader("Accept-Charset", "utf8")
+bow.AddRequestHeader("Accept", "text/html")
+bow.AddRequestHeader("Accept-Charset", "utf8")
 
 // Requesting a page.
 err := bow.Open("http://www.reddit.com")
