@@ -29,6 +29,11 @@ const (
 	FollowRedirects
 )
 
+// InitialAssetsArraySize is the initial size when allocating a slice of page
+// assets. Increasing this size may lead to a very small performance increase
+// when downloading assets from a page with a lot of assets.
+var InitialAssetsSliceSize = 20
+
 // Browsable represents an HTTP web browser.
 type Browsable interface {
 	// SetUserAgent sets the user agent.
@@ -288,11 +293,11 @@ func (bow *Browser) Links() []*Link {
 	bow.Find("a").Each(func(_ int, s *goquery.Selection) {
 		href, err := bow.attributeToUrl("href", s)
 		if err == nil {
-			links = append(links, &Link{
-				ID:   bow.attributeOrDefault("id", "", s),
-				URL:  href,
-				Text: s.Text(),
-			})
+			links = append(links, NewLinkAsset(
+				href,
+				bow.attributeOrDefault("id", "", s),
+				s.Text(),
+			))
 		}
 	})
 
@@ -305,12 +310,12 @@ func (bow *Browser) Images() []*Image {
 	bow.Find("img").Each(func(_ int, s *goquery.Selection) {
 		src, err := bow.attributeToUrl("src", s)
 		if err == nil {
-			images = append(images, &Image{
-				ID:    bow.attributeOrDefault("id", "", s),
-				URL:   src,
-				Alt:   bow.attributeOrDefault("alt", "", s),
-				Title: bow.attributeOrDefault("title", "", s),
-			})
+			images = append(images, NewImageAsset(
+				src,
+				bow.attributeOrDefault("id", "", s),
+				bow.attributeOrDefault("alt", "", s),
+				bow.attributeOrDefault("title", "", s),
+			))
 		}
 	})
 
@@ -325,12 +330,12 @@ func (bow *Browser) Stylesheets() []*Stylesheet {
 		if ok && rel == "stylesheet" {
 			href, err := bow.attributeToUrl("href", s)
 			if err == nil {
-				stylesheets = append(stylesheets, &Stylesheet{
-					ID:    bow.attributeOrDefault("id", "", s),
-					URL:   href,
-					Media: bow.attributeOrDefault("media", "all", s),
-					Type:  bow.attributeOrDefault("type", "text/css", s),
-				})
+				stylesheets = append(stylesheets, NewStylesheetAsset(
+					href,
+					bow.attributeOrDefault("id", "", s),
+					bow.attributeOrDefault("media", "all", s),
+					bow.attributeOrDefault("type", "text/css", s),
+				))
 			}
 		}
 	})
@@ -344,11 +349,11 @@ func (bow *Browser) Scripts() []*Script {
 	bow.Find("script").Each(func(_ int, s *goquery.Selection) {
 		src, err := bow.attributeToUrl("src", s)
 		if err == nil {
-			scripts = append(scripts, &Script{
-				ID:   bow.attributeOrDefault("id", "", s),
-				URL:  src,
-				Type: bow.attributeOrDefault("type", "text/javascript", s),
-			})
+			scripts = append(scripts, NewScriptAsset(
+				src,
+				bow.attributeOrDefault("id", "", s),
+				bow.attributeOrDefault("type", "text/javascript", s),
+			))
 		}
 	})
 
