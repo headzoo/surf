@@ -54,11 +54,11 @@ type Browsable interface {
 	// SetHistoryJar is used to set the history jar the browser uses.
 	SetHistoryJar(hj jar.History)
 
-	// AddHeader adds a header the browser sends with each request.
-	AddHeader(name, value string)
+	// SetHeadersJar sets the headers the browser sends with each request.
+	SetHeadersJar(h http.Header)
 
-	// SetHeaders sets the headers the browser sends with each request.
-	SetHeaders(h http.Header)
+	// AddRequestHeader adds a header the browser sends with each request.
+	AddRequestHeader(name, value string)
 
 	// Open requests the given URL using the GET method.
 	Open(url string) error
@@ -126,8 +126,8 @@ type Browsable interface {
 	// Title returns the page title.
 	Title() string
 
-	// Headers returns the page headers.
-	Headers() http.Header
+	// ResponseHeaders returns the page headers.
+	ResponseHeaders() http.Header
 
 	// Body returns the page body as a string of html.
 	Body() string
@@ -398,14 +398,14 @@ func (bow *Browser) SetHistoryJar(hj jar.History) {
 	bow.history = hj
 }
 
-// AddHeader sets a header the browser sends with each request.
-func (bow *Browser) AddHeader(name, value string) {
-	bow.headers.Add(name, value)
+// SetHeadersJar sets the headers the browser sends with each request.
+func (bow *Browser) SetHeadersJar(h http.Header) {
+	bow.headers = h
 }
 
-// SetHeaders sets the headers the browser sends with each request.
-func (bow *Browser) SetHeaders(h http.Header) {
-	bow.headers = h
+// AddRequestHeader sets a header the browser sends with each request.
+func (bow *Browser) AddRequestHeader(name, value string) {
+	bow.headers.Add(name, value)
 }
 
 // ResolveUrl returns an absolute URL for a possibly relative URL.
@@ -448,8 +448,8 @@ func (bow *Browser) Title() string {
 	return bow.state.Dom.Find("title").Text()
 }
 
-// Headers returns the page headers.
-func (bow *Browser) Headers() http.Header {
+// ResponseHeaders returns the page headers.
+func (bow *Browser) ResponseHeaders() http.Header {
 	return bow.state.Response.Header
 }
 

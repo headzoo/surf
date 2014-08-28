@@ -28,7 +28,7 @@ func NewBrowser() *browser.Browser {
 	bow.SetCookieJar(jar.NewMemoryCookies())
 	bow.SetBookmarksJar(jar.NewMemoryBookmarks())
 	bow.SetHistoryJar(jar.NewMemoryHistory())
-	bow.SetHeaders(jar.NewMemoryHeaders())
+	bow.SetHeadersJar(jar.NewMemoryHeaders())
 	bow.SetAttributes(browser.AttributeMap{
 		browser.SendReferer:         DefaultSendReferer,
 		browser.MetaRefreshHandling: DefaultMetaRefreshHandling,
