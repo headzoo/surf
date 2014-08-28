@@ -1,6 +1,7 @@
 #### v0.4.8 - 2014/08/28
 * surf.NewBrowser() no longer returns an error.
 * Added jar.NewMemoryCookies() method.
+* Added jar.NewMemoryHeaders() method.
 
 
 #### v0.4.7 - 2014/08/28
