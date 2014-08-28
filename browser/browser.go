@@ -214,7 +214,7 @@ func (bow *Browser) PostForm(u string, data url.Values) error {
 // Returns a boolean value indicating whether a previous page existed, and was
 // successfully loaded.
 func (bow *Browser) Back() bool {
-	if bow.history.Len() > 0 {
+	if bow.history.Len() > 1 {
 		bow.state = bow.history.Pop()
 		return true
 	}

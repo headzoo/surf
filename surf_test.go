@@ -13,80 +13,137 @@ import (
 
 func TestGet(t *testing.T) {
 	ut.Run(t)
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		fmt.Fprint(w, html)
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		if req.URL.Path == "/page1" {
+			fmt.Fprint(w, htmlPage1)
+		} else if req.URL.Path == "/page2" {
+			fmt.Fprint(w, htmlPage2)
+		}
 	}))
 	defer ts.Close()
 
-	b := NewBrowser()
-	var _ browser.Browsable = b
+	var bow browser.Browsable = NewBrowser()
 
-	err := b.Open(ts.URL)
+	err := bow.Open(ts.URL + "/page1")
 	ut.AssertNil(err)
-	ut.AssertEquals("Surf", b.Title())
-	ut.AssertContains("<p>Hello, Surf!</p>", b.Body())
+	ut.AssertEquals("Surf Page 1", bow.Title())
+	ut.AssertContains("<p>Hello, Surf!</p>", bow.Body())
+
+	err = bow.Open(ts.URL + "/page2")
+	ut.AssertNil(err)
+	ut.AssertEquals("Surf Page 2", bow.Title())
+
+	ok := bow.Back()
+	ut.AssertTrue(ok)
+	ut.AssertEquals("Surf Page 1", bow.Title())
+
+	ok = bow.Back()
+	ut.AssertFalse(ok)
+	ut.AssertEquals("Surf Page 1", bow.Title())
+}
+
+func TestDownload(t *testing.T) {
+	ut.Run(t)
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		fmt.Fprint(w, req.UserAgent())
+	}))
+	defer ts.Close()
+
+	bow := NewBrowser()
+	bow.Open(ts.URL)
 
 	buff := &bytes.Buffer{}
-	l, err := b.Download(buff)
+	l, err := bow.Download(buff)
 	ut.AssertNil(err)
 	ut.AssertGreaterThan(0, int(l))
 	ut.AssertEquals(int(l), buff.Len())
 }
 
+func TestUserAgent(t *testing.T) {
+	ut.Run(t)
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		fmt.Fprint(w, req.UserAgent())
+	}))
+	defer ts.Close()
+
+	bow := NewBrowser()
+	bow.SetUserAgent("Testing/1.0")
+	err := bow.Open(ts.URL)
+	ut.AssertNil(err)
+	ut.AssertEquals("Testing/1.0", bow.Body())
+}
+
+func TestHeaders(t *testing.T) {
+	ut.Run(t)
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		fmt.Fprint(w, req.Header.Get("X-Testing-1"))
+		fmt.Fprint(w, req.Header.Get("X-Testing-2"))
+	}))
+	defer ts.Close()
+
+	bow := NewBrowser()
+	bow.AddRequestHeader("X-Testing-1", "Testing-1")
+	bow.AddRequestHeader("X-Testing-2", "Testing-2")
+	err := bow.Open(ts.URL)
+	ut.AssertNil(err)
+	ut.AssertContains("Testing-1", bow.Body())
+	ut.AssertContains("Testing-2", bow.Body())
+}
+
 func TestBookmarks(t *testing.T) {
 	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		fmt.Fprint(w, html)
+		fmt.Fprint(w, htmlPage1)
 	}))
 	defer ts.Close()
 
 	bookmarks := jar.NewMemoryBookmarks()
-	b := NewBrowser()
-	b.SetBookmarksJar(bookmarks)
+	bow := NewBrowser()
+	bow.SetBookmarksJar(bookmarks)
 
 	bookmarks.Save("test1", ts.URL)
-	b.OpenBookmark("test1")
-	ut.AssertEquals("Surf", b.Title())
-	ut.AssertContains("<p>Hello, Surf!</p>", b.Body())
+	bow.OpenBookmark("test1")
+	ut.AssertEquals("Surf Page 1", bow.Title())
+	ut.AssertContains("<p>Hello, Surf!</p>", bow.Body())
 
-	err := b.Bookmark("test2")
+	err := bow.Bookmark("test2")
 	ut.AssertNil(err)
-	b.OpenBookmark("test2")
-	ut.AssertEquals("Surf", b.Title())
+	bow.OpenBookmark("test2")
+	ut.AssertEquals("Surf Page 1", bow.Title())
 }
 
 func TestClick(t *testing.T) {
 	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
-			fmt.Fprint(w, html)
+			fmt.Fprint(w, htmlPage1)
 		} else if r.URL.Path == "/page2" {
-			fmt.Fprint(w, html)
+			fmt.Fprint(w, htmlPage1)
 		}
 	}))
 	defer ts.Close()
 
-	b := NewBrowser()
-	err := b.Open(ts.URL)
+	bow := NewBrowser()
+	err := bow.Open(ts.URL)
 	ut.AssertNil(err)
 
-	err = b.Click("a:contains('click')")
+	err = bow.Click("a:contains('click')")
 	ut.AssertNil(err)
-	ut.AssertContains("<p>Hello, Surf!</p>", b.Body())
+	ut.AssertContains("<p>Hello, Surf!</p>", bow.Body())
 }
 
 func TestLinks(t *testing.T) {
 	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		fmt.Fprint(w, html)
+		fmt.Fprint(w, htmlPage1)
 	}))
 	defer ts.Close()
 
-	b := NewBrowser()
-	err := b.Open(ts.URL)
+	bow := NewBrowser()
+	err := bow.Open(ts.URL)
 	ut.AssertNil(err)
 
-	links := b.Links()
+	links := bow.Links()
 	ut.AssertEquals(2, len(links))
 	ut.AssertEquals("", links[0].ID)
 	ut.AssertEquals(ts.URL+"/page2", links[0].URL.String())
@@ -99,15 +156,15 @@ func TestLinks(t *testing.T) {
 func TestImages(t *testing.T) {
 	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		fmt.Fprint(w, html)
+		fmt.Fprint(w, htmlPage1)
 	}))
 	defer ts.Close()
 
-	b := NewBrowser()
-	err := b.Open(ts.URL)
+	bow := NewBrowser()
+	err := bow.Open(ts.URL)
 	ut.AssertNil(err)
 
-	images := b.Images()
+	images := bow.Images()
 	ut.AssertEquals(2, len(images))
 	ut.AssertEquals("imgur-image", images[0].ID)
 	ut.AssertEquals("http://i.imgur.com/HW4bJtY.jpg", images[0].URL.String())
@@ -129,14 +186,15 @@ func TestImages(t *testing.T) {
 func TestStylesheets(t *testing.T) {
 	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		fmt.Fprint(w, html)
+		fmt.Fprint(w, htmlPage1)
 	}))
 	defer ts.Close()
-	b := NewBrowser()
-	err := b.Open(ts.URL)
+
+	bow := NewBrowser()
+	err := bow.Open(ts.URL)
 	ut.AssertNil(err)
 
-	stylesheets := b.Stylesheets()
+	stylesheets := bow.Stylesheets()
 	ut.AssertEquals(2, len(stylesheets))
 	ut.AssertEquals("http://godoc.org/-/site.css", stylesheets[0].URL.String())
 	ut.AssertEquals("all", stylesheets[0].Media)
@@ -156,14 +214,15 @@ func TestStylesheets(t *testing.T) {
 func TestScripts(t *testing.T) {
 	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		fmt.Fprint(w, html)
+		fmt.Fprint(w, htmlPage1)
 	}))
 	defer ts.Close()
-	b := NewBrowser()
-	err := b.Open(ts.URL)
+
+	bow := NewBrowser()
+	err := bow.Open(ts.URL)
 	ut.AssertNil(err)
 
-	scripts := b.Scripts()
+	scripts := bow.Scripts()
 	ut.AssertEquals(2, len(scripts))
 	ut.AssertEquals("http://godoc.org/-/site.js", scripts[0].URL.String())
 	ut.AssertEquals("text/javascript", scripts[0].Type)
@@ -178,10 +237,10 @@ func TestScripts(t *testing.T) {
 	ut.AssertEquals(int(l), buff.Len())
 }
 
-var html = `<!doctype html>
+var htmlPage1 = `<!doctype html>
 <html>
 	<head>
-		<title>Surf</title>
+		<title>Surf Page 1</title>
 		<link href="/favicon.ico" rel="icon" type="image/x-icon">
 		<link href="http://godoc.org/-/site.css" media="all" rel="stylesheet" type="text/css" />
 		<link href="/print.css" rel="stylesheet" media="print" />
@@ -200,6 +259,17 @@ var html = `<!doctype html>
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
 		</script>
+	</body>
+</html>
+`
+
+var htmlPage2 = `<!doctype html>
+<html>
+	<head>
+		<title>Surf Page 2</title>
+	</head>
+	<body>
+		<p>Hello, Surf!</p>
 	</body>
 </html>
 `
