@@ -281,6 +281,7 @@ for {
     }
 }
 ```
+When downloading assets asynchronously, you should keep in mind the potentially large number of assets embedded into a typical web page. For that reason you should setup a queue that downloads only a few at a time.
 
 
 ### Credits
