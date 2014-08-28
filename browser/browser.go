@@ -4,7 +4,6 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/headzoo/surf/agent"
 	"github.com/headzoo/surf/errors"
-	"github.com/headzoo/surf/form"
 	"github.com/headzoo/surf/jar"
 	"io"
 	"io/ioutil"
@@ -105,10 +104,10 @@ type Browsable interface {
 	Click(expr string) error
 
 	// Form returns the form in the current page that matches the given expr.
-	Form(expr string) (form.Submittable, error)
+	Form(expr string) (Submittable, error)
 
 	// Forms returns an array of every form in the page.
-	Forms() []form.Submittable
+	Forms() []Submittable
 
 	// Links returns an array of every link found in the page.
 	Links() []*Link
@@ -267,7 +266,7 @@ func (bow *Browser) Click(expr string) error {
 }
 
 // Form returns the form in the current page that matches the given expr.
-func (bow *Browser) Form(expr string) (form.Submittable, error) {
+func (bow *Browser) Form(expr string) (Submittable, error) {
 	sel := bow.Dom().Find(expr)
 	if sel.Length() == 0 {
 		return nil, errors.NewElementNotFound(
@@ -278,22 +277,22 @@ func (bow *Browser) Form(expr string) (form.Submittable, error) {
 			"Expr '%s' does not match a form tag.", expr)
 	}
 
-	return form.NewForm(sel), nil
+	return NewForm(bow, sel), nil
 }
 
 // Forms returns an array of every form in the page.
 //
 // Returns nil when the page does not contain any forms.
-func (bow *Browser) Forms() []form.Submittable {
+func (bow *Browser) Forms() []Submittable {
 	sel := bow.Dom().Find("form")
 	len := sel.Length()
 	if len == 0 {
 		return nil
 	}
 
-	forms := make([]form.Submittable, len)
+	forms := make([]Submittable, len)
 	sel.Each(func(_ int, s *goquery.Selection) {
-		forms = append(forms, form.NewForm(s))
+		forms = append(forms, NewForm(bow, s))
 	})
 	return forms
 }

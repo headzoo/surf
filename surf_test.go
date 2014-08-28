@@ -126,36 +126,6 @@ func TestImages(t *testing.T) {
 	ut.AssertEquals(int(l), buff.Len())
 }
 
-/*
-func TestBrowserForm(t *testing.T) {
-	ut.Run(t)
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "GET" {
-			fmt.Fprint(w, htmlForm)
-		} else {
-			r.ParseForm()
-			fmt.Fprint(w, r.Form.Encode())
-		}
-	}))
-	defer ts.Close()
-
-	b, _ := NewBrowser()
-	err := b.Open(ts.URL)
-	ut.AssertNil(err)
-
-	f, err := b.Form("[name='default']")
-	ut.AssertNil(err)
-
-	f.Input("age", "55")
-	f.Input("gender", "male")
-	err = f.Click("submit2")
-	ut.AssertNil(err)
-	ut.AssertContains("age=55", b.Body())
-	ut.AssertContains("gender=male", b.Body())
-	ut.AssertContains("submit2=submitted2", b.Body())
-}
-*/
-
 var html = `<!doctype html>
 <html>
 	<head>
@@ -181,22 +151,3 @@ var htmlLinks = `<!doctype html>
 	</body>
 </html>
 `
-
-/*
-var htmlForm = `<!doctype html>
-<html>
-	<head>
-		<title>Echo Form</title>
-	</head>
-	<body>
-		<form method="post" action="/" name="default">
-			<input type="text" name="age" value="" />
-			<input type="radio" name="gender" value="male" />
-			<input type="radio" name="gender" value="female" />
-			<input type="submit" name="submit1" value="submitted1" />
-			<input type="submit" name="submit2" value="submitted2" />
-		</form>
-	</body>
-</html>
-`
-*/

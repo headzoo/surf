@@ -1,4 +1,4 @@
-package form
+package browser
 
 import (
 	"github.com/PuerkitoBio/goquery"
@@ -19,6 +19,7 @@ type Submittable interface {
 
 // Form is the default form element.
 type Form struct {
+	bow       Browsable
 	selection *goquery.Selection
 	method    string
 	action    string
@@ -27,11 +28,12 @@ type Form struct {
 }
 
 // NewForm creates and returns a *Form type.
-func NewForm(s *goquery.Selection) *Form {
+func NewForm(bow Browsable, s *goquery.Selection) *Form {
 	fields, buttons := serializeForm(s)
-	method, action := formAttributes(s)
+	method, action := formAttributes(bow, s)
 
 	return &Form{
+		bow:       bow,
 		selection: s,
 		method:    method,
 		action:    action,
@@ -89,35 +91,33 @@ func (f *Form) Dom() *goquery.Selection {
 
 // send submits the form.
 func (f *Form) send(buttonName, buttonValue string) error {
-	/*
-		method, ok := f.selection.Attr("method")
-		if !ok {
-			method = "GET"
-		}
-		action, ok := f.selection.Attr("action")
-		if !ok {
-			//action = f.browser.Url().String()
-		}
-		aurl, err := url.Parse(action)
-		if err != nil {
-			return err
-		}
-		aurl = f.browser.ResolveUrl(aurl)
+	method, ok := f.selection.Attr("method")
+	if !ok {
+		method = "GET"
+	}
+	action, ok := f.selection.Attr("action")
+	if !ok {
+		action = f.bow.Url().String()
+	}
+	aurl, err := url.Parse(action)
+	if err != nil {
+		return err
+	}
+	aurl = f.bow.ResolveUrl(aurl)
 
-		values := make(url.Values, len(f.fields)+1)
-		for name, vals := range f.fields {
-			values[name] = vals
-		}
-		if buttonName != "" {
-			values.Set(buttonName, buttonValue)
-		}
+	values := make(url.Values, len(f.fields)+1)
+	for name, vals := range f.fields {
+		values[name] = vals
+	}
+	if buttonName != "" {
+		values.Set(buttonName, buttonValue)
+	}
 
-		if strings.ToUpper(method) == "GET" {
-			return f.browser.OpenForm(aurl.String(), values)
-		} else {
-			return f.browser.PostForm(aurl.String(), values)
-		}
-	*/
+	if strings.ToUpper(method) == "GET" {
+		return f.bow.OpenForm(aurl.String(), values)
+	} else {
+		return f.bow.PostForm(aurl.String(), values)
+	}
 
 	return nil
 }
@@ -158,20 +158,20 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
 	return fields, buttons
 }
 
-func formAttributes(s *goquery.Selection) (string, string) {
+func formAttributes(bow Browsable, s *goquery.Selection) (string, string) {
 	method, ok := s.Attr("method")
 	if !ok {
 		method = "GET"
 	}
 	action, ok := s.Attr("action")
 	if !ok {
-		//action = b.Url().String()
+		action = bow.Url().String()
 	}
 	aurl, err := url.Parse(action)
 	if err != nil {
 		return "", ""
 	}
-	//aurl = b.ResolveUrl(aurl)
+	aurl = bow.ResolveUrl(aurl)
 
 	return strings.ToUpper(method), aurl.String()
 }
