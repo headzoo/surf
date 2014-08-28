@@ -18,7 +18,7 @@ func TestGet(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	b, _ := NewBrowser()
+	b := NewBrowser()
 	var _ browser.Browsable = b
 
 	err := b.Open(ts.URL)
@@ -41,7 +41,7 @@ func TestBookmarks(t *testing.T) {
 	defer ts.Close()
 
 	bookmarks := jar.NewMemoryBookmarks()
-	b, _ := NewBrowser()
+	b := NewBrowser()
 	b.SetBookmarksJar(bookmarks)
 
 	bookmarks.Save("test1", ts.URL)
@@ -66,7 +66,7 @@ func TestClick(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	b, _ := NewBrowser()
+	b := NewBrowser()
 	err := b.Open(ts.URL)
 	ut.AssertNil(err)
 
@@ -82,7 +82,7 @@ func TestLinks(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	b, _ := NewBrowser()
+	b := NewBrowser()
 	err := b.Open(ts.URL)
 	ut.AssertNil(err)
 
@@ -103,7 +103,7 @@ func TestImages(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	b, _ := NewBrowser()
+	b := NewBrowser()
 	err := b.Open(ts.URL)
 	ut.AssertNil(err)
 
@@ -132,7 +132,7 @@ func TestStylesheets(t *testing.T) {
 		fmt.Fprint(w, html)
 	}))
 	defer ts.Close()
-	b, _ := NewBrowser()
+	b := NewBrowser()
 	err := b.Open(ts.URL)
 	ut.AssertNil(err)
 
@@ -159,7 +159,7 @@ func TestScripts(t *testing.T) {
 		fmt.Fprint(w, html)
 	}))
 	defer ts.Close()
-	b, _ := NewBrowser()
+	b := NewBrowser()
 	err := b.Open(ts.URL)
 	ut.AssertNil(err)
 
