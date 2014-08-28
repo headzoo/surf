@@ -1,3 +1,4 @@
+// Package surf ensembles other packages into a usable browser.
 package surf
 
 import (
