@@ -1,9 +1,9 @@
 package util
 
 import (
-	"os"
 	"io"
 	"net/http"
+	"os"
 )
 
 // FileExists returns if the given file exists.

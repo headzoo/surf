@@ -1,8 +1,8 @@
 package browser
 
 import (
-	"io"
 	"github.com/headzoo/surf/util"
+	"io"
 )
 
 // Link stores the properties of a page link.

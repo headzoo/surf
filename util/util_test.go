@@ -1,9 +1,9 @@
 package util
 
 import (
+	"bytes"
 	"github.com/headzoo/ut"
 	"testing"
-	"bytes"
 )
 
 func TestFileExists(t *testing.T) {
