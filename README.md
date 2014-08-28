@@ -35,13 +35,11 @@ bow := surf.NewBrowser()
 bow.AddHeader("Accept", "text/html")
 bow.AddHeader("Accept-Charset", "utf8")
 
-
 // Requesting a page.
 err := bow.Open("http://www.reddit.com")
 if err != nil { panic(err) }
 fmt.Println(bow.Title())
 // Outputs: "reddit: the front page of the internet"
-
 
 // Follow a link on the page where the link text is "new". Surf uses the selector
 // engine from goquery, which has a similar syntax to jQuery.
@@ -50,11 +48,9 @@ if err != nil { panic(err) }
 fmt.Println(bow.Title())
 // Outputs: "newest submissions: reddit.com"
 
-
 // Bookmark the page so we can come back to it later.
 err = bow.BookmarkPage("reddit-new")
 if err != nil { panic(err) }
-
 
 // Login to the site via their login form. Again, we're using the goquery selector
 // syntax.
@@ -64,7 +60,6 @@ fm.Input("user", "JoeRedditor")
 fm.Input("passwd", "d234rlkasd")
 err = fm.Submit()
 if err != nil { panic(err) }
-
 
 // Now that we're logged in, follow the link to our profile.
 err = bow.Click("a:contains('JoeRedditor')")
@@ -76,7 +71,6 @@ fmt.Println(bow.Title())
 err = bow.Back()
 if err != nil { panic(err) }
 fmt.Println(bow.Body())
-
 
 // The underlying goquery.Document is exposed via the Dom() method, which
 // can be used to parse values from the body. See the goquery documentation
@@ -115,7 +109,6 @@ bow.SetUserAgent("SuperCrawler/1.0")
 // Or set the user agent globally so every new browser you create uses it.
 browser.DefaultUserAgent = "SuperCrawler/1.0"
 
-
 // Attributes control how the browser behaves. Use the SetAttribute() method
 // to set attributes one at a time.
 bow.SetAttribute(browser.SendReferer, false)
@@ -124,28 +117,24 @@ bow.SetAttribute(browser.FollowRedirects, false)
 
 // Or set the attributes all at once using SetAttributes().
 bow.SetAttributes(browser.AttributeMap{
-    browser.SendReferer:         browser.DefaultSendReferer,
-    browser.MetaRefreshHandling: browser.DefaultMetaRefreshHandling,
-    browser.FollowRedirects:     browser.DefaultFollowRedirects,
+    browser.SendReferer:         surf.DefaultSendReferer,
+    browser.MetaRefreshHandling: surf.DefaultMetaRefreshHandling,
+    browser.FollowRedirects:     surf.DefaultFollowRedirects,
 })
 
 // The attributes can also be set globally. Now every new browser you create
 // will be set with these defaults.
-browser.DefaultSendReferer = false
-browser.DefaultMetaRefreshHandling = false
-browser.DefaultFollowRedirects = false
+surf.DefaultSendReferer = false
+surf.DefaultMetaRefreshHandling = false
+surf.DefaultFollowRedirects = false
 
 // Override the build in cookie jar.
 // Surf uses cookiejar.Jar by default.
-cookies, err := cookiejar.New(nil)
-if err != nil { panic(err) }
-bow.SetCookieJar(cookies)
+bow.SetCookieJar(jar.NewMemoryCookies())
 
 // Override the build in bookmarks jar.
 // Surf uses jar.MemoryBookmarks by default.
-bookmarks, err := jar.NewMemoryBookmarks()
-if err != nil { panic(err) }
-bow.SetBookmarksJar(bookmarks)
+bow.SetBookmarksJar(jar.NewMemoryBookmarks())
 
 // Use jar.FileBookmarks to read and write your bookmarks to a JSON file.
 bookmarks, err = jar.NewFileBookmarks("/home/joe/bookmarks.json")
