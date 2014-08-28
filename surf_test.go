@@ -59,7 +59,7 @@ func TestClick(t *testing.T) {
 	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path == "/" {
-			fmt.Fprint(w, htmlLinks)
+			fmt.Fprint(w, html)
 		} else if r.URL.Path == "/page2" {
 			fmt.Fprint(w, html)
 		}
@@ -78,7 +78,7 @@ func TestClick(t *testing.T) {
 func TestLinks(t *testing.T) {
 	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-		fmt.Fprint(w, htmlLinks)
+		fmt.Fprint(w, html)
 	}))
 	defer ts.Close()
 
@@ -187,28 +187,19 @@ var html = `<!doctype html>
 		<link href="/print.css" rel="stylesheet" media="print" />
 	</head>
 	<body>
-		<img src="http://i.imgur.com/HW4bJtY.jpg" id="imgur-image" title="It's a..." />
 		<p>Hello, Surf!</p>
+		<img src="http://i.imgur.com/HW4bJtY.jpg" id="imgur-image" title="It's a..." />
 		<img src="/Cxagv.jpg" alt="A picture" />
+
+		<p>Click the link below.</p>
+		<a href="/page2">click</a>
+		<a href="/page3" id="page3">no clicking</a>
 
 		<script src="http://godoc.org/-/site.js" type="text/javascript"></script>
 		<script src="/jquery.min.js" type="text/javascript"></script>
 		<script type="text/javascript">
 			var _gaq = _gaq || [];
 		</script>
-	</body>
-</html>
-`
-
-var htmlLinks = `<!doctype html>
-<html>
-	<head>
-		<title>Surf</title>
-	</head>
-	<body>
-		<p>Click the link below.</p>
-		<a href="/page2">click</a>
-		<a href="/page3" id="page3">no clicking</a>
 	</body>
 </html>
 `
