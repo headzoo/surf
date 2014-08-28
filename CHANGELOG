@@ -2,6 +2,7 @@
 * surf.NewBrowser() no longer returns an error.
 * Added jar.NewMemoryCookies() method.
 * Added jar.NewMemoryHeaders() method.
+* Moved default attributes into surf package.
 
 
 #### v0.4.7 - 2014/08/28
