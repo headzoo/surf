@@ -2,7 +2,6 @@ package browser
 
 import (
 	"github.com/PuerkitoBio/goquery"
-	"github.com/headzoo/surf/agent"
 	"github.com/headzoo/surf/errors"
 	"github.com/headzoo/surf/jar"
 	"io"
@@ -28,20 +27,6 @@ const (
 
 	// FollowRedirectsAttribute instructs a Browser to follow Location headers.
 	FollowRedirects
-)
-
-var (
-	// DefaultUserAgent is the global user agent value.
-	DefaultUserAgent = agent.Create()
-
-	// DefaultSendRefererAttribute is the global value for the AttributeSendReferer attribute.
-	DefaultSendReferer = true
-
-	// DefaultMetaRefreshHandlingAttribute is the global value for the AttributeHandleRefresh attribute.
-	DefaultMetaRefreshHandling = true
-
-	// DefaultFollowRedirectsAttribute is the global value for the AttributeFollowRedirects attribute.
-	DefaultFollowRedirects = true
 )
 
 // Browsable represents an HTTP web browser.
