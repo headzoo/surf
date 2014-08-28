@@ -4,7 +4,6 @@ package surf
 import (
 	"github.com/headzoo/surf/browser"
 	"github.com/headzoo/surf/jar"
-	"net/http"
 )
 
 // NewBrowser creates and returns a *browser.Browser type.
@@ -14,7 +13,7 @@ func NewBrowser() *browser.Browser {
 	bow.SetCookieJar(jar.NewMemoryCookies())
 	bow.SetBookmarksJar(jar.NewMemoryBookmarks())
 	bow.SetHistoryJar(jar.NewMemoryHistory())
-	bow.SetHeaders(make(http.Header, 10))
+	bow.SetHeaders(jar.NewMemoryHeaders())
 	bow.SetAttributes(browser.AttributeMap{
 		browser.SendReferer:         browser.DefaultSendReferer,
 		browser.MetaRefreshHandling: browser.DefaultMetaRefreshHandling,
