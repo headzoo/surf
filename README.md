@@ -18,6 +18,9 @@ _This project is very young, and the API is bound to change often. Use at your o
 Download the library using go.  
 `go get github.com/headzoo/surf`
 
+You'll need the ut library if you want to run the unit tests.  
+`go get github.com/headzoo/ut`  
+
 Import the library into your project.  
 `import "github.com/headzoo/surf"`
 
