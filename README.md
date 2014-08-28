@@ -49,7 +49,7 @@ fmt.Println(bow.Title())
 // Outputs: "newest submissions: reddit.com"
 
 // Bookmark the page so we can come back to it later.
-err = bow.BookmarkPage("reddit-new")
+err = bow.Bookmark("reddit-new")
 if err != nil { panic(err) }
 
 // Login to the site via their login form. Again, we're using the goquery selector
