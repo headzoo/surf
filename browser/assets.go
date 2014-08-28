@@ -124,8 +124,8 @@ type Link struct {
 func NewLinkAsset(u *url.URL, id, text string) *Link {
 	return &Link{
 		Asset: Asset{
-			URL: u,
-			ID: id,
+			URL:  u,
+			ID:   id,
 			Type: LinkAsset,
 		},
 		Text: text,
@@ -149,7 +149,7 @@ func NewImageAsset(url *url.URL, id, alt, title string) *Image {
 		DownloadableAsset: DownloadableAsset{
 			Asset: Asset{
 				URL:  url,
-				ID: id,
+				ID:   id,
 				Type: ImageAsset,
 			},
 		},
@@ -176,7 +176,7 @@ func NewStylesheetAsset(url *url.URL, id, media, typ string) *Stylesheet {
 			Asset: Asset{
 				URL:  url,
 				Type: StylesheetAsset,
-				ID:    id,
+				ID:   id,
 			},
 		},
 		Media: media,
