@@ -8,12 +8,13 @@ _This project is very young, and the API is bound to change often. Use at your o
 
 * [Installation](#installation)
 * [Usage](#usage)
-* [Settings](#settings)
 * [User Agents](#user-agents)
 * [Downloading](#downloading)
+* [Settings](#settings)
 * [Credits](#credits)
 * [Use Cases](#use-cases)
 * [TODO](#todo)
+
 
 ### Installation
 Download the library using go.  
@@ -67,11 +68,6 @@ if err != nil { panic(err) }
 fmt.Println(bow.Title())
 // Outputs: "overview for JoeRedditor"
 
-// Move back to the home page, and print the page body.
-err = bow.Back()
-if err != nil { panic(err) }
-fmt.Println(bow.Body())
-
 // The underlying goquery.Document is exposed via the Dom() method, which
 // can be used to parse values from the body. See the goquery documentation
 // for more information on selecting page elements.
@@ -96,50 +92,6 @@ file, err := os.Create("reddit.html")
 if err != nil { panic(err) }
 defer file.Close()
 bow.Download(file)
-```
-
-
-### Settings
-```go
-bow := surf.NewBrowser()
-
-// Set the user agent this browser instance will send with each request.
-bow.SetUserAgent("SuperCrawler/1.0")
-
-// Or set the user agent globally so every new browser you create uses it.
-browser.DefaultUserAgent = "SuperCrawler/1.0"
-
-// Attributes control how the browser behaves. Use the SetAttribute() method
-// to set attributes one at a time.
-bow.SetAttribute(browser.SendReferer, false)
-bow.SetAttribute(browser.MetaRefreshHandling, false)
-bow.SetAttribute(browser.FollowRedirects, false)
-
-// Or set the attributes all at once using SetAttributes().
-bow.SetAttributes(browser.AttributeMap{
-    browser.SendReferer:         surf.DefaultSendReferer,
-    browser.MetaRefreshHandling: surf.DefaultMetaRefreshHandling,
-    browser.FollowRedirects:     surf.DefaultFollowRedirects,
-})
-
-// The attributes can also be set globally. Now every new browser you create
-// will be set with these defaults.
-surf.DefaultSendReferer = false
-surf.DefaultMetaRefreshHandling = false
-surf.DefaultFollowRedirects = false
-
-// Override the build in cookie jar.
-// Surf uses cookiejar.Jar by default.
-bow.SetCookieJar(jar.NewMemoryCookies())
-
-// Override the build in bookmarks jar.
-// Surf uses jar.MemoryBookmarks by default.
-bow.SetBookmarksJar(jar.NewMemoryBookmarks())
-
-// Use jar.FileBookmarks to read and write your bookmarks to a JSON file.
-bookmarks, err = jar.NewFileBookmarks("/home/joe/bookmarks.json")
-if err != nil { panic(err) }
-bow.SetBookmarksJar(bookmarks)
 ```
 
 
@@ -253,6 +205,49 @@ log.Println("Downloads complete!")
 ```
 When downloading assets asynchronously, you should keep in mind the potentially large number of assets embedded into a typical web page. For that reason you should setup a queue that downloads only a few at a time.
 
+
+### Settings
+```go
+bow := surf.NewBrowser()
+
+// Set the user agent this browser instance will send with each request.
+bow.SetUserAgent("SuperCrawler/1.0")
+
+// Or set the user agent globally so every new browser you create uses it.
+browser.DefaultUserAgent = "SuperCrawler/1.0"
+
+// Attributes control how the browser behaves. Use the SetAttribute() method
+// to set attributes one at a time.
+bow.SetAttribute(browser.SendReferer, false)
+bow.SetAttribute(browser.MetaRefreshHandling, false)
+bow.SetAttribute(browser.FollowRedirects, false)
+
+// Or set the attributes all at once using SetAttributes().
+bow.SetAttributes(browser.AttributeMap{
+    browser.SendReferer:         surf.DefaultSendReferer,
+    browser.MetaRefreshHandling: surf.DefaultMetaRefreshHandling,
+    browser.FollowRedirects:     surf.DefaultFollowRedirects,
+})
+
+// The attributes can also be set globally. Now every new browser you create
+// will be set with these defaults.
+surf.DefaultSendReferer = false
+surf.DefaultMetaRefreshHandling = false
+surf.DefaultFollowRedirects = false
+
+// Override the build in cookie jar.
+// Surf uses cookiejar.Jar by default.
+bow.SetCookieJar(jar.NewMemoryCookies())
+
+// Override the build in bookmarks jar.
+// Surf uses jar.MemoryBookmarks by default.
+bow.SetBookmarksJar(jar.NewMemoryBookmarks())
+
+// Use jar.FileBookmarks to read and write your bookmarks to a JSON file.
+bookmarks, err = jar.NewFileBookmarks("/home/joe/bookmarks.json")
+if err != nil { panic(err) }
+bow.SetBookmarksJar(bookmarks)
+```
 
 ### Credits
 Surf uses the awesome [goquery](https://github.com/PuerkitoBio/goquery) by Martin Angers, and was written using [Intellij](http://www.jetbrains.com/idea/) and the [golang plugin](http://plugins.jetbrains.com/plugin/5047).
