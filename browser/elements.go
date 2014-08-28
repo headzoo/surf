@@ -36,3 +36,20 @@ type Image struct {
 func (i *Image) Download(out io.Writer) (int64, error) {
 	return util.Download(i.Src, out)
 }
+
+// Stylesheet stores the properties of a linked stylesheet.
+type Stylesheet struct {
+	// Href is the value of the href attribute.
+	Href string
+
+	// Media is the value of the media attribute. Defaults to "all" when not specified.
+	Media string
+
+	// Type is the value of the type attribute. Defaults to "text/css" when not specified.
+	Type string
+}
+
+// Download writes the stylesheet to the given io.Writer type.
+func (s *Stylesheet) Download(out io.Writer) (int64, error) {
+	return util.Download(s.Href, out)
+}

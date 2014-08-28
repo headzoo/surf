@@ -126,10 +126,40 @@ func TestImages(t *testing.T) {
 	ut.AssertEquals(int(l), buff.Len())
 }
 
+func TestStylesheets(t *testing.T) {
+	ut.Run(t)
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		fmt.Fprint(w, html)
+	}))
+	defer ts.Close()
+	b, _ := NewBrowser()
+	err := b.Open(ts.URL)
+	ut.AssertNil(err)
+
+	stylesheets := b.Stylesheets()
+	ut.AssertEquals(2, len(stylesheets))
+	ut.AssertEquals("http://godoc.org/-/site.css", stylesheets[0].Href)
+	ut.AssertEquals("all", stylesheets[0].Media)
+	ut.AssertEquals("text/css", stylesheets[0].Type)
+
+	ut.AssertEquals(ts.URL + "/print.css", stylesheets[1].Href)
+	ut.AssertEquals("print", stylesheets[1].Media)
+	ut.AssertEquals("text/css", stylesheets[1].Type)
+
+	buff := &bytes.Buffer{}
+	l, err := stylesheets[0].Download(buff)
+	ut.AssertNil(err)
+	ut.AssertGreaterThan(0, buff.Len())
+	ut.AssertEquals(int(l), buff.Len())
+}
+
 var html = `<!doctype html>
 <html>
 	<head>
 		<title>Surf</title>
+		<link href="/favicon.ico" rel="icon" type="image/x-icon">
+		<link href="http://godoc.org/-/site.css" media="all" rel="stylesheet" type="text/css" />
+		<link href="/print.css" rel="stylesheet" media="print" />
 	</head>
 	<body>
 		<img src="http://i.imgur.com/HW4bJtY.jpg" id="imgur-image" title="It's a..." />

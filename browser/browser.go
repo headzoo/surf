@@ -115,6 +115,9 @@ type Browsable interface {
 	// Images returns an array of every image found in the page.
 	Images() []*Image
 
+	// Stylesheets returns an array of every stylesheet linked to the document.
+	Stylesheets() []*Stylesheet
+
 	// SiteCookies returns the cookies for the current site.
 	SiteCookies() []*http.Cookie
 
@@ -344,6 +347,39 @@ func (bow *Browser) Images() []*Image {
 	})
 
 	return images
+}
+
+// Stylesheets returns an array of every stylesheet linked to the document.
+func (bow *Browser) Stylesheets() []*Stylesheet {
+	sel := bow.Dom().Find("link")
+	stylesheets := make([]*Stylesheet, 0, sel.Length())
+
+	sel.Each(func(_ int, s *goquery.Selection) {
+		rel, ok := s.Attr("rel")
+		if ok && rel == "stylesheet" {
+			href, ok := s.Attr("href")
+			if ok {
+				href, err := bow.ResolveStringUrl(href)
+				if err == nil {
+					typ, ok := s.Attr("type")
+					if !ok {
+						typ = "text/css"
+					}
+					media, ok := s.Attr("media")
+					if !ok {
+						media = "all"
+					}
+					stylesheets = append(stylesheets, &Stylesheet{
+						Href: href,
+						Media: media,
+						Type: typ,
+					})
+				}
+			}
+		}
+	})
+
+	return stylesheets
 }
 
 // SiteCookies returns the cookies for the current site.

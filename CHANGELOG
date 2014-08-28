@@ -1,3 +1,7 @@
+#### v0.4.7 - 2014/08/xx
+* Created type Stylesheet.
+
+
 #### v0.4.6 - 2014/08/27
 * Broke up the packages to be more organized.
 * Created jar.FileBookmarks for saving bookmarks to a file.
