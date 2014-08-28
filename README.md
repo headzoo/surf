@@ -29,8 +29,7 @@ Import the library into your project.
 ### Usage
 ```go
 // Start by creating a new bow.
-bow, err := surf.NewBrowser()
-if err != nil { panic(err) }
+bow := surf.NewBrowser()
 
 // Add additional request headers.
 bow.AddHeader("Accept", "text/html")
@@ -38,7 +37,7 @@ bow.AddHeader("Accept-Charset", "utf8")
 
 
 // Requesting a page.
-err = bow.Open("http://www.reddit.com")
+err := bow.Open("http://www.reddit.com")
 if err != nil { panic(err) }
 fmt.Println(bow.Title())
 // Outputs: "reddit: the front page of the internet"
@@ -108,8 +107,7 @@ bow.Download(file)
 
 ### Settings
 ```go
-bow, err := surf.NewBrowser()
-if err != nil { panic(err) }
+bow := surf.NewBrowser()
 
 // Set the user agent this browser instance will send with each request.
 bow.SetUserAgent("SuperCrawler/1.0")
@@ -159,8 +157,7 @@ bow.SetBookmarksJar(bookmarks)
 ### User Agents
 The agent package contains a number of methods for creating user agent strings for popular browsers and crawlers, and for generating your own user agents.
 ```go
-bow, err := surf.NewBrowser()
-if err != nil { panic(err) }
+bow := surf.NewBrowser()
 
 // Use the Google Chrome user agent. The Chrome() method returns:
 // "Mozilla/5.0 (Windows NT 6.3; x64) Chrome/37.0.2049.0 Safari/537.36".
@@ -197,9 +194,8 @@ The agent package has an internal database for many different versions of many d
 ### Downloading
 Surf makes it easy to download page assets, such as images, stylesheets, and scripts. They can even be downloaded asynchronously.
 ```go
-bow, err := surf.NewBrowser()
-if err != nil { panic(err) }
-err = bow.Open("http://www.reddit.com")
+bow := surf.NewBrowser()
+err := bow.Open("http://www.reddit.com")
 if err != nil { panic(err) }
 
 // Download the images on the page and write them to files.
