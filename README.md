@@ -247,6 +247,39 @@ for {
 COMPLETE:
 	close(results)
 	fmt.Println("Downloads complete!")
+	
+// You can download all of the site assets with a few changes.
+downloadQueue := 0
+results := make(browser.AsyncDownloadChannel, 1)
+for _, image := range bow.Images() {
+    image.DownloadAsync(results)
+    downloadQueue++
+}
+for _, stylesheet := range bow.Stylesheets() {
+    stylesheet.DownloadAsync(results)
+    downloadQueue++
+}
+for _, script := range bow.Scripts() {
+    script.DownloadAsync(results)
+    downloadQueue++
+}
+
+for {
+    select {
+    case result := <-results:
+    	if result.Error == nil {
+    		filename := "/home/joe/Pictures" + result.Asset.URL.Path()
+    		ioutil.WriteFile(filename, result.Data, 0700)
+        } else {
+        	fmt.Printf("Error downloading %s.", result.Asset.URL.String())
+        }
+        
+        downloadQueue--
+        if downloadQueue == 0 {
+            goto COMPLETE
+        }
+    }
+}
 ```
 
 
