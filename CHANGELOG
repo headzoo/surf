@@ -1,3 +1,8 @@
+#### v0.4.8 - 2014/08/28
+* surf.NewBrowser() no longer returns an error.
+* Added jar.NewMemoryCookies() method.
+
+
 #### v0.4.7 - 2014/08/28
 * Created type Stylesheet.
 * Created type Script.
