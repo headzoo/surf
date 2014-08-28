@@ -274,8 +274,6 @@ func (bow *Browser) Form(expr string) (Submittable, error) {
 }
 
 // Forms returns an array of every form in the page.
-//
-// Returns nil when the page does not contain any forms.
 func (bow *Browser) Forms() []Submittable {
 	sel := bow.Find("form")
 	len := sel.Length()
