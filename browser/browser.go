@@ -242,17 +242,12 @@ func (bow *Browser) Click(expr string) error {
 			"Expr '%s' must match an anchor tag.", expr)
 	}
 
-	href, ok := sel.Attr("href")
-	if !ok {
-		return errors.NewLinkNotFound(
-			"No link found matching expr '%s'.", expr)
-	}
-	href, err := bow.ResolveStringUrl(href)
+	href, err := bow.attrToResolvedUrl("href", sel)
 	if err != nil {
 		return err
 	}
 
-	return bow.sendGet(href, bow.Url().String())
+	return bow.sendGet(href.String(), bow.Url().String())
 }
 
 // Form returns the form in the current page that matches the given expr.
@@ -291,11 +286,11 @@ func (bow *Browser) Forms() []Submittable {
 func (bow *Browser) Links() []*Link {
 	links := make([]*Link, 0, InitialAssetsSliceSize)
 	bow.Find("a").Each(func(_ int, s *goquery.Selection) {
-		href, err := bow.attributeToUrl("href", s)
+		href, err := bow.attrToResolvedUrl("href", s)
 		if err == nil {
 			links = append(links, NewLinkAsset(
 				href,
-				bow.attributeOrDefault("id", "", s),
+				bow.attrOrDefault("id", "", s),
 				s.Text(),
 			))
 		}
@@ -308,13 +303,13 @@ func (bow *Browser) Links() []*Link {
 func (bow *Browser) Images() []*Image {
 	images := make([]*Image, 0, InitialAssetsSliceSize)
 	bow.Find("img").Each(func(_ int, s *goquery.Selection) {
-		src, err := bow.attributeToUrl("src", s)
+		src, err := bow.attrToResolvedUrl("src", s)
 		if err == nil {
 			images = append(images, NewImageAsset(
 				src,
-				bow.attributeOrDefault("id", "", s),
-				bow.attributeOrDefault("alt", "", s),
-				bow.attributeOrDefault("title", "", s),
+				bow.attrOrDefault("id", "", s),
+				bow.attrOrDefault("alt", "", s),
+				bow.attrOrDefault("title", "", s),
 			))
 		}
 	})
@@ -328,13 +323,13 @@ func (bow *Browser) Stylesheets() []*Stylesheet {
 	bow.Find("link").Each(func(_ int, s *goquery.Selection) {
 		rel, ok := s.Attr("rel")
 		if ok && rel == "stylesheet" {
-			href, err := bow.attributeToUrl("href", s)
+			href, err := bow.attrToResolvedUrl("href", s)
 			if err == nil {
 				stylesheets = append(stylesheets, NewStylesheetAsset(
 					href,
-					bow.attributeOrDefault("id", "", s),
-					bow.attributeOrDefault("media", "all", s),
-					bow.attributeOrDefault("type", "text/css", s),
+					bow.attrOrDefault("id", "", s),
+					bow.attrOrDefault("media", "all", s),
+					bow.attrOrDefault("type", "text/css", s),
 				))
 			}
 		}
@@ -347,12 +342,12 @@ func (bow *Browser) Stylesheets() []*Stylesheet {
 func (bow *Browser) Scripts() []*Script {
 	scripts := make([]*Script, 0, InitialAssetsSliceSize)
 	bow.Find("script").Each(func(_ int, s *goquery.Selection) {
-		src, err := bow.attributeToUrl("src", s)
+		src, err := bow.attrToResolvedUrl("src", s)
 		if err == nil {
 			scripts = append(scripts, NewScriptAsset(
 				src,
-				bow.attributeOrDefault("id", "", s),
-				bow.attributeOrDefault("type", "text/javascript", s),
+				bow.attrOrDefault("id", "", s),
+				bow.attrOrDefault("type", "text/javascript", s),
 			))
 		}
 	})
@@ -581,7 +576,7 @@ func (bow *Browser) shouldRedirect(req *http.Request, _ []*http.Request) error {
 }
 
 // attributeToUrl reads an attribute from an element and returns a url.
-func (bow *Browser) attributeToUrl(name string, sel *goquery.Selection) (*url.URL, error) {
+func (bow *Browser) attrToResolvedUrl(name string, sel *goquery.Selection) (*url.URL, error) {
 	src, ok := sel.Attr(name)
 	if !ok {
 		return nil, errors.NewAttributeNotFound(
@@ -596,7 +591,7 @@ func (bow *Browser) attributeToUrl(name string, sel *goquery.Selection) (*url.UR
 }
 
 // attributeOrDefault reads an attribute and returns it or the default value when it's empty.
-func (bow *Browser) attributeOrDefault(name, def string, sel *goquery.Selection) string {
+func (bow *Browser) attrOrDefault(name, def string, sel *goquery.Selection) string {
 	a, ok := sel.Attr(name)
 	if ok {
 		return a
