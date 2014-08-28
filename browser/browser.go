@@ -214,7 +214,7 @@ func (bow *Browser) PostForm(u string, data url.Values) error {
 // Returns a boolean value indicating whether a previous page existed, and was
 // successfully loaded.
 func (bow *Browser) Back() bool {
-	if bow.history.Len() > 0 {
+	if bow.history.Len() > 1 {
 		bow.state = bow.history.Pop()
 		return true
 	}
@@ -274,8 +274,6 @@ func (bow *Browser) Form(expr string) (Submittable, error) {
 }
 
 // Forms returns an array of every form in the page.
-//
-// Returns nil when the page does not contain any forms.
 func (bow *Browser) Forms() []Submittable {
 	sel := bow.Find("form")
 	len := sel.Length()
