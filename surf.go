@@ -5,19 +5,13 @@ import (
 	"github.com/headzoo/surf/browser"
 	"github.com/headzoo/surf/jar"
 	"net/http"
-	"net/http/cookiejar"
 )
 
 // NewBrowser creates and returns a *browser.Browser type.
-func NewBrowser() (*browser.Browser, error) {
-	cookies, err := cookiejar.New(nil)
-	if err != nil {
-		return nil, err
-	}
-
+func NewBrowser() *browser.Browser {
 	bow := &browser.Browser{}
 	bow.SetUserAgent(browser.DefaultUserAgent)
-	bow.SetCookieJar(cookies)
+	bow.SetCookieJar(jar.NewMemoryCookies())
 	bow.SetBookmarksJar(jar.NewMemoryBookmarks())
 	bow.SetHistoryJar(jar.NewMemoryHistory())
 	bow.SetHeaders(make(http.Header, 10))
@@ -27,5 +21,5 @@ func NewBrowser() (*browser.Browser, error) {
 		browser.FollowRedirects:     browser.DefaultFollowRedirects,
 	})
 
-	return bow, nil
+	return bow
 }
