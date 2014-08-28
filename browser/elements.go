@@ -2,6 +2,7 @@ package browser
 
 import (
 	"io"
+	"github.com/headzoo/surf/util"
 )
 
 // Link stores the properties of a page link.
@@ -33,5 +34,5 @@ type Image struct {
 
 // Download writes the image to the given io.Writer type.
 func (i *Image) Download(out io.Writer) (int64, error) {
-	return download(i.Src, out)
+	return util.Download(i.Src, out)
 }

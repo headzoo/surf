@@ -565,13 +565,3 @@ func (bow *Browser) shouldRedirect(req *http.Request, _ []*http.Request) error {
 	return errors.NewLocation(
 		"Redirects are disabled. Cannot follow '%s'.", req.URL.String())
 }
-
-// download copies a remote file to the given writer.
-func download(url string, out io.Writer) (int64, error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return 0, err
-	}
-	defer resp.Body.Close()
-	return io.Copy(out, resp.Body)
-}
