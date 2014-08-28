@@ -49,7 +49,7 @@ func TestBookmarks(t *testing.T) {
 	ut.AssertEquals("Surf", b.Title())
 	ut.AssertContains("<p>Hello, Surf!</p>", b.Body())
 
-	err := b.BookmarkPage("test2")
+	err := b.Bookmark("test2")
 	ut.AssertNil(err)
 	b.OpenBookmark("test2")
 	ut.AssertEquals("Surf", b.Title())

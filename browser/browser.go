@@ -81,8 +81,8 @@ type Browsable interface {
 	// Reload duplicates the last successful request.
 	Reload() error
 
-	// BookmarkPage saves the page URL in the bookmarks with the given name.
-	BookmarkPage(name string) error
+	// Bookmark saves the page URL in the bookmarks with the given name.
+	Bookmark(name string) error
 
 	// Click clicks on the page element matched by the given expression.
 	Click(expr string) error
@@ -221,8 +221,8 @@ func (bow *Browser) Reload() error {
 	return errors.NewPageNotLoaded("Cannot reload, the previous request failed.")
 }
 
-// BookmarkPage saves the page URL in the bookmarks with the given name.
-func (bow *Browser) BookmarkPage(name string) error {
+// Bookmark saves the page URL in the bookmarks with the given name.
+func (bow *Browser) Bookmark(name string) error {
 	return bow.bookmarks.Save(name, bow.ResolveUrl(bow.Url()).String())
 }
 
