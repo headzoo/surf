@@ -12,6 +12,15 @@ type State struct {
 	Dom      *goquery.Document
 }
 
+// NewHistoryState creates and returns a new *State type.
+func NewHistoryState(req *http.Request, resp *http.Response, dom *goquery.Document) *State {
+	return &State{
+		Request:  req,
+		Response: resp,
+		Dom:      dom,
+	}
+}
+
 // History is a type that records browser state.
 type History interface {
 	Len() int

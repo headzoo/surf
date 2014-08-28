@@ -70,7 +70,7 @@ type Browsable interface {
 	OpenBookmark(name string) error
 
 	// Post requests the given URL using the POST method.
-	Post(url string, bodyType string, body io.Reader) error
+	Post(url string, contentType string, body io.Reader) error
 
 	// PostForm requests the given URL using the POST method with the given data.
 	PostForm(url string, data url.Values) error
@@ -168,7 +168,11 @@ type Browser struct {
 
 // Open requests the given URL using the GET method.
 func (bow *Browser) Open(u string) error {
-	return bow.sendGet(u, "")
+	ur, err := url.Parse(u)
+	if err != nil {
+		return err
+	}
+	return bow.httpGET(ur, nil)
 }
 
 // OpenForm appends the data values to the given URL and sends a GET request.
@@ -192,8 +196,12 @@ func (bow *Browser) OpenBookmark(name string) error {
 }
 
 // Post requests the given URL using the POST method.
-func (bow *Browser) Post(u string, bodyType string, body io.Reader) error {
-	return bow.sendPost(u, bodyType, body, "")
+func (bow *Browser) Post(u string, contentType string, body io.Reader) error {
+	ur, err := url.Parse(u)
+	if err != nil {
+		return err
+	}
+	return bow.httpPOST(ur, nil, contentType, body)
 }
 
 // PostForm requests the given URL using the POST method with the given data.
@@ -216,7 +224,7 @@ func (bow *Browser) Back() bool {
 // Reload duplicates the last successful request.
 func (bow *Browser) Reload() error {
 	if bow.state.Request != nil {
-		return bow.send(bow.state.Request)
+		return bow.httpRequest(bow.state.Request)
 	}
 	return errors.NewPageNotLoaded("Cannot reload, the previous request failed.")
 }
@@ -247,7 +255,7 @@ func (bow *Browser) Click(expr string) error {
 		return err
 	}
 
-	return bow.sendGet(href.String(), bow.Url().String())
+	return bow.httpGET(href, bow.Url())
 }
 
 // Form returns the form in the current page that matches the given expr.
@@ -461,46 +469,48 @@ func (bow *Browser) Find(expr string) *goquery.Selection {
 	return bow.state.Dom.Find(expr)
 }
 
-// client creates, configures, and returns a *http.Client type.
-func (bow *Browser) client() *http.Client {
+// -- Unexported methods --
+
+// buildClient creates, configures, and returns a *http.Client type.
+func (bow *Browser) buildClient() *http.Client {
 	client := &http.Client{}
 	client.Jar = bow.cookies
 	client.CheckRedirect = bow.shouldRedirect
 	return client
 }
 
-// request creates and returns a *http.Request type.
+// buildRequest creates and returns a *http.Request type.
 // Sets any headers that need to be sent with the request.
-func (bow *Browser) request(method, url string) (*http.Request, error) {
+func (bow *Browser) buildRequest(method, url string, ref *url.URL) (*http.Request, error) {
 	req, err := http.NewRequest(method, url, nil)
 	if err != nil {
 		return nil, err
 	}
 	req.Header = bow.headers
-	req.Header["User-Agent"] = []string{bow.userAgent}
+	req.Header.Add("User-Agent", bow.userAgent)
+	if bow.attributes[SendReferer] && ref != nil {
+		req.Header.Add("Referer", ref.String())
+	}
+
 	return req, nil
 }
 
-// sendGet makes an HTTP GET request for the given URL.
+// httpGET makes an HTTP GET request for the given URL.
 // When via is not nil, and AttributeSendReferer is true, the Referer header will
-// be set to via's URL.
-func (bow *Browser) sendGet(url string, via string) error {
-	req, err := bow.request("GET", url)
+// be set to ref.
+func (bow *Browser) httpGET(u *url.URL, ref *url.URL) error {
+	req, err := bow.buildRequest("GET", u.String(), ref)
 	if err != nil {
 		return err
 	}
-	if bow.attributes[SendReferer] && via != "" {
-		req.Header["Referer"] = []string{via}
-	}
-
-	return bow.send(req)
+	return bow.httpRequest(req)
 }
 
-// sendPost makes an HTTP POST request for the given URL.
+// httpPOST makes an HTTP POST request for the given URL.
 // When via is not nil, and AttributeSendReferer is true, the Referer header will
-// be set to via's URL.
-func (bow *Browser) sendPost(url string, bodyType string, body io.Reader, via string) error {
-	req, err := bow.request("POST", url)
+// be set to ref.
+func (bow *Browser) httpPOST(u *url.URL, ref *url.URL, contentType string, body io.Reader) error {
+	req, err := bow.buildRequest("POST", u.String(), ref)
 	if err != nil {
 		return err
 	}
@@ -509,31 +519,24 @@ func (bow *Browser) sendPost(url string, bodyType string, body io.Reader, via st
 		rc = ioutil.NopCloser(body)
 	}
 	req.Body = rc
-	req.Header["Content-Type"] = []string{bodyType}
-	if bow.attributes[SendReferer] && via != "" {
-		req.Header["Referer"] = []string{via}
-	}
+	req.Header.Add("Content-Type", contentType)
 
-	return bow.send(req)
+	return bow.httpRequest(req)
 }
 
 // send uses the given *http.Request to make an HTTP request.
-func (bow *Browser) send(req *http.Request) error {
+func (bow *Browser) httpRequest(req *http.Request) error {
 	bow.preSend()
-	resp, err := bow.client().Do(req)
+	resp, err := bow.buildClient().Do(req)
 	if err != nil {
 		return err
 	}
-	body, err := goquery.NewDocumentFromResponse(resp)
+	dom, err := goquery.NewDocumentFromResponse(resp)
 	if err != nil {
 		return err
 	}
 	bow.history.Push(bow.state)
-	bow.state = &jar.State{
-		Request:  req,
-		Response: resp,
-		Dom:      body,
-	}
+	bow.state = jar.NewHistoryState(req, resp, dom)
 	bow.postSend()
 
 	return nil
