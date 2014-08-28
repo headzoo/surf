@@ -3,7 +3,7 @@ package browser
 import (
 	"fmt"
 	"github.com/headzoo/surf/jar"
-	ut "github.com/headzoo/surf/unittest"
+	"github.com/headzoo/ut"
 	"net/http"
 	"net/http/httptest"
 	"testing"

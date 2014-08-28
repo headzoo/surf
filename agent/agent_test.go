@@ -2,7 +2,7 @@ package agent
 
 import (
 	"fmt"
-	ut "github.com/headzoo/surf/unittest"
+	"github.com/headzoo/ut"
 	"runtime"
 	"testing"
 )

@@ -1,6 +1,7 @@
 #### v0.4.6 - 2014/08/xx
 * Broke up the packages to be more organized.
 * Created jar.FileBookmarks for saving bookmarks to a file.
+* Removed unittest package. Now at github.com/headzoo/ut.
 
 
 #### v0.4.5 - 2014/08/27

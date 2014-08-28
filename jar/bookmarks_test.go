@@ -1,7 +1,7 @@
 package jar
 
 import (
-	ut "github.com/headzoo/surf/unittest"
+	"github.com/headzoo/ut"
 	"os"
 	"testing"
 )

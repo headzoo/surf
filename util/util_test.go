@@ -1,7 +1,7 @@
 package util
 
 import (
-	ut "github.com/headzoo/surf/unittest"
+	"github.com/headzoo/ut"
 	"testing"
 	"bytes"
 )
