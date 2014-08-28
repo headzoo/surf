@@ -24,38 +24,38 @@ Import the library into your project.
 
 ### Usage
 ```go
-// Start by creating a new browser.
-browser, err := surf.NewBrowser()
+// Start by creating a new bow.
+bow, err := surf.NewBrowser()
 if err != nil { panic(err) }
 
-// Set additional request headers.
-browser.RequestHeaders.Add("Accept", "text/html")
-browser.RequestHeaders.Add("Accept-Charset", "utf8")
+// Add additional request headers.
+bow.AddHeader("Accept", "text/html")
+bow.AddHeader("Accept-Charset", "utf8")
 
 
 // Requesting a page.
-err = browser.Get("http://www.reddit.com")
+err = bow.Open("http://www.reddit.com")
 if err != nil { panic(err) }
-fmt.Println(browser.Title())
+fmt.Println(bow.Title())
 // Outputs: "reddit: the front page of the internet"
 
 
 // Follow a link on the page where the link text is "new". Surf uses the selector
 // engine from goquery, which has a similar syntax to jQuery.
-err = browser.Click("a:contains('new')")
+err = bow.Click("a:contains('new')")
 if err != nil { panic(err) }
-fmt.Println(browser.Title())
+fmt.Println(bow.Title())
 // Outputs: "newest submissions: reddit.com"
 
 
 // Bookmark the page so we can come back to it later.
-err = browser.BookmarkPage("reddit-new")
+err = bow.BookmarkPage("reddit-new")
 if err != nil { panic(err) }
 
 
 // Login to the site via their login form. Again, we're using the goquery selector
-// syntax. The "form" is explicit. The selector below is actually "form.login-form".
-fm, err := browser.Form(".login-form")
+// syntax.
+fm, err := bow.Form("form.login-form")
 if err != nil { panic(err) }
 fm.Input("user", "JoeRedditor")
 fm.Input("passwd", "d234rlkasd")
@@ -64,24 +64,32 @@ if err != nil { panic(err) }
 
 
 // Now that we're logged in, follow the link to our profile.
-err = browser.Click("a:contains('JoeRedditor')")
+err = bow.Click("a:contains('JoeRedditor')")
 if err != nil { panic(err) }
-fmt.Println(browser.Title())
+fmt.Println(bow.Title())
 // Outputs: "overview for JoeRedditor"
 
 // Move back to the home page, and print the page body.
-err = browser.Back()
+err = bow.Back()
 if err != nil { panic(err) }
-fmt.Println(browser.Body())
+fmt.Println(bow.Body())
 
 
-// The underlying goquery.Selection is exposed via the Dom() method, which
-// can be used to parse values from the body.
-// Load our previously saved bookmark, and print
-// the titles for each submission on the reddit home page.
-err = browser.GetBookmark("reddit-new")
+// The underlying goquery.Document is exposed via the Dom() method, which
+// can be used to parse values from the body. See the goquery documentation
+// for more information on selecting page elements.
+// Load our previously saved bookmark, and print the titles for each submission
+// on the reddit home page.
+err = bow.GetBookmark("reddit-new")
 if err != nil { panic(err) }
-browser.Dom().Find("a.title").Each(func(_ int, s *goquery.Selection) {
+bow.Dom().Find("a.title").Each(func(_ int, s *goquery.Selection) {
+    fmt.Println(s.Text())
+})
+
+// The most common Dom() methods can be called directly from the browser.
+// The need to find elements on the page is common enough that the above could
+// be written like this.
+bow.Find("a.title").Each(func(_ int, s *goquery.Selection) {
     fmt.Println(s.Text())
 })
 
@@ -90,84 +98,94 @@ browser.Dom().Find("a.title").Each(func(_ int, s *goquery.Selection) {
 file, err := os.Create("reddit.html")
 if err != nil { panic(err) }
 defer file.Close()
-browser.Download(file)
+bow.Download(file)
 ```
 
 
 ### Settings
 ```go
-browser, err := surf.NewBrowser()
+bow, err := surf.NewBrowser()
 if err != nil { panic(err) }
 
-// Override the default user agent.
-browser.UserAgent = "MyBrowser"
+// Set the user agent this browser instance will send with each request.
+bow.SetUserAgent("SuperCrawler/1.0")
 
-// Set the user agent globally. Each Browser instance you create will use this.
-attrib.DefaultUserAgent = "MyBrowser"
+// Or set the user agent globally so every new browser you create uses it.
+browser.DefaultUserAgent = "SuperCrawler/1.0"
 
 
-// Attributes control how the browser behaves.
-browser.SetAttribute(attrib.SendReferer, false)
-browser.SetAttribute(attrib.MetaRefreshHandling, false)
-browser.SetAttribute(attrib.FollowRedirects, false)
+// Attributes control how the browser behaves. Use the SetAttribute() method
+// to set attributes one at a time.
+bow.SetAttribute(browser.SendReferer, false)
+bow.SetAttribute(browser.MetaRefreshHandling, false)
+bow.SetAttribute(browser.FollowRedirects, false)
 
-// The attributes may also be set globally.
-attrib.DefaultSendReferer = false
-attrib.DefaultMetaRefreshHandling = false
-attrib.DefaultFollowRedirects = false
+// Or set the attributes all at once using SetAttributes().
+bow.SetAttributes(browser.AttributeMap{
+    browser.SendReferer:         browser.DefaultSendReferer,
+    browser.MetaRefreshHandling: browser.DefaultMetaRefreshHandling,
+    browser.FollowRedirects:     browser.DefaultFollowRedirects,
+})
 
+// The attributes can also be set globally. Now every new browser you create
+// will be set with these defaults.
+browser.DefaultSendReferer = false
+browser.DefaultMetaRefreshHandling = false
+browser.DefaultFollowRedirects = false
 
 // Override the build in cookie jar.
+// Surf uses cookiejar.Jar by default.
 cookies, err := cookiejar.New(nil)
 if err != nil { panic(err) }
-browser.Cookies = cookies
+bow.SetCookieJar(cookies)
 
-// Override the build in bookmarks with an in-memory container.
-// This is actually the bookmarks jar used by default.
+// Override the build in bookmarks jar.
+// Surf uses jar.MemoryBookmarks by default.
 bookmarks, err := jar.NewMemoryBookmarks()
 if err != nil { panic(err) }
-browser.Bookmarks = bookmarks
+bow.SetBookmarksJar(bookmarks)
 
-// You can also save your bookmarks to a file.
-bookmarks, err := jar.NewFileBookmarks("/home/joe/bookmarks.json")
+// Use jar.FileBookmarks to read and write your bookmarks to a JSON file.
+bookmarks, err = jar.NewFileBookmarks("/home/joe/bookmarks.json")
 if err != nil { panic(err) }
-browser.Bookmarks = bookmarks
+bow.SetBookmarksJar(bookmarks)
 ```
 
 
 ### User Agents
-The agent package contains a number of methods for creating user agent strings for popular browsers and crawlers, and for generating your own user agents.
+The agent package contains a number of methods for creating user agent strings for popular bows and crawlers, and for generating your own user agents.
 ```go
-browser, err := surf.NewBrowser()
+bow, err := surf.NewBrowser()
 if err != nil { panic(err) }
 
 // Use the Google Chrome user agent. The Chrome() method returns:
 // "Mozilla/5.0 (Windows NT 6.3; x64) Chrome/37.0.2049.0 Safari/537.36".
-browser.UserAgent = agent.Chrome()
+bow.SetUserAgent(agent.Chrome())
 
 // The Firefox() method returns:
 // "Mozilla/5.0 (Windows NT 6.3; x64; rv:31.0) Gecko/20100101 Firefox/31.0".
-browser.UserAgent = agent.Firefox()
+bow.SetUserAgent(agent.Firefox())
 
 // The Safari() method returns:
 // "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Safari/8536.25".
-browser.UserAgent = agent.Safari()
+bow.SetUserAgent(agent.Safari())
 
-// There are methods for a number of browsers and crawlers. For example
+// There are methods for a number of bows and crawlers. For example
 // Opera(), MSIE(), AOL(), GoogleBot(), and many more. You can even choose
-// the browser version. This will create:
+// the bow version. This will create:
 // "Mozilla/5.0 (Windows NT 6.3; x64) Chrome/35 Safari/537.36".
-browser.UserAgent = agent.CreateVersion("chrome", "35")
+ua := agent.CreateVersion("chrome", "35")
+bow.SetUserAgent(ua)
 
 // Creating your own custom user agent is just as easy. The following code
 // generates the user agent:
-// "MyBrowser/1.0 (Windows NT 6.1; WOW64; x64)".
-agent.Name = "MyBrowser"
+// "Mybow/1.0 (Windows NT 6.1; WOW64; x64)".
+agent.Name = "Mybow"
 agent.Version = "1.0"
 agent.OSName = "Windows NT"
 agent.OSVersion = "6.1"
 agent.Comments = []string{"WOW64", "x64"}
-browser.UserAgent = agent.Create()
+bow.SetUserAgent(agent.Create())
 ```
 The agent package has an internal database for many different versions of many different browsers. See the [agent package API documentation](http://godoc.org/github.com/headzoo/surf/agent) for more information.
 

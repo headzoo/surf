@@ -1,20 +1,20 @@
-package element
+package jar
 
 import (
 	ut "github.com/headzoo/surf/unittest"
 	"testing"
 )
 
-func TestPageStack(t *testing.T) {
+func TestMemoryHistory(t *testing.T) {
 	ut.Run(t)
-	stack := NewPageStack()
+	stack := NewMemoryHistory()
 
-	page1 := &Page{}
+	page1 := &State{}
 	stack.Push(page1)
 	ut.AssertEquals(1, stack.Len())
 	ut.AssertEquals(page1, stack.Top())
 
-	page2 := &Page{}
+	page2 := &State{}
 	stack.Push(page2)
 	ut.AssertEquals(2, stack.Len())
 	ut.AssertEquals(page2, stack.Top())
