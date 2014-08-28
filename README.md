@@ -194,44 +194,6 @@ for _, image := range bow.Images() {
     image.Download(fout)
     fout.Close()
 }
-
-// Download the images asynchronously and write them to files.
-//
-// The DownloadAsync() takes an instance of browser.AsyncDownloadChannel, which
-// is a channel upon which the method will put an instance of AsyncDownloadResult
-// when the download is complete. The AsyncDownloadResult has the downloaded data,
-// or an error if there was one.
-downloadQueue := 0
-results := make(browser.AsyncDownloadChannel, 1)
-for _, image := range bow.Images() {
-    image.DownloadAsync(results)
-    downloadQueue++
-}
-
-for {
-    select {
-    case result := <-results:
-    	// The *browser.Image is stored in result.Asset, but that's of type
-    	// interface{} (because AsyncDownloadResult handles many types of
-    	// downloads). Use type assertion to get the *browser.Image.
-    	image := result.Asset.(*browser.Image)
-    	if result.Error == nil {
-    		// The image data is saved in result.Data, which is type []byte.
-    		filename := "/home/joe/Pictures" + image.URL.Path()
-    		ioutil.WriteFile(filename, result.Data, 0700)
-        } else {
-        	fmt.Printf("Error downloading %s.", image.URL.String())
-        }
-        
-        downloadQueue--
-        if downloadQueue == 0 {
-            goto COMPLETE
-        }
-    }
-}
-COMPLETE:
-	close(results)
-	fmt.Println("Downloads complete!")
 ```
 When downloading assets asynchronously, you should keep in mind the potentially large number of assets embedded into a typical web page. For that reason you should setup a queue that downloads only a few at a time.
 
