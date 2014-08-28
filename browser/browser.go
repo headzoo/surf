@@ -44,12 +44,6 @@ var (
 	DefaultFollowRedirects = true
 )
 
-// Downloadable represents an element that may be downloaded.
-type Downloadable interface {
-	// Download writes the contents of the element to the given writer.
-	Download(out io.Writer) (int64, error)
-}
-
 // Browsable represents an HTTP web browser.
 type Browsable interface {
 	// SetUserAgent sets the user agent.
@@ -305,21 +299,15 @@ func (bow *Browser) Forms() []Submittable {
 
 // Links returns an array of every link found in the page.
 func (bow *Browser) Links() []*Link {
-	sel := bow.Find("a")
-	links := make([]*Link, 0, sel.Length())
-
-	sel.Each(func(_ int, s *goquery.Selection) {
-		id, _ := s.Attr("id")
-		href, ok := s.Attr("href")
-		if ok {
-			href, err := bow.ResolveStringUrl(href)
-			if err == nil {
-				links = append(links, &Link{
-					ID:   id,
-					Href: href,
-					Text: s.Text(),
-				})
-			}
+	links := make([]*Link, 0, InitialAssetsSliceSize)
+	bow.Find("a").Each(func(_ int, s *goquery.Selection) {
+		href, err := bow.attributeToUrl("href", s)
+		if err == nil {
+			links = append(links, &Link{
+				ID:   bow.attributeOrDefault("id", "", s),
+				URL:  href,
+				Text: s.Text(),
+			})
 		}
 	})
 
@@ -328,24 +316,16 @@ func (bow *Browser) Links() []*Link {
 
 // Images returns an array of every image found in the page.
 func (bow *Browser) Images() []*Image {
-	sel := bow.Find("img")
-	images := make([]*Image, 0, sel.Length())
-
-	sel.Each(func(_ int, s *goquery.Selection) {
-		id, _ := s.Attr("id")
-		alt, _ := s.Attr("alt")
-		title, _ := s.Attr("title")
-		src, ok := s.Attr("src")
-		if ok {
-			src, err := bow.ResolveStringUrl(src)
-			if err == nil {
-				images = append(images, &Image{
-					ID:    id,
-					Src:   src,
-					Alt:   alt,
-					Title: title,
-				})
-			}
+	images := make([]*Image, 0, InitialAssetsSliceSize)
+	bow.Find("img").Each(func(_ int, s *goquery.Selection) {
+		src, err := bow.attributeToUrl("src", s)
+		if err == nil {
+			images = append(images, &Image{
+				ID:    bow.attributeOrDefault("id", "", s),
+				URL:   src,
+				Alt:   bow.attributeOrDefault("alt", "", s),
+				Title: bow.attributeOrDefault("title", "", s),
+			})
 		}
 	})
 
@@ -354,30 +334,18 @@ func (bow *Browser) Images() []*Image {
 
 // Stylesheets returns an array of every stylesheet linked to the document.
 func (bow *Browser) Stylesheets() []*Stylesheet {
-	sel := bow.Find("link")
-	stylesheets := make([]*Stylesheet, 0, sel.Length())
-
-	sel.Each(func(_ int, s *goquery.Selection) {
+	stylesheets := make([]*Stylesheet, 0, InitialAssetsSliceSize)
+	bow.Find("link").Each(func(_ int, s *goquery.Selection) {
 		rel, ok := s.Attr("rel")
 		if ok && rel == "stylesheet" {
-			href, ok := s.Attr("href")
-			if ok {
-				href, err := bow.ResolveStringUrl(href)
-				if err == nil {
-					typ, ok := s.Attr("type")
-					if !ok {
-						typ = "text/css"
-					}
-					media, ok := s.Attr("media")
-					if !ok {
-						media = "all"
-					}
-					stylesheets = append(stylesheets, &Stylesheet{
-						Href: href,
-						Media: media,
-						Type: typ,
-					})
-				}
+			href, err := bow.attributeToUrl("href", s)
+			if err == nil {
+				stylesheets = append(stylesheets, &Stylesheet{
+					ID:    bow.attributeOrDefault("id", "", s),
+					URL:   href,
+					Media: bow.attributeOrDefault("media", "all", s),
+					Type:  bow.attributeOrDefault("type", "text/css", s),
+				})
 			}
 		}
 	})
@@ -387,23 +355,15 @@ func (bow *Browser) Stylesheets() []*Stylesheet {
 
 // Scripts returns an array of every script linked to the document.
 func (bow *Browser) Scripts() []*Script {
-	sel := bow.Find("script")
-	scripts := make([]*Script, 0, sel.Length())
-
-	sel.Each(func(_ int, s *goquery.Selection) {
-		src, ok := s.Attr("src")
-		if ok {
-			src, err := bow.ResolveStringUrl(src)
-			if err == nil {
-				typ, ok := s.Attr("type")
-				if !ok {
-					typ = "text/javascript"
-				}
-				scripts = append(scripts, &Script{
-					Src: src,
-					Type: typ,
-				})
-			}
+	scripts := make([]*Script, 0, InitialAssetsSliceSize)
+	bow.Find("script").Each(func(_ int, s *goquery.Selection) {
+		src, err := bow.attributeToUrl("src", s)
+		if err == nil {
+			scripts = append(scripts, &Script{
+				ID:   bow.attributeOrDefault("id", "", s),
+				URL:  src,
+				Type: bow.attributeOrDefault("type", "text/javascript", s),
+			})
 		}
 	})
 
@@ -628,4 +588,28 @@ func (bow *Browser) shouldRedirect(req *http.Request, _ []*http.Request) error {
 	}
 	return errors.NewLocation(
 		"Redirects are disabled. Cannot follow '%s'.", req.URL.String())
+}
+
+// attributeToUrl reads an attribute from an element and returns a url.
+func (bow *Browser) attributeToUrl(name string, sel *goquery.Selection) (*url.URL, error) {
+	src, ok := sel.Attr(name)
+	if !ok {
+		return nil, errors.NewAttributeNotFound(
+			"Attribute '%s' not found.", name)
+	}
+	ur, err := url.Parse(src)
+	if err != nil {
+		return nil, err
+	}
+
+	return bow.ResolveUrl(ur), nil
+}
+
+// attributeOrDefault reads an attribute and returns it or the default value when it's empty.
+func (bow *Browser) attributeOrDefault(name, def string, sel *goquery.Selection) string {
+	a, ok := sel.Attr(name)
+	if ok {
+		return a
+	}
+	return def
 }

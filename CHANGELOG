@@ -1,6 +1,8 @@
-#### v0.4.7 - 2014/08/xx
+#### v0.4.7 - 2014/08/28
 * Created type Stylesheet.
 * Created type Script.
+* Normalized asset URLs (src, href) to always use URL.
+* Added DownloadAsync() methods.
 
 
 #### v0.4.6 - 2014/08/27

@@ -2,8 +2,6 @@
 package util
 
 import (
-	"io"
-	"net/http"
 	"os"
 )
 
@@ -16,17 +14,4 @@ func FileExists(file string) bool {
 	}
 
 	return true
-}
-
-// Download copies a remote file to the given writer.
-//
-// Returns the number of bytes written and any errors.
-func Download(url string, out io.Writer) (int64, error) {
-	resp, err := http.Get(url)
-	if err != nil {
-		return 0, err
-	}
-	defer resp.Body.Close()
-
-	return io.Copy(out, resp.Body)
 }

@@ -46,6 +46,19 @@ func NewLinkNotFound(msg string, a ...interface{}) LinkNotFound {
 	}
 }
 
+// AttributeNotFound represents a failed attempt to read an element attribute.
+type AttributeNotFound struct {
+	error
+}
+
+// NewAttributeNotFound creates and returns a AttributeNotFound type.
+func NewAttributeNotFound(msg string, a ...interface{}) AttributeNotFound {
+	msg = fmt.Sprintf(msg, a...)
+	return AttributeNotFound{
+		error: errors.New(msg),
+	}
+}
+
 // Location represents a failed attempt to follow a Location header.
 type Location struct {
 	error

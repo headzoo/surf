@@ -10,6 +10,7 @@ _This project is very young, and the API is bound to change often. Use at your o
 * [Usage](#usage)
 * [Settings](#settings)
 * [User Agents](#user-agents)
+* [Downloading](#downloading)
 * [Credits](#credits)
 * [Use Cases](#use-cases)
 * [TODO](#todo)
@@ -156,7 +157,7 @@ bow.SetBookmarksJar(bookmarks)
 
 
 ### User Agents
-The agent package contains a number of methods for creating user agent strings for popular bows and crawlers, and for generating your own user agents.
+The agent package contains a number of methods for creating user agent strings for popular browsers and crawlers, and for generating your own user agents.
 ```go
 bow, err := surf.NewBrowser()
 if err != nil { panic(err) }
@@ -191,6 +192,47 @@ agent.Comments = []string{"WOW64", "x64"}
 bow.SetUserAgent(agent.Create())
 ```
 The agent package has an internal database for many different versions of many different browsers. See the [agent package API documentation](http://godoc.org/github.com/headzoo/surf/agent) for more information.
+
+
+### Downloading
+Surf makes it easy to download page assets, such as images, stylesheets, and scripts. They can even be downloaded asynchronously.
+```go
+bow, err := surf.NewBrowser()
+if err != nil { panic(err) }
+err = bow.Open("http://www.reddit.com")
+if err != nil { panic(err) }
+
+// Download the images on the page and write them to files.
+for _, image := range bow.Images() {
+    fout, err := os.Create("/home/joe/Pictures" + image.URL.Path())
+    if err != nil { panic(err) }
+    image.Download(fout)
+    fout.Close()
+}
+
+// Download the images on the page asynchronously and write them to files.
+images := bow.Images()
+total := len(images)
+results := make(browser.AsyncDownloadChannel, 1)
+for _, image := range images {
+    image.DownloadAsync(results)
+}
+for {
+    select {
+    case result := <-results:
+        image := result.Asset.(*browser.Image)
+        fout, err := os.Create("/home/joe/Pictures" + image.URL.Path())
+        io.Copy(fout, result.Data)
+        fout.Close()
+        total--
+        if total == 0 {
+            goto COMPLETE
+        }
+    }
+}
+COMPLETE:
+	fmt.Println("Downloads complete!")
+```
 
 
 ### Credits
