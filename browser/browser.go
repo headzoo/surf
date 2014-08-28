@@ -118,6 +118,9 @@ type Browsable interface {
 	// Stylesheets returns an array of every stylesheet linked to the document.
 	Stylesheets() []*Stylesheet
 
+	// Scripts returns an array of every script linked to the document.
+	Scripts() []*Script
+
 	// SiteCookies returns the cookies for the current site.
 	SiteCookies() []*http.Cookie
 
@@ -245,7 +248,7 @@ func (bow *Browser) BookmarkPage(name string) error {
 // to load the page pointed at by the link. Future versions of Surf may support
 // JavaScript and clicking on elements will fire the click event.
 func (bow *Browser) Click(expr string) error {
-	sel := bow.Dom().Find(expr)
+	sel := bow.Find(expr)
 	if sel.Length() == 0 {
 		return errors.NewElementNotFound(
 			"Element not found matching expr '%s'.", expr)
@@ -270,7 +273,7 @@ func (bow *Browser) Click(expr string) error {
 
 // Form returns the form in the current page that matches the given expr.
 func (bow *Browser) Form(expr string) (Submittable, error) {
-	sel := bow.Dom().Find(expr)
+	sel := bow.Find(expr)
 	if sel.Length() == 0 {
 		return nil, errors.NewElementNotFound(
 			"Form not found matching expr '%s'.", expr)
@@ -287,7 +290,7 @@ func (bow *Browser) Form(expr string) (Submittable, error) {
 //
 // Returns nil when the page does not contain any forms.
 func (bow *Browser) Forms() []Submittable {
-	sel := bow.Dom().Find("form")
+	sel := bow.Find("form")
 	len := sel.Length()
 	if len == 0 {
 		return nil
@@ -302,7 +305,7 @@ func (bow *Browser) Forms() []Submittable {
 
 // Links returns an array of every link found in the page.
 func (bow *Browser) Links() []*Link {
-	sel := bow.Dom().Find("a")
+	sel := bow.Find("a")
 	links := make([]*Link, 0, sel.Length())
 
 	sel.Each(func(_ int, s *goquery.Selection) {
@@ -325,7 +328,7 @@ func (bow *Browser) Links() []*Link {
 
 // Images returns an array of every image found in the page.
 func (bow *Browser) Images() []*Image {
-	sel := bow.Dom().Find("img")
+	sel := bow.Find("img")
 	images := make([]*Image, 0, sel.Length())
 
 	sel.Each(func(_ int, s *goquery.Selection) {
@@ -351,7 +354,7 @@ func (bow *Browser) Images() []*Image {
 
 // Stylesheets returns an array of every stylesheet linked to the document.
 func (bow *Browser) Stylesheets() []*Stylesheet {
-	sel := bow.Dom().Find("link")
+	sel := bow.Find("link")
 	stylesheets := make([]*Stylesheet, 0, sel.Length())
 
 	sel.Each(func(_ int, s *goquery.Selection) {
@@ -380,6 +383,31 @@ func (bow *Browser) Stylesheets() []*Stylesheet {
 	})
 
 	return stylesheets
+}
+
+// Scripts returns an array of every script linked to the document.
+func (bow *Browser) Scripts() []*Script {
+	sel := bow.Find("script")
+	scripts := make([]*Script, 0, sel.Length())
+
+	sel.Each(func(_ int, s *goquery.Selection) {
+		src, ok := s.Attr("src")
+		if ok {
+			src, err := bow.ResolveStringUrl(src)
+			if err == nil {
+				typ, ok := s.Attr("type")
+				if !ok {
+					typ = "text/javascript"
+				}
+				scripts = append(scripts, &Script{
+					Src: src,
+					Type: typ,
+				})
+			}
+		}
+	})
+
+	return scripts
 }
 
 // SiteCookies returns the cookies for the current site.
@@ -576,7 +604,7 @@ func (bow *Browser) preSend() {
 // postSend sets browser state after sending a request.
 func (bow *Browser) postSend() {
 	if bow.attributes[MetaRefreshHandling] {
-		sel := bow.Dom().Find("meta[http-equiv='refresh']")
+		sel := bow.Find("meta[http-equiv='refresh']")
 		if sel.Length() > 0 {
 			attr, ok := sel.Attr("content")
 			if ok {

@@ -53,3 +53,17 @@ type Stylesheet struct {
 func (s *Stylesheet) Download(out io.Writer) (int64, error) {
 	return util.Download(s.Href, out)
 }
+
+// Script stores the properties of a linked script.
+type Script struct {
+	// Src is the value of the image src attribute.
+	Src string
+
+	// Type is the value of the type attribute. Defaults to "text/javascript" when not specified.
+	Type string
+}
+
+// Download writes the script to the given io.Writer type.
+func (s *Script) Download(out io.Writer) (int64, error) {
+	return util.Download(s.Src, out)
+}

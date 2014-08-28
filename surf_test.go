@@ -153,6 +153,31 @@ func TestStylesheets(t *testing.T) {
 	ut.AssertEquals(int(l), buff.Len())
 }
 
+func TestScripts(t *testing.T) {
+	ut.Run(t)
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		fmt.Fprint(w, html)
+	}))
+	defer ts.Close()
+	b, _ := NewBrowser()
+	err := b.Open(ts.URL)
+	ut.AssertNil(err)
+
+	scripts := b.Scripts()
+	ut.AssertEquals(2, len(scripts))
+	ut.AssertEquals("http://godoc.org/-/site.js", scripts[0].Src)
+	ut.AssertEquals("text/javascript", scripts[0].Type)
+
+	ut.AssertEquals(ts.URL+"/jquery.min.js", scripts[1].Src)
+	ut.AssertEquals("text/javascript", scripts[1].Type)
+
+	buff := &bytes.Buffer{}
+	l, err := scripts[0].Download(buff)
+	ut.AssertNil(err)
+	ut.AssertGreaterThan(0, buff.Len())
+	ut.AssertEquals(int(l), buff.Len())
+}
+
 var html = `<!doctype html>
 <html>
 	<head>
@@ -165,6 +190,12 @@ var html = `<!doctype html>
 		<img src="http://i.imgur.com/HW4bJtY.jpg" id="imgur-image" title="It's a..." />
 		<p>Hello, Surf!</p>
 		<img src="/Cxagv.jpg" alt="A picture" />
+
+		<script src="http://godoc.org/-/site.js" type="text/javascript"></script>
+		<script src="/jquery.min.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			var _gaq = _gaq || [];
+		</script>
 	</body>
 </html>
 `
