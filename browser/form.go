@@ -23,7 +23,7 @@ type Form struct {
 	selection     *goquery.Selection
 	method        string
 	action        string
-	definedFields []string
+	definedFields map[string]bool
 	fields        url.Values
 	buttons       url.Values
 }
@@ -55,20 +55,9 @@ func (f *Form) Action() string {
 	return f.action
 }
 
-// stringInSlice judges wheter slice has the given string.
-// Original: http://stackoverflow.com/questions/15323767/how-to-if-x-in-array-in-golang
-func stringInSlice(a string, list []string) bool {
-	for _, b := range list {
-		if b == a {
-			return true
-		}
-	}
-	return false
-}
-
 // Input sets the value of a form field.
 func (f *Form) Input(name, value string) error {
-	if stringInSlice(name, f.definedFields) {
+	if f.definedFields[name] {
 		f.fields.Set(name, value)
 		return nil
 	}
@@ -138,9 +127,9 @@ func (f *Form) send(buttonName, buttonValue string) error {
 // Serialize converts the form fields into a url.Values type.
 // Returns two url.Value types. The first is the form field values, and the
 // second is the form button values.
-func serializeForm(sel *goquery.Selection) ([]string, url.Values, url.Values) {
+func serializeForm(sel *goquery.Selection) (map[string]bool, url.Values, url.Values) {
 	input := sel.Find("input,button")
-	var definedfields []string
+	definedFields := map[string]bool{}
 	fields := make(url.Values)
 	buttons := make(url.Values)
 
@@ -157,7 +146,7 @@ func serializeForm(sel *goquery.Selection) ([]string, url.Values, url.Values) {
 						buttons.Add(name, "")
 					}
 				} else if typ == "radio" || typ == "checkbox" {
-					definedfields = append(definedfields, name)
+					definedFields[name] = true
 					_, ok := s.Attr("checked")
 					if ok {
 						val, ok := s.Attr("value")
@@ -166,7 +155,7 @@ func serializeForm(sel *goquery.Selection) ([]string, url.Values, url.Values) {
 						}
 					}
 				} else {
-					definedfields = append(definedfields, name)
+					definedFields[name] = true
 					val, ok := s.Attr("value")
 					if ok {
 						fields.Add(name, val)
@@ -183,7 +172,7 @@ func serializeForm(sel *goquery.Selection) ([]string, url.Values, url.Values) {
 		if !ok {
 			return
 		}
-		definedfields = append(definedfields, name)
+		definedFields[name] = true
 		s.Find("option[selected]").Each(func(_ int, so *goquery.Selection) {
 			val, ok := so.Attr("value")
 			if ok {
@@ -198,11 +187,11 @@ func serializeForm(sel *goquery.Selection) ([]string, url.Values, url.Values) {
 		if !ok {
 			return
 		}
-		definedfields = append(definedfields, name)
+		definedFields[name] = true
 		fields.Add(name, s.Text())
 	})
 
-	return definedfields, fields, buttons
+	return definedFields, fields, buttons
 }
 
 func formAttributes(bow Browsable, s *goquery.Selection) (string, string) {
