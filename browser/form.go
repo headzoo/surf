@@ -55,12 +55,8 @@ func (f *Form) Action() string {
 
 // Input sets the value of a form field.
 func (f *Form) Input(name, value string) error {
-	if _, ok := f.fields[name]; ok {
-		f.fields.Set(name, value)
-		return nil
-	}
-	return errors.NewElementNotFound(
-		"No input found with name '%s'.", name)
+	f.fields.Set(name, value)
+	return nil
 }
 
 // Submit submits the form.
@@ -127,12 +123,9 @@ func (f *Form) send(buttonName, buttonValue string) error {
 // second is the form button values.
 func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
 	input := sel.Find("input,button")
-	if input.Length() == 0 {
-		return url.Values{}, url.Values{}
-	}
-
 	fields := make(url.Values)
 	buttons := make(url.Values)
+
 	input.Each(func(_ int, s *goquery.Selection) {
 		name, ok := s.Attr("name")
 		if ok {
@@ -145,6 +138,14 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
 					} else {
 						buttons.Add(name, "")
 					}
+				} else if typ == "radio" || typ == "checkbox" {
+					_, ok := s.Attr("checked")
+					if ok {
+						val, ok := s.Attr("value")
+						if ok {
+							fields.Add(name, val)
+						}
+					}
 				} else {
 					val, ok := s.Attr("value")
 					if ok {
@@ -153,6 +154,30 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
 				}
 			}
 		}
+	})
+
+	selec := sel.Find("select")
+
+	selec.Each(func(_ int, s *goquery.Selection) {
+		name, ok := s.Attr("name")
+		if !ok {
+			return
+		}
+		s.Find("option[selected]").Each(func(_ int, so *goquery.Selection) {
+			val, ok := so.Attr("value")
+			if ok {
+				fields.Add(name, val)
+			}
+		})
+	})
+
+	textarea := sel.Find("textarea")
+	textarea.Each(func(_ int, s *goquery.Selection) {
+		name, ok := s.Attr("name")
+		if !ok {
+			return
+		}
+		fields.Add(name, s.Text())
 	})
 
 	return fields, buttons
