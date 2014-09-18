@@ -116,6 +116,10 @@ func (f *Form) send(buttonName, buttonValue string) error {
 	if strings.ToUpper(method) == "GET" {
 		return f.bow.OpenForm(aurl.String(), values)
 	} else {
+		enctype, _ := f.selection.Attr("enctype")
+		if enctype == "multipart/form-data" {
+			return f.bow.PostMultipart(aurl.String(), values)
+		}
 		return f.bow.PostForm(aurl.String(), values)
 	}
 

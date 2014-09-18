@@ -1,10 +1,12 @@
 package browser
 
 import (
+	"bytes"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/headzoo/surf/errors"
 	"github.com/headzoo/surf/jar"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"strings"
@@ -73,6 +75,9 @@ type Browsable interface {
 
 	// PostForm requests the given URL using the POST method with the given data.
 	PostForm(url string, data url.Values) error
+
+	// PostMultipart requests the given URL using the POST method with the given data using multipart/form-data format.
+	PostMultipart(u string, data url.Values) error
 
 	// Back loads the previously requested page.
 	Back() bool
@@ -206,6 +211,24 @@ func (bow *Browser) Post(u string, contentType string, body io.Reader) error {
 // PostForm requests the given URL using the POST method with the given data.
 func (bow *Browser) PostForm(u string, data url.Values) error {
 	return bow.Post(u, "application/x-www-form-urlencoded", strings.NewReader(data.Encode()))
+}
+
+// PostMultipart requests the given URL using the POST method with the given data using multipart/form-data format.
+func (bow *Browser) PostMultipart(u string, data url.Values) error {
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+
+	for k, vs := range data {
+		for _, v := range vs {
+			writer.WriteField(k, v)
+		}
+	}
+	err := writer.Close()
+	if err != nil {
+		return err
+
+	}
+	return bow.Post(u, writer.FormDataContentType(), body)
 }
 
 // Back loads the previously requested page.
@@ -511,7 +534,7 @@ func (bow *Browser) httpPOST(u *url.URL, ref *url.URL, contentType string, body 
 	if err != nil {
 		return err
 	}
-	req.Header.Add("Content-Type", contentType)
+	req.Header.Set("Content-Type", contentType)
 
 	return bow.httpRequest(req)
 }
