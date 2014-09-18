@@ -1,4 +1,4 @@
-#### v0.4.8 - 2014/09/18
+#### v0.4.9 - 2014/09/18
 * Added Browser.PostMultipart() method.
 * Internal changes when building a request to ensure Content-Length is set.
 
