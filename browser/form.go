@@ -19,26 +19,28 @@ type Submittable interface {
 
 // Form is the default form element.
 type Form struct {
-	bow       Browsable
-	selection *goquery.Selection
-	method    string
-	action    string
-	fields    url.Values
-	buttons   url.Values
+	bow           Browsable
+	selection     *goquery.Selection
+	method        string
+	action        string
+	definedFields []string
+	fields        url.Values
+	buttons       url.Values
 }
 
 // NewForm creates and returns a *Form type.
 func NewForm(bow Browsable, s *goquery.Selection) *Form {
-	fields, buttons := serializeForm(s)
+	definedFields, fields, buttons := serializeForm(s)
 	method, action := formAttributes(bow, s)
 
 	return &Form{
-		bow:       bow,
-		selection: s,
-		method:    method,
-		action:    action,
-		fields:    fields,
-		buttons:   buttons,
+		bow:           bow,
+		selection:     s,
+		method:        method,
+		action:        action,
+		definedFields: definedFields,
+		fields:        fields,
+		buttons:       buttons,
 	}
 }
 
@@ -53,10 +55,25 @@ func (f *Form) Action() string {
 	return f.action
 }
 
+// stringInSlice judges wheter slice has the given string.
+// Original: http://stackoverflow.com/questions/15323767/how-to-if-x-in-array-in-golang
+func stringInSlice(a string, list []string) bool {
+	for _, b := range list {
+		if b == a {
+			return true
+		}
+	}
+	return false
+}
+
 // Input sets the value of a form field.
 func (f *Form) Input(name, value string) error {
-	f.fields.Set(name, value)
-	return nil
+	if stringInSlice(name, f.definedFields) {
+		f.fields.Set(name, value)
+		return nil
+	}
+	return errors.NewElementNotFound(
+		"No input found with name '%s'.", name)
 }
 
 // Submit submits the form.
@@ -121,8 +138,9 @@ func (f *Form) send(buttonName, buttonValue string) error {
 // Serialize converts the form fields into a url.Values type.
 // Returns two url.Value types. The first is the form field values, and the
 // second is the form button values.
-func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
+func serializeForm(sel *goquery.Selection) ([]string, url.Values, url.Values) {
 	input := sel.Find("input,button")
+	var definedfields []string
 	fields := make(url.Values)
 	buttons := make(url.Values)
 
@@ -139,6 +157,7 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
 						buttons.Add(name, "")
 					}
 				} else if typ == "radio" || typ == "checkbox" {
+					definedfields = append(definedfields, name)
 					_, ok := s.Attr("checked")
 					if ok {
 						val, ok := s.Attr("value")
@@ -147,6 +166,7 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
 						}
 					}
 				} else {
+					definedfields = append(definedfields, name)
 					val, ok := s.Attr("value")
 					if ok {
 						fields.Add(name, val)
@@ -163,6 +183,7 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
 		if !ok {
 			return
 		}
+		definedfields = append(definedfields, name)
 		s.Find("option[selected]").Each(func(_ int, so *goquery.Selection) {
 			val, ok := so.Attr("value")
 			if ok {
@@ -177,10 +198,11 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
 		if !ok {
 			return
 		}
+		definedfields = append(definedfields, name)
 		fields.Add(name, s.Text())
 	})
 
-	return fields, buttons
+	return definedfields, fields, buttons
 }
 
 func formAttributes(bow Browsable, s *goquery.Selection) (string, string) {

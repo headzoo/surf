@@ -79,9 +79,15 @@ func TestBrowserForm2(t *testing.T) {
 	f, err := bow.Form("[name='default']")
 	ut.AssertNil(err)
 
+	err = f.Input("age", "54")
+	ut.AssertNil(err)
+	err = f.Input("agee", "54")
+	ut.AssertNotNil(err)
+
 	err = f.Click("submit2")
 	ut.AssertNil(err)
-	ut.AssertContains("age=55", bow.Body())
+	ut.AssertContains("company=none", bow.Body())
+	ut.AssertContains("age=54", bow.Body())
 	ut.AssertContains("gender=male", bow.Body())
 	ut.AssertContains("music=jazz", bow.Body())
 	ut.AssertContains("hobby=Dance", bow.Body())
@@ -96,6 +102,7 @@ var htmlForm2 = `<!doctype html>
 	</head>
 	<body>
 		<form method="post" action="/" name="default">
+			<input type="text" name="company" value="none" />
 			<input type="text" name="age" value="55" />
 			<input type="radio" name="gender" value="male" checked/>
 			<input type="radio" name="gender" value="female" />
