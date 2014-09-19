@@ -252,6 +252,10 @@ bow.SetBookmarksJar(bookmarks)
 ### Credits
 Surf uses the awesome [goquery](https://github.com/PuerkitoBio/goquery) by Martin Angers, and was written using [Intellij](http://www.jetbrains.com/idea/) and the [golang plugin](http://plugins.jetbrains.com/plugin/5047).
 
+Contributing authors:
+
+* [Haruyama Seigo](https://github.com/haruyama)
+
 
 ### Use Cases
 * Interacting with sites that do not have public APIs.

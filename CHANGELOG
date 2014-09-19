@@ -1,3 +1,8 @@
+#### v0.4.9 - 2014/09/18
+* Added Browser.PostMultipart() method.
+* Internal changes when building a request to ensure Content-Length is set.
+
+
 #### v0.4.8 - 2014/08/28
 * surf.NewBrowser() no longer returns an error.
 * Added jar.NewMemoryCookies() method.
