@@ -12,6 +12,8 @@ type Submittable interface {
 	Method() string
 	Action() string
 	Input(name, value string) error
+	InputSlice(name string, values []string) error
+	CheckBox(name string, values []string) error
 	Click(button string) error
 	Submit() error
 	Dom() *goquery.Selection
@@ -63,6 +65,24 @@ func (f *Form) Input(name, value string) error {
 	}
 	return errors.NewElementNotFound(
 		"No input found with name '%s'.", name)
+}
+
+// InputSlice sets the values of a form field.
+func (f *Form) InputSlice(name string, values []string) error {
+	if f.definedFields[name] {
+		f.fields.Del(name)
+		for _, v := range values {
+			f.fields.Add(name, v)
+		}
+		return nil
+	}
+	return errors.NewElementNotFound(
+		"No input found with name '%s'.", name)
+}
+
+// CheckBox sets the values of a form field.
+func (f *Form) CheckBox(name string, values []string) error {
+	return f.InputSlice(name, values)
 }
 
 // Submit submits the form.

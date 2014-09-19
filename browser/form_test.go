@@ -6,6 +6,7 @@ import (
 	"github.com/headzoo/ut"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -84,12 +85,23 @@ func TestBrowserForm2(t *testing.T) {
 	err = f.Input("agee", "54")
 	ut.AssertNotNil(err)
 
+	err = f.CheckBox("music", []string{"rock", "fusion"})
+	ut.AssertNil(err)
+
+	err = f.CheckBox("music2", []string{"rock", "fusion"})
+	ut.AssertNotNil(err)
+
 	err = f.Click("submit2")
+
 	ut.AssertNil(err)
 	ut.AssertContains("company=none", bow.Body())
 	ut.AssertContains("age=54", bow.Body())
 	ut.AssertContains("gender=male", bow.Body())
-	ut.AssertContains("music=jazz", bow.Body())
+
+	ut.AssertFalse(strings.Contains(bow.Body(), "music=jazz"))
+	ut.AssertContains("music=rock", bow.Body())
+	ut.AssertContains("music=fusion", bow.Body())
+
 	ut.AssertContains("hobby=Dance", bow.Body())
 	ut.AssertContains("city=NY", bow.Body())
 	ut.AssertContains("submit2=submitted2", bow.Body())
@@ -102,17 +114,20 @@ var htmlForm2 = `<!doctype html>
 	</head>
 	<body>
 		<form method="post" action="/" name="default">
-			<input type="text" name="company" value="none" />
-			<input type="text" name="age" value="55" />
-			<input type="radio" name="gender" value="male" checked/>
-			<input type="radio" name="gender" value="female" />
-			<input type="checkbox" name="music" value="jazz" checked="checked"/>
+			<input type="text" name="will_be_deleted" value="aaa">
+			<input type="text" name="company" value="none">
+			<input type="text" name="age" value="55">
+			<input type="radio" name="gender" value="male" checked>
+			<input type="radio" name="gender" value="female">
+			<input type="checkbox" name="music" value="jazz" checked="checked">
+			<input type="checkbox" name="music" value="rock">
+			<input type="checkbox" name="music" value="fusion" checked>
 			<select name="city">
 				<option value="NY" selected>
 				<option value="Tokyo">
 			</select>
 			<textarea name="hobby">Dance</textarea>
-			<input type="submit" name="submit2" value="submitted2" />
+			<input type="submit" name="submit2" value="submitted2">
 		</form>
 	</body>
 </html>
