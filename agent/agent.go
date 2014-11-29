@@ -8,9 +8,9 @@ package agent
 
 import (
 	"bytes"
+	"os/exec"
 	"runtime"
 	"strings"
-	"syscall"
 	"text/template"
 )
 
@@ -361,22 +361,21 @@ func createFromDetails(bname, bver, osname, osver string, c []string) string {
 
 // osName returns the name of the OS.
 func osName() string {
-	buf := &syscall.Utsname{}
-	err := syscall.Uname(buf)
+	out, err := exec.Command("uname", "-s").Output()
 	if err != nil {
 		return "Linux"
 	}
-	return charsToString(buf.Sysname)
+	return strings.ToLower(strings.TrimSpace(string(out)))
 }
 
 // osVersion returns the OS version.
 func osVersion() string {
-	buf := &syscall.Utsname{}
-	err := syscall.Uname(buf)
+	out, err := exec.Command("uname", "-r").Output()
 	if err != nil {
 		return "0.0"
 	}
-	return charsToString(buf.Release)
+	return strings.ToLower(strings.TrimSpace(string(out)))
+
 }
 
 // charsToString converts a [65]int8 byte array into a string.
