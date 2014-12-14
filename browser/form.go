@@ -143,17 +143,11 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
 			typ, ok := s.Attr("type")
 			if ok {
 				if typ == "submit" {
-					val, ok := s.Attr("value")
-					if ok {
-						buttons.Add(name, val)
-					} else {
-						buttons.Add(name, "")
-					}
+					val, _ := s.Attr("value")
+					buttons.Add(name, val)
 				} else {
-					val, ok := s.Attr("value")
-					if ok {
-						fields.Add(name, val)
-					}
+					val, _ := s.Attr("value")
+					fields.Add(name, val)
 				}
 			}
 		}
