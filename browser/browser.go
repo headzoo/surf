@@ -428,6 +428,11 @@ func (bow *Browser) AddRequestHeader(name, value string) {
 	bow.headers.Add(name, value)
 }
 
+// DelRequestHeader deletes a header so the browser will not send it with future requests.
+func (bow *Browser) DelRequestHeader(name string) {
+	bow.headers.Del(name)
+}
+
 // ResolveUrl returns an absolute URL for a possibly relative URL.
 func (bow *Browser) ResolveUrl(u *url.URL) *url.URL {
 	return bow.Url().ResolveReference(u)
