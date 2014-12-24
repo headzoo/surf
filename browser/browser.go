@@ -199,7 +199,7 @@ func (bow *Browser) OpenBookmark(name string) error {
 	return bow.Open(url)
 }
 
-// Post requests the given URL using the POST method. The current page will be listed as the referer.
+// Post requests the given URL using the POST method.
 func (bow *Browser) Post(u string, contentType string, body io.Reader) error {
 	ur, err := url.Parse(u)
 	if err != nil {
