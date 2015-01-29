@@ -205,7 +205,7 @@ func (bow *Browser) Post(u string, contentType string, body io.Reader) error {
 	if err != nil {
 		return err
 	}
-	return bow.httpPOST(ur, nil, contentType, body)
+	return bow.httpPOST(ur, bow.Url(), contentType, body)
 }
 
 // PostForm requests the given URL using the POST method with the given data.
@@ -426,6 +426,11 @@ func (bow *Browser) SetHeadersJar(h http.Header) {
 // AddRequestHeader sets a header the browser sends with each request.
 func (bow *Browser) AddRequestHeader(name, value string) {
 	bow.headers.Add(name, value)
+}
+
+// DelRequestHeader deletes a header so the browser will not send it with future requests.
+func (bow *Browser) DelRequestHeader(name string) {
+	bow.headers.Del(name)
 }
 
 // ResolveUrl returns an absolute URL for a possibly relative URL.
