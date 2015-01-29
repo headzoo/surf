@@ -1,3 +1,8 @@
+#### v0.5.0.1 - 2015/01/29
+* Refactoring of documentation.
+* Added .travis.yml for continuous integration.
+
+
 #### v0.5 - 2015/01/29
 * Extended osName and osVersion to work on various systems. [#7](https://github.com/headzoo/surf/pull/7)
 * Added Browser.DelRequestHeader() method. [#11](https://github.com/headzoo/surf/pull/11)
