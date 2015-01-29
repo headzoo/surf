@@ -205,7 +205,7 @@ func (bow *Browser) Post(u string, contentType string, body io.Reader) error {
 	if err != nil {
 		return err
 	}
-	return bow.httpPOST(ur, nil, contentType, body)
+	return bow.httpPOST(ur, bow.Url(), contentType, body)
 }
 
 // PostForm requests the given URL using the POST method with the given data.
