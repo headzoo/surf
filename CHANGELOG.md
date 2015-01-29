@@ -1,3 +1,8 @@
+#### v0.5.1 - 2015/01/29
+* Doc updates.
+* Lint fixes.
+
+
 #### v0.5.0.1 - 2015/01/29
 * Refactoring of documentation.
 * Added .travis.yml for continuous integration.
