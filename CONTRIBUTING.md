@@ -3,10 +3,10 @@ Contributing to Surf
 This document outlines the guidelines for contributing to the project.
 
 
-* [Issues](#installation)
-* [Bug Reports](#general-usage)
-* [Feature Requests](#downloading)
-* [Pull Requests](#user-agents)
+* [Issues](#issues)
+* [Bug Reports](#bug-reports)
+* [Feature Requests](#feature-requests)
+* [Pull Requests](#pull-requests)
 
 
 ## Issues
