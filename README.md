@@ -255,6 +255,9 @@ Surf uses the awesome [goquery](https://github.com/PuerkitoBio/goquery) by Marti
 Contributing authors:
 
 * [Haruyama Seigo](https://github.com/haruyama)
+* [Tatsushi Demachi](https://github.com/tatsushid)
+* [Charl Matthee](https://github.com/charl)
+* [Matt Holt](https://github.com/mholt)
 
 
 ### Use Cases
