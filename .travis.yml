@@ -11,3 +11,7 @@ install:
 script:
  - go test -v ./...
  
+notifications:
+  email:
+    - sean@headzoo.io
+    
