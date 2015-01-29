@@ -1,10 +1,11 @@
 Surf
 ====
-Surf is a Go (golang) library that implements a virtual browser that you can control pragmatically. Just like a real browser you can open pages, follow links, bookmark pages, submit forms, and many other things. Surf is modeled after Andy Lester's Perl module [WWW::Mechanize](http://search.cpan.org/~ether/WWW-Mechanize-1.73/lib/WWW/Mechanize.pm).
 
 [![Build Status](https://travis-ci.org/headzoo/surf.svg?branch=master)](https://travis-ci.org/headzoo/surf)
 [![GoDoc](https://godoc.org/github.com/headzoo/surf?status.svg)](https://godoc.org/github.com/headzoo/surf)
+[![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/headzoo/surf/master/LICENSE.md)
 
+Surf is a Go (golang) library that implements a virtual browser that you can control pragmatically. Just like a real browser you can open pages, follow links, bookmark pages, submit forms, and many other things. Surf is modeled after Andy Lester's Perl module [WWW::Mechanize](http://search.cpan.org/~ether/WWW-Mechanize-1.73/lib/WWW/Mechanize.pm).
 
 [Complete API documentation is available from the GoDoc website.](http://godoc.org/github.com/headzoo/surf)
 
