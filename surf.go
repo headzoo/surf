@@ -11,13 +11,13 @@ var (
 	// DefaultUserAgent is the global user agent value.
 	DefaultUserAgent = agent.Create()
 
-	// DefaultSendRefererAttribute is the global value for the AttributeSendReferer attribute.
+	// DefaultSendReferer is the global value for the AttributeSendReferer attribute.
 	DefaultSendReferer = true
 
-	// DefaultMetaRefreshHandlingAttribute is the global value for the AttributeHandleRefresh attribute.
+	// DefaultMetaRefreshHandling is the global value for the AttributeHandleRefresh attribute.
 	DefaultMetaRefreshHandling = true
 
-	// DefaultFollowRedirectsAttribute is the global value for the AttributeFollowRedirects attribute.
+	// DefaultFollowRedirects is the global value for the AttributeFollowRedirects attribute.
 	DefaultFollowRedirects = true
 )
 

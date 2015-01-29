@@ -3,7 +3,6 @@ package surf
 import (
 	"bytes"
 	"fmt"
-	"github.com/headzoo/surf/browser"
 	"github.com/headzoo/surf/jar"
 	"github.com/headzoo/ut"
 	"net/http"
@@ -22,7 +21,7 @@ func TestGet(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	var bow browser.Browsable = NewBrowser()
+	bow := NewBrowser()
 
 	err := bow.Open(ts.URL + "/page1")
 	ut.AssertNil(err)
