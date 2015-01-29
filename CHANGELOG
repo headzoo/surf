@@ -1,3 +1,9 @@
+#### v0.5 - 2015/01/29
+* Extended osName and osVersion to work on various systems. [#7](https://github.com/headzoo/surf/pull/7)
+* Added Browser.DelRequestHeader() method. [#11](https://github.com/headzoo/surf/pull/11)
+* Setting the Referrer header to the current URL in Browser.Post(). [#10](https://github.com/headzoo/surf/pull/10)
+
+
 #### v0.4.9 - 2014/09/18
 * Added Browser.PostMultipart() method.
 * Internal changes when building a request to ensure Content-Length is set.
