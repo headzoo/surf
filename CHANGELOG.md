@@ -1,3 +1,7 @@
+#### v0.5.2 - 2015/03/06
+* Allow calling Post without first opening a page. [#14](https://github.com/headzoo/surf/issues/14)
+
+
 #### v0.5.1 - 2015/01/29
 * Doc updates.
 * Lint fixes.

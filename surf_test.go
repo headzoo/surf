@@ -41,6 +41,24 @@ func TestGet(t *testing.T) {
 	ut.AssertEquals("Surf Page 1", bow.Title())
 }
 
+func TestPost(t *testing.T) {
+	ut.Run(t)
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		if req.Method == "POST" {
+			w.WriteHeader(200)
+			w.Write([]byte("OK"))
+		} else {
+			w.WriteHeader(500)
+			w.Write([]byte("ERROR"))
+		}
+	}))
+	defer ts.Close()
+	
+	bow := NewBrowser()
+	bow.Post(ts.URL, "application/x-www-form-urlencoded", nil)
+	ut.AssertEquals(200, bow.StatusCode())
+}
+
 func TestDownload(t *testing.T) {
 	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {

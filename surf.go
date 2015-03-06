@@ -25,6 +25,7 @@ var (
 func NewBrowser() *browser.Browser {
 	bow := &browser.Browser{}
 	bow.SetUserAgent(DefaultUserAgent)
+	bow.SetState(&jar.State{})
 	bow.SetCookieJar(jar.NewMemoryCookies())
 	bow.SetBookmarksJar(jar.NewMemoryBookmarks())
 	bow.SetHistoryJar(jar.NewMemoryHistory())

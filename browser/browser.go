@@ -45,6 +45,9 @@ type Browsable interface {
 
 	// SetAttributes is used to set all the browser attributes.
 	SetAttributes(a AttributeMap)
+	
+	// SetState sets the init browser state.
+	SetState(sj *jar.State)
 
 	// SetBookmarksJar sets the bookmarks jar the browser uses.
 	SetBookmarksJar(bj jar.BookmarksJar)
@@ -388,6 +391,11 @@ func (bow *Browser) SiteCookies() []*http.Cookie {
 	return bow.cookies.Cookies(bow.Url())
 }
 
+// SetState sets the browser state.
+func (bow *Browser) SetState(sj *jar.State) {
+	bow.state = sj
+}
+
 // SetCookieJar is used to set the cookie jar the browser uses.
 func (bow *Browser) SetCookieJar(cj http.CookieJar) {
 	bow.cookies = cj
@@ -460,6 +468,9 @@ func (bow *Browser) Download(o io.Writer) (int64, error) {
 
 // Url returns the page URL as a string.
 func (bow *Browser) Url() *url.URL {
+	if bow.state.Request == nil {
+		return nil
+	}
 	return bow.state.Request.URL
 }
 
