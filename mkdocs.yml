@@ -8,7 +8,6 @@ pages:
 - [quick_start.md, User Guide, Quick Start]
 - [settings.md, User Guide, Settings]
 - [user_agents.md, User Guide, User Agents]
-- [downloading.md, User Guide, Downloading Pages]
 - [api/packages/surf.md, Packages, surf]
 - [api/packages/browser.md, Packages, browser]
 - [api/packages/agent.md, Packages, agent]
