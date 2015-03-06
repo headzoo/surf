@@ -10,3 +10,8 @@ pages:
 - [user_agents.md, User Agent Settings]
 - [downloading.md, Downloading Pages]
 - [credits.md, Credits]
+- [api/surf.md, API, surf]
+- [api/browser.md, API, browser]
+- [api/agent.md, API, agent]
+- [api/jar.md, API, jar]
+- [api/util.md, API, util]
