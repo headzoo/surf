@@ -43,4 +43,4 @@ Import the library into your project.
 import "github.com/headzoo/surf"
 ```
 
-The [Quick Start](/quick_start) documentation contains more information.
+The [Quick Start](quick_start) documentation contains more information.

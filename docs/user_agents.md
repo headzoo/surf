@@ -36,4 +36,4 @@ bow.SetUserAgent(agent.Create())
 ```
 
 The agent package has an internal database for many different versions of many different browsers.
-See the [agent package API documentation](/api/packages/agent) for more information.
+See the [agent package API documentation](api/packages/agent) for more information.
