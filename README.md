@@ -2,7 +2,7 @@ Surf
 ====
 
 [![Build Status](https://img.shields.io/travis/headzoo/surf/master.svg?style=flat-square)](https://travis-ci.org/headzoo/surf)
-[![Documentation](https://img.shields.io/badge/documentation-readthedocs-blue.svg?style=flat-square)](http://surf.readthedocs.org/)
+[![Documentation](https://img.shields.io/badge/documentation-readthedocs-blue.svg?style=flat-square)](http://www.gosurf.io)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/headzoo/surf/master/LICENSE.md)
 
 Surf is a Go (golang) library that implements a virtual browser that you can control pragmatically. Just like a
@@ -47,7 +47,7 @@ func main() {
 
 ### Documentation
 
-Complete documentation is available on [Read the Docs](http://surf.readthedocs.org/).
+Complete documentation is available on [Read the Docs](http://www.gosurf.io).
 
 
 ### Credits
