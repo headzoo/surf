@@ -5,7 +5,7 @@ site_author: Sean Hickey
 theme: readthedocs
 pages:
 - [index.md, Home]
-- [overview.md, User Guide, Quick Start]
+- [quick_start.md, User Guide, Quick Start]
 - [settings.md, User Guide, Settings]
 - [user_agents.md, User Guide, User Agents]
 - [downloading.md, User Guide, Downloading Pages]
