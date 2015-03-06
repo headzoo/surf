@@ -5,7 +5,8 @@ site_author: Sean Hickey
 theme: readthedocs
 pages:
 - [index.md, Home]
-- [downloading.md, Downloading Pages]
+- [overview.md, Overview]
 - [settings.md, Settings Overview]
 - [user_agents.md, User Agent Settings]
+- [downloading.md, Downloading Pages]
 - [credits.md, Credits]
