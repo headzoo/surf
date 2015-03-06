@@ -52,32 +52,116 @@
                 <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
     
-        <li class="main active"><a href="#welcome-to-mkdocs">Welcome to MkDocs</a></li>
+        <li class="main active"><a href="#installation">Installation</a></li>
         
-            <li><a href="#commands">Commands</a></li>
-        
-            <li><a href="#project-layout">Project layout</a></li>
+    
+        <li class="main "><a href="#general-usage">General Usage</a></li>
         
     
     </ul>
 </div></div>
                 <div class="col-md-9" role="main">
 
-<h1 id="welcome-to-mkdocs">Welcome to MkDocs</h1>
-<p>For full documentation visit <a href="http://mkdocs.org">mkdocs.org</a>.</p>
-<h2 id="commands">Commands</h2>
-<ul>
-<li><code>mkdocs new [dir-name]</code> - Create a new project.</li>
-<li><code>mkdocs serve</code> - Start the live-reloading docs server.</li>
-<li><code>mkdocs build</code> - Build the documentation site.</li>
-<li><code>mkdocs help</code> - Print this help message.</li>
-</ul>
-<h2 id="project-layout">Project layout</h2>
-<pre><code>mkdocs.yml    # The configuration file.
-docs/
-    index.md  # The documentation homepage.
-    ...       # Other markdown pages, images and other files.
+<p>Surf is a Go (golang) library that implements a virtual browser that you control pragmatically. Just like a real
+browser you can open pages, follow links, bookmark pages, submit forms, and many other things. </p>
+<pre><code class="go">package main
+
+import (
+    &quot;github.com/headzoo/surf&quot;
+    &quot;fmt&quot;
+)
+
+func main() {
+    bow := surf.NewBrowser()
+    err := bow.Open(&quot;http://golang.org&quot;)
+    if err != nil {
+        panic(err)
+    }
+
+    // Outputs: &quot;The Go Programming Language&quot;
+    fmt.Println(bow.Title())
+}
 </code></pre>
+
+<h3 id="installation">Installation</h3>
+<p>Download the library using go.</p>
+<pre><code class="sh">$ go get github.com/headzoo/surf
+</code></pre>
+
+<p>You'll need the ut library if you want to run the unit tests.</p>
+<pre><code class="bash">$ go get github.com/headzoo/ut
+</code></pre>
+
+<p>Import the library into your project.</p>
+<pre><code class="go">import &quot;github.com/headzoo/surf&quot;
+</code></pre>
+
+<h3 id="general-usage">General Usage</h3>
+<pre><code class="go">// Start by creating a new bow.
+bow := surf.NewBrowser()
+
+// Add additional request headers.
+bow.AddRequestHeader(&quot;Accept&quot;, &quot;text/html&quot;)
+bow.AddRequestHeader(&quot;Accept-Charset&quot;, &quot;utf8&quot;)
+
+// Requesting a page.
+err := bow.Open(&quot;http://www.reddit.com&quot;)
+if err != nil { panic(err) }
+fmt.Println(bow.Title())
+// Outputs: &quot;reddit: the front page of the internet&quot;
+
+// Follow a link on the page where the link text is &quot;new&quot;. Surf uses the selector
+// engine from goquery, which has a similar syntax to jQuery.
+err = bow.Click(&quot;a:contains('new')&quot;)
+if err != nil { panic(err) }
+fmt.Println(bow.Title())
+// Outputs: &quot;newest submissions: reddit.com&quot;
+
+// Bookmark the page so we can come back to it later.
+err = bow.Bookmark(&quot;reddit-new&quot;)
+if err != nil { panic(err) }
+
+// Login to the site via their login form. Again, we're using the goquery selector
+// syntax.
+fm, err := bow.Form(&quot;form.login-form&quot;)
+if err != nil { panic(err) }
+fm.Input(&quot;user&quot;, &quot;JoeRedditor&quot;)
+fm.Input(&quot;passwd&quot;, &quot;d234rlkasd&quot;)
+err = fm.Submit()
+if err != nil { panic(err) }
+
+// Now that we're logged in, follow the link to our profile.
+err = bow.Click(&quot;a:contains('JoeRedditor')&quot;)
+if err != nil { panic(err) }
+fmt.Println(bow.Title())
+// Outputs: &quot;overview for JoeRedditor&quot;
+
+// The underlying goquery.Document is exposed via the Dom() method, which
+// can be used to parse values from the body. See the goquery documentation
+// for more information on selecting page elements.
+// Load our previously saved bookmark, and print the titles for each submission
+// on the reddit home page.
+err = bow.GetBookmark(&quot;reddit-new&quot;)
+if err != nil { panic(err) }
+bow.Dom().Find(&quot;a.title&quot;).Each(func(_ int, s *goquery.Selection) {
+    fmt.Println(s.Text())
+})
+
+// The most common Dom() methods can be called directly from the browser.
+// The need to find elements on the page is common enough that the above could
+// be written like this.
+bow.Find(&quot;a.title&quot;).Each(func(_ int, s *goquery.Selection) {
+    fmt.Println(s.Text())
+})
+
+// Last, but not least, write the document to a file using the Download()
+// method. The Download() method accepts any io.Writer.
+file, err := os.Create(&quot;reddit.html&quot;)
+if err != nil { panic(err) }
+defer file.Close()
+bow.Download(file)
+</code></pre>
+
 </div>
             
         </div>
