@@ -10,7 +10,7 @@ browser you can open pages, follow links, bookmark pages, submit forms, and many
 
 
 ### Installation
-Download the library using go.
+Download Surf using go.
 
 ```sh
 $ go get github.com/headzoo/surf
