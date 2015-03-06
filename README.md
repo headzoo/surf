@@ -10,6 +10,13 @@ Surf
 Surf is a Go (golang) library that implements a virtual browser that you can control pragmatically. Just like a
 real browser you can open pages, follow links, bookmark pages, submit forms, and many other things.
 
+* [Installation](#installation)
+* [General Usage](#quick-start)
+* [Documentation](#documentation)
+* [Credits](#credits)
+* [Contributing](#contributing)
+* [License](#license)
+
 
 ### Installation
 Download the library using go.  
@@ -40,6 +47,8 @@ func main() {
 }
 ```
 
+### Documentation
+
 Complete documentation is available on [Read the Docs](http://surf.readthedocs.org/)
 
 
@@ -60,7 +69,12 @@ Contributing authors:
 
 
 ### Contributing
-See [CONTRIBUTING.md] for more information on contributing to the project.
+Issues and pull requests are _always_ welcome. Code changes are made to the
+[`dev`](https://github.com/headzoo/surf/tree/dev) branch. Once a milestone has been reached the branch will
+be merged in with `master`, and a new version tag created. **Do not** make your changes against the
+`master` branch, or they will _may_ be ignored.
+
+See [CONTRIBUTING.md](https://raw.githubusercontent.com/headzoo/surf/master/CONTRIBUTING.md) for more information.
 
 
 ### License
