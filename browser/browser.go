@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"strings"
 	"time"
+	"io/ioutil"
 )
 
 // Attribute represents a Browser capability.
@@ -171,6 +172,9 @@ type Browser struct {
 
 	// refresh is a timer used to meta refresh pages.
 	refresh *time.Timer
+	
+	// body of the current page.
+	body []byte
 }
 
 // Open requests the given URL using the GET method.
@@ -458,12 +462,8 @@ func (bow *Browser) ResolveStringUrl(u string) (string, error) {
 
 // Download writes the contents of the document to the given writer.
 func (bow *Browser) Download(o io.Writer) (int64, error) {
-	h, err := bow.state.Dom.Html()
-	if err != nil {
-		return 0, err
-	}
-	l, err := io.WriteString(o, h)
-	return int64(l), err
+	buff := bytes.NewBuffer(bow.body)
+	return io.Copy(o, buff)
 }
 
 // Url returns the page URL as a string.
@@ -562,10 +562,18 @@ func (bow *Browser) httpRequest(req *http.Request) error {
 	if err != nil {
 		return err
 	}
-	dom, err := goquery.NewDocumentFromResponse(resp)
+	
+	bow.body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
+	
+	buff := bytes.NewBuffer(bow.body)
+	dom, err := goquery.NewDocumentFromReader(buff)
+	if err != nil {
+		return err
+	}
+	
 	bow.history.Push(bow.state)
 	bow.state = jar.NewHistoryState(req, resp, dom)
 	bow.postSend()
@@ -582,7 +590,7 @@ func (bow *Browser) preSend() {
 
 // postSend sets browser state after sending a request.
 func (bow *Browser) postSend() {
-	if bow.attributes[MetaRefreshHandling] {
+	if isContentTypeHtml(bow.state.Response) && bow.attributes[MetaRefreshHandling] {
 		sel := bow.Find("meta[http-equiv='refresh']")
 		if sel.Length() > 0 {
 			attr, ok := sel.Attr("content")
@@ -631,4 +639,13 @@ func (bow *Browser) attrOrDefault(name, def string, sel *goquery.Selection) stri
 		return a
 	}
 	return def
+}
+
+// isContentTypeHtml returns true when the given response sent the "text/html" content type.
+func isContentTypeHtml(res *http.Response) bool {
+	if res != nil {
+		ct := res.Header.Get("Content-Type")
+		return ct == "" || strings.Contains(ct, "text/html")
+	}
+	return false
 }

@@ -1,5 +1,6 @@
 #### v0.5.2 - 2015/03/06
 * Allow calling Post without first opening a page. [#14](https://github.com/headzoo/surf/issues/14)
+* Browser.Download() writes the raw body instead of the parsed DOM. [#13](https://github.com/headzoo/surf/issues/13)
 
 
 #### v0.5.1 - 2015/01/29

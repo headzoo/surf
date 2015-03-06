@@ -76,6 +76,22 @@ func TestDownload(t *testing.T) {
 	ut.AssertEquals(int(l), buff.Len())
 }
 
+func TestDownloadContentType(t *testing.T) {
+	ut.Run(t)
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		b := bytes.NewBufferString("Hello")
+		fmt.Fprint(w, b)
+	}))
+	defer ts.Close()
+
+	bow := NewBrowser()
+	bow.Open(ts.URL)
+
+	buff := &bytes.Buffer{}
+	bow.Download(buff)
+	ut.AssertEquals("Hello", buff.String())
+}
+
 func TestUserAgent(t *testing.T) {
 	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
