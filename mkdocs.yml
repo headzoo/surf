@@ -1,1 +1,8 @@
 site_name: Surf
+theme: readthedocs
+pages:
+- [index.md, Home]
+- [downloading.md, Downloading Pages]
+- [settings.md, Settings Overview]
+- [user_agents.md, User Agent Settings]
+- [credits.md, Credits]
