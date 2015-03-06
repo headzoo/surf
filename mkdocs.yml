@@ -14,4 +14,4 @@ pages:
 - [api/packages/agent.md, Packages, agent]
 - [api/packages/jar.md, Packages, jar]
 - [api/packages/util.md, Packages, util]
-- [credits.md, Credits]
+- [credits.md, About, Credits]
