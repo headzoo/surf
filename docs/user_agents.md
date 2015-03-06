@@ -1,6 +1,6 @@
 # User Agents
-
-The agent package contains a number of methods for creating user agent strings for popular browsers and crawlers, and for generating your own user agents.
+The agent package contains a number of methods for creating user agent strings for popular browsers
+and crawlers, and for generating your own user agents.
 
 ```go
 bow := surf.NewBrowser()
@@ -34,4 +34,6 @@ agent.OSVersion = "6.1"
 agent.Comments = []string{"WOW64", "x64"}
 bow.SetUserAgent(agent.Create())
 ```
-The agent package has an internal database for many different versions of many different browsers. See the [agent package API documentation](http://godoc.org/github.com/headzoo/surf/agent) for more information.
+
+The agent package has an internal database for many different versions of many different browsers.
+See the [agent package API documentation](/api/packages/agent) for more information.
