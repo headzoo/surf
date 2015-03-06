@@ -4,7 +4,7 @@ Surf is a Go (golang) library that implements a virtual browser that you control
 browser you can open pages, follow links, bookmark pages, submit forms, and many other things. 
 
 [![Build Status](https://img.shields.io/travis/headzoo/surf/master.svg?style=flat-square)](https://travis-ci.org/headzoo/surf)
-[![Github](https://img.shields.io/badge/source-github-blue.svg)](https://github.com/headzoo/surf/)
+[![Github](https://img.shields.io/badge/source-github-blue.svg?style=flat-square)](https://github.com/headzoo/surf/)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/headzoo/surf/master/LICENSE.md)
 [![GitHub Stars](https://img.shields.io/github/stars/headzoo/surf.svg?style=flat-square)](https://github.com/headzoo/surf/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/headzoo/surf.svg?style=flat-square)](https://github.com/headzoo/surf/network)
