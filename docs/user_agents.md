@@ -1,4 +1,4 @@
-# User Agent Settings
+# User Agents
 
 The agent package contains a number of methods for creating user agent strings for popular browsers and crawlers, and for generating your own user agents.
 
