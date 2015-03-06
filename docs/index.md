@@ -9,6 +9,22 @@ browser you can open pages, follow links, bookmark pages, submit forms, and many
 [![GitHub Forks](https://img.shields.io/github/forks/headzoo/surf.svg?style=flat-square)](https://github.com/headzoo/surf/network)
 
 
+### Installation
+Download the library using go.
+
+```sh
+$ go get github.com/headzoo/surf
+```
+
+Import the library into your project.
+
+```go
+import "github.com/headzoo/surf"
+```
+
+
+### Quick Start
+
 ```go
 package main
 
@@ -29,18 +45,4 @@ func main() {
 }
 ```
 
-
-### Installation
-Download the library using go.
-
-```sh
-$ go get github.com/headzoo/surf
-```
-
-Import the library into your project.
-
-```go
-import "github.com/headzoo/surf"
-```
-
-The [Quick Start](quick_start) documentation contains more information.
+Read the [Overview](overview) documentation for more information.
