@@ -1,3 +1,5 @@
+# User Agent Settings
+
 The agent package contains a number of methods for creating user agent strings for popular browsers and crawlers, and for generating your own user agents.
 
 ```go

@@ -1,3 +1,5 @@
+# Settings
+
 ```go
 bow := surf.NewBrowser()
 
