@@ -1,5 +1,4 @@
-# Settings
-
+# User Agent
 Set the user agent this browser instance will send with each request.
 ```go
 bow := surf.NewBrowser()
@@ -11,6 +10,7 @@ Or set the user agent globally so every new browser you create uses it.
 browser.DefaultUserAgent = "SuperCrawler/1.0"
 ```
 
+# Attributes
 Attributes control how the browser behaves. Use the SetAttribute() method
 to set attributes one at a time.
 ```go
@@ -38,6 +38,7 @@ surf.DefaultMetaRefreshHandling = false
 surf.DefaultFollowRedirects = false
 ```
 
+# Storage Jars
 Override the build in cookie jar. Surf uses cookiejar.Jar by default.
 ```go
 bow := surf.NewBrowser()
