@@ -48,7 +48,7 @@ func main() {
 
 ### Documentation
 
-Complete documentation is available on [Read the Docs](http://surf.readthedocs.org/)
+Complete documentation is available on [Read the Docs](http://surf.readthedocs.org/).
 
 
 ### Credits
