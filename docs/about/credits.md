@@ -1,5 +1,10 @@
 # Credits
-Surf uses the awesome [goquery](https://github.com/PuerkitoBio/goquery) by Martin Angers, and was written using [Intellij](http://www.jetbrains.com/idea/) and the [golang plugin](http://plugins.jetbrains.com/plugin/5047).
+Go was started by [Sean Hickey](https://github.com/headzoo) (headzoo) to learn more about the Go programming language.
+The idea to create Surf was born in [this Reddit thread](http://www.reddit.com/r/golang/comments/2efw1q/mechanize_in_go/cjz4lze).
+
+Surf uses the awesome [goquery](https://github.com/PuerkitoBio/goquery) by Martin Angers, and
+was written using [Intellij](http://www.jetbrains.com/idea/) and
+the [golang plugin](http://plugins.jetbrains.com/plugin/5047).
 
 Contributing authors:
 
