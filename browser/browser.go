@@ -2,16 +2,17 @@ package browser
 
 import (
 	"bytes"
-	"github.com/PuerkitoBio/goquery"
-	"github.com/headzoo/surf/errors"
-	"github.com/headzoo/surf/jar"
 	"io"
+	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
-	"io/ioutil"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/headzoo/surf/errors"
+	"github.com/headzoo/surf/jar"
 )
 
 // Attribute represents a Browser capability.
@@ -46,7 +47,7 @@ type Browsable interface {
 
 	// SetAttributes is used to set all the browser attributes.
 	SetAttributes(a AttributeMap)
-	
+
 	// SetState sets the init browser state.
 	SetState(sj *jar.State)
 
@@ -172,7 +173,7 @@ type Browser struct {
 
 	// refresh is a timer used to meta refresh pages.
 	refresh *time.Timer
-	
+
 	// body of the current page.
 	body []byte
 }
@@ -468,10 +469,16 @@ func (bow *Browser) Download(o io.Writer) (int64, error) {
 
 // Url returns the page URL as a string.
 func (bow *Browser) Url() *url.URL {
-	if bow.state.Request == nil {
+	if bow.state.Response == nil {
+		// there is a possibility that we issued a request, but for
+		// whatever reason the request failed.
+		if bow.state.Request != nil {
+			return bow.state.Request.URL
+		}
 		return nil
 	}
-	return bow.state.Request.URL
+
+	return bow.state.Response.Request.URL
 }
 
 // StatusCode returns the response status code.
@@ -562,18 +569,18 @@ func (bow *Browser) httpRequest(req *http.Request) error {
 	if err != nil {
 		return err
 	}
-	
+
 	bow.body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
-	
+
 	buff := bytes.NewBuffer(bow.body)
 	dom, err := goquery.NewDocumentFromReader(buff)
 	if err != nil {
 		return err
 	}
-	
+
 	bow.history.Push(bow.state)
 	bow.state = jar.NewHistoryState(req, resp, dom)
 	bow.postSend()
