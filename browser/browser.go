@@ -2,16 +2,20 @@ package browser
 
 import (
 	"bytes"
+	"fmt"
+	"io"
+	"io/ioutil"
+	"mime/multipart"
+	"net/http"
+	"net/http/httputil"
+	"net/url"
+	"os"
+	"strings"
+	"time"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/headzoo/surf/errors"
 	"github.com/headzoo/surf/jar"
-	"io"
-	"mime/multipart"
-	"net/http"
-	"net/url"
-	"strings"
-	"time"
-	"io/ioutil"
 )
 
 // Attribute represents a Browser capability.
@@ -526,6 +530,11 @@ func (bow *Browser) buildRequest(method, url string, ref *url.URL, body io.Reade
 	req.Header.Add("User-Agent", bow.userAgent)
 	if bow.attributes[SendReferer] && ref != nil {
 		req.Header.Add("Referer", ref.String())
+	}
+
+	if os.Getenv("DEBUG_HEADERS") != "" {
+		d, _ := httputil.DumpRequest(req, false)
+		fmt.Fprintln(os.Stderr, "===== [DUMP] =====\n", string(d))
 	}
 
 	return req, nil
