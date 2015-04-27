@@ -437,7 +437,7 @@ func (bow *Browser) SetHeadersJar(h http.Header) {
 
 // AddRequestHeader sets a header the browser sends with each request.
 func (bow *Browser) AddRequestHeader(name, value string) {
-	bow.headers.Add(name, value)
+	bow.headers.Set(name, value)
 }
 
 // DelRequestHeader deletes a header so the browser will not send it with future requests.
@@ -523,9 +523,9 @@ func (bow *Browser) buildRequest(method, url string, ref *url.URL, body io.Reade
 		return nil, err
 	}
 	req.Header = bow.headers
-	req.Header.Add("User-Agent", bow.userAgent)
+	req.Header.Set("User-Agent", bow.userAgent)
 	if bow.attributes[SendReferer] && ref != nil {
-		req.Header.Add("Referer", ref.String())
+		req.Header.Set("Referer", ref.String())
 	}
 
 	return req, nil
