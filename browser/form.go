@@ -130,7 +130,7 @@ func (f *Form) send(buttonName, buttonValue string) error {
 // Returns two url.Value types. The first is the form field values, and the
 // second is the form button values.
 func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
-	input := sel.Find("input,button")
+	input := sel.Find("input,button,textarea")
 	if input.Length() == 0 {
 		return url.Values{}, url.Values{}
 	}
@@ -141,7 +141,7 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
 		name, ok := s.Attr("name")
 		if ok {
 			typ, ok := s.Attr("type")
-			if ok {
+			if ok || s.Is("textarea") {
 				if typ == "submit" {
 					val, ok := s.Attr("value")
 					if ok {
