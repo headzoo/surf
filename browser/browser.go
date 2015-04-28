@@ -532,7 +532,7 @@ func (bow *Browser) buildRequest(method, url string, ref *url.URL, body io.Reade
 		req.Header.Add("Referer", ref.String())
 	}
 
-	if os.Getenv("DEBUG_HEADERS") != "" {
+	if os.Getenv("SURF_DEBUG_HEADERS") != "" {
 		d, _ := httputil.DumpRequest(req, false)
 		fmt.Fprintln(os.Stderr, "===== [DUMP] =====\n", string(d))
 	}
