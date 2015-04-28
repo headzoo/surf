@@ -26,6 +26,8 @@ func newDefaultTestBrowser() *Browser {
 	return bow
 }
 
+// TestRedirect
+// See: https://github.com/headzoo/surf/pull/18
 func TestRedirect(t *testing.T) {
 	ts0 := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
