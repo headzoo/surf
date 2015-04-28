@@ -66,6 +66,7 @@ Contributing authors:
 * [Matt Holt](https://github.com/mholt)
 * [lalyos](https://github.com/lalyos)
 * [lestrrat](https://github.com/lestrrat)
+* [Carl Henrik Lunde](https://github.com/chlunde)
 
 
 [![Twitter](https://img.shields.io/badge/follow-%40WebSeanHickey-orange.svg?style=flat-square)](https://twitter.com/WebSeanHickey)
