@@ -1,3 +1,10 @@
+#### v0.5.3 - 2015/04/28
+* Added SURF_DEBUG_HEADERS environment variable. [#20](https://github.com/headzoo/surf/pull/20)
+* Fixed bug where request headers are being added instead of set. [#19](https://github.com/headzoo/surf/pull/19)
+* Fix for redirects. [#18](https://github.com/headzoo/surf/pull/18)
+* Added support for textareas. [#16](https://github.com/headzoo/surf/pull/16)
+
+
 #### v0.5.2 - 2015/03/06
 * Allow calling Post without first opening a page. [#14](https://github.com/headzoo/surf/issues/14)
 * Browser.Download() writes the raw body instead of the parsed DOM. [#13](https://github.com/headzoo/surf/issues/13)
