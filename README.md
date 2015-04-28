@@ -64,6 +64,8 @@ Contributing authors:
 * [Tatsushi Demachi](https://github.com/tatsushid)
 * [Charl Matthee](https://github.com/charl)
 * [Matt Holt](https://github.com/mholt)
+* [lalyos](https://github.com/lalyos)
+
 
 [![Twitter](https://img.shields.io/badge/follow-%40WebSeanHickey-orange.svg?style=flat-square)](https://twitter.com/WebSeanHickey)
 
