@@ -13,6 +13,8 @@ Contributing authors:
 * [Charl Matthee](https://github.com/charl)
 * [Matt Holt](https://github.com/mholt)
 * [lalyos](https://github.com/lalyos)
+* [lestrrat](https://github.com/lestrrat)
+* [Carl Henrik Lunde](https://github.com/chlunde)
 
 
 <a href="https://twitter.com/WebSeanHickey" class="twitter-follow-button" data-show-count="false">Follow @WebSeanHickey</a>
