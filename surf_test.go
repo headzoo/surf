@@ -123,6 +123,23 @@ func TestHeaders(t *testing.T) {
 	ut.AssertContains("Testing-2", bow.Body())
 }
 
+// TestHeadersSet
+// See: https://github.com/headzoo/surf/pull/19
+func TestHeadersBug19(t *testing.T) {
+	ut.Run(t)
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		fmt.Fprint(w, req.Header.Get("X-Testing"))
+	}))
+	defer ts.Close()
+
+	bow := NewBrowser()
+	bow.AddRequestHeader("X-Testing", "Testing-1")
+	bow.AddRequestHeader("X-Testing", "Testing-2")
+	err := bow.Open(ts.URL)
+	ut.AssertNil(err)
+	ut.AssertContains("Testing-2", bow.Body())
+}
+
 func TestBookmarks(t *testing.T) {
 	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
