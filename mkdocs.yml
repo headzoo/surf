@@ -17,3 +17,4 @@ pages:
 - ["api/packages/jar.md", "Packages", "jar"]
 - ["api/packages/util.md", "Packages", "util"]
 - ["about/credits.md", "About", "Credits"]
+- ["about/license.md", "About", "License"]
