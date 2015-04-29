@@ -5,8 +5,11 @@ Surf
 [![Documentation](https://img.shields.io/badge/documentation-readthedocs-blue.svg?style=flat-square)](http://www.gosurf.io)
 [![MIT License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/headzoo/surf/master/LICENSE.md)
 
-Surf is a Go (golang) library that implements a virtual browser that you can control pragmatically. Just like a
-real browser you can open pages, follow links, bookmark pages, submit forms, and many other things.
+Surf is a Go (golang) library that implements a virtual web browser that you control pragmatically.
+Surf isn't just another Go solution for downloading content from the web. Surf is designed to behave
+like web browser, and includes: cookie management, history, bookmarking, user agent spoofing
+(with a nifty user agent builder), submitting forms, DOM selection and traversal via jQuery style
+CSS selectors, scraping assets like images, stylesheets, and other features.
 
 * [Installation](#installation)
 * [General Usage](#quick-start)
