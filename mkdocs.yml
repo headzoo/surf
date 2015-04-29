@@ -4,6 +4,7 @@ site_author: "Sean Hickey"
 copyright: "2015, Sean Hickey"
 markdown_extensions: [fenced_code]
 theme: "readthedocs"
+
 pages:
 - ["index.md", "Home"]
 - ["overview.md", "User Guide", "Overview"]
