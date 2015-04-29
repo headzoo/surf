@@ -73,7 +73,7 @@ func TestRedirect(t *testing.T) {
 		t.Errorf("Expected redirect to have happened")
 		return
 	}
-	// If we got here, then we know that redirects are correcly working
+	// If we got here, then we know that redirects are correctly working
 
 	// Alright, now let's see if the browser does the same thing
 	b := newDefaultTestBrowser()

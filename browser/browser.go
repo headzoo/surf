@@ -66,6 +66,9 @@ type Browsable interface {
 	// SetHeadersJar sets the headers the browser sends with each request.
 	SetHeadersJar(h http.Header)
 
+	// SetTransport sets the http library transport mechanism for each request.
+	SetTransport(t *http.Transport)
+
 	// AddRequestHeader adds a header the browser sends with each request.
 	AddRequestHeader(name, value string)
 
@@ -167,6 +170,10 @@ type Browser struct {
 
 	// history stores the visited pages.
 	history jar.History
+
+	// transport specifies the mechanism by which individual HTTP
+	// requests are made.
+	transport *http.Transport
 
 	// headers are additional headers to send with each request.
 	headers http.Header
@@ -439,6 +446,11 @@ func (bow *Browser) SetHeadersJar(h http.Header) {
 	bow.headers = h
 }
 
+// SetTransport sets the http library transport mechanism for each request.
+func (bow *Browser) SetTransport(t *http.Transport) {
+	bow.transport = t
+}
+
 // AddRequestHeader sets a header the browser sends with each request.
 func (bow *Browser) AddRequestHeader(name, value string) {
 	bow.headers.Set(name, value)
@@ -522,6 +534,10 @@ func (bow *Browser) buildClient() *http.Client {
 	client := &http.Client{}
 	client.Jar = bow.cookies
 	client.CheckRedirect = bow.shouldRedirect
+	if bow.transport != nil {
+		client.Transport = bow.transport
+	}
+
 	return client
 }
 

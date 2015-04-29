@@ -1,3 +1,7 @@
+#### v0.5.4 - 2015/04/29
+* Added Browser.SetTransport() method. [#15](https://github.com/headzoo/surf/issues/15)
+
+
 #### v0.5.3 - 2015/04/28
 * Added SURF_DEBUG_HEADERS environment variable. [#20](https://github.com/headzoo/surf/pull/20)
 * Fixed bug where request headers are being added instead of set. [#19](https://github.com/headzoo/surf/pull/19)
