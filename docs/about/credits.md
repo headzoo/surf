@@ -1,5 +1,5 @@
 # Credits
-Go was started by [Sean Hickey](https://github.com/headzoo) (headzoo) to learn more about the Go programming language.
+Surf was started by [Sean Hickey](https://github.com/headzoo) (headzoo) to learn more about the Go programming language.
 The idea to create Surf was born in [this Reddit thread](http://www.reddit.com/r/golang/comments/2efw1q/mechanize_in_go/cjz4lze).
 
 <a href="https://twitter.com/WebSeanHickey" class="twitter-follow-button" data-show-count="false">Follow @WebSeanHickey</a>
