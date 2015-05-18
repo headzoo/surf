@@ -74,6 +74,9 @@ type Browsable interface {
 
 	// Open requests the given URL using the GET method.
 	Open(url string) error
+	
+	// Open requests the given URL using the HEAD method.
+	Head(url string) error
 
 	// OpenForm appends the data values to the given URL and sends a GET request.
 	OpenForm(url string, data url.Values) error
@@ -195,6 +198,15 @@ func (bow *Browser) Open(u string) error {
 		return err
 	}
 	return bow.httpGET(ur, nil)
+}
+
+// Open requests the given URL using the HEAD method.
+func (bow *Browser) Head(u string) error {
+	ur, err := url.Parse(u)
+	if err != nil {
+		return err
+	}
+	return bow.httpHEAD(ur, nil)
 }
 
 // OpenForm appends the data values to the given URL and sends a GET request.
@@ -567,6 +579,17 @@ func (bow *Browser) buildRequest(method, url string, ref *url.URL, body io.Reade
 // be set to ref.
 func (bow *Browser) httpGET(u *url.URL, ref *url.URL) error {
 	req, err := bow.buildRequest("GET", u.String(), ref, nil)
+	if err != nil {
+		return err
+	}
+	return bow.httpRequest(req)
+}
+
+// httpHEAD makes an HTTP HEAD request for the given URL.
+// When via is not nil, and AttributeSendReferer is true, the Referer header will
+// be set to ref.
+func (bow *Browser) httpHEAD(u *url.URL, ref *url.URL) error {
+	req, err := bow.buildRequest("HEAD", u.String(), ref, nil)
 	if err != nil {
 		return err
 	}
