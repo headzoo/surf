@@ -89,6 +89,7 @@ fmt.Println(bow.Title())
 The underlying document is exposed via the Dom() method, which can be used to parse values from the
 body. In this example we print the "title" attribute of each link on the page by finding each element
 matching the selector `a.title`.
+
 ```go
 bow := surf.NewBrowser()
 bow.Open("http://reddit.com")
