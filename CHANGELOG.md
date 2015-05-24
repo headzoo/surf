@@ -1,3 +1,7 @@
+#### v0.5.5 - 2014/05/24
+* Added Browser.Head() method. [#24](https://github.com/headzoo/surf/pull/24)
+
+
 #### v0.5.4 - 2015/04/29
 * Added Browser.SetTransport() method. [#15](https://github.com/headzoo/surf/issues/15)
 
