@@ -74,7 +74,7 @@ type Browsable interface {
 
 	// Open requests the given URL using the GET method.
 	Open(url string) error
-	
+
 	// Open requests the given URL using the HEAD method.
 	Head(url string) error
 
@@ -560,7 +560,13 @@ func (bow *Browser) buildRequest(method, url string, ref *url.URL, body io.Reade
 	if err != nil {
 		return nil, err
 	}
+
 	req.Header = bow.headers
+
+	if host := req.Header.Get("Host"); host != "" {
+		req.Host = host
+	}
+
 	req.Header.Set("User-Agent", bow.userAgent)
 	if bow.attributes[SendReferer] && ref != nil {
 		req.Header.Set("Referer", ref.String())
