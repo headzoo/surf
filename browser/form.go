@@ -140,23 +140,13 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
 	input.Each(func(_ int, s *goquery.Selection) {
 		name, ok := s.Attr("name")
 		if ok {
-			typ, ok := s.Attr("type")
-			if ok || s.Is("textarea") {
-				if typ == "submit" {
-					val, ok := s.Attr("value")
-					if ok {
-						buttons.Add(name, val)
-					} else {
-						buttons.Add(name, "")
-					}
-				} else {
-					val, ok := s.Attr("value")
-					if !ok {
-						val = ""
-					}
-					fields.Add(name, val)
-				}
+			val, _ := s.Attr("value")
+			if t, _ := s.Attr("type"); t == "submit" {
+				buttons.Add(name, val)
+			} else {
+				fields.Add(name, val)
 			}
+
 		}
 	})
 
