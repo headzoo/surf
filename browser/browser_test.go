@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/headzoo/surf/agent"
 	"github.com/headzoo/surf/jar"
@@ -86,5 +87,55 @@ func TestRedirect(t *testing.T) {
 	if b.Url().String() != ts0.URL {
 		t.Errorf("Error: Redirects are not being recorded?")
 		return
+	}
+}
+
+// TestCookieHeader ensures that headers are not shared/merged across
+// requests.
+func TestCookieHeader(t *testing.T) {
+	calls := 0
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		calls++
+
+		cookie, err := r.Cookie("c")
+		if err == http.ErrNoCookie {
+			err = nil
+		}
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		switch r.URL.Path {
+		case "/cookie":
+			http.SetCookie(w, &http.Cookie{
+				Name: "c", Value: "v",
+				Expires: time.Now().Add(time.Hour),
+				Path:    "/cookie",
+			})
+			if r.URL.Query().Get("check") != "" && cookie == nil {
+				t.Errorf("got no cookie")
+			}
+
+		case "/":
+			if cookie != nil {
+				t.Errorf("got cookie %v, want no cookie", cookie)
+			}
+		}
+	}))
+	defer ts.Close()
+
+	b := newDefaultTestBrowser()
+	if err := b.Open(ts.URL + "/cookie"); err != nil {
+		t.Fatal(err)
+	}
+	if err := b.Open(ts.URL + "/cookie?check=1"); err != nil {
+		t.Fatal(err)
+	}
+	if err := b.Open(ts.URL + "/"); err != nil {
+		t.Fatal(err)
+	}
+
+	if want := 3; calls != want {
+		t.Errorf("got %d calls, want %d", calls, want)
 	}
 }
