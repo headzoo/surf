@@ -616,6 +616,7 @@ func (bow *Browser) httpRequest(req *http.Request) error {
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
 	bow.body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
