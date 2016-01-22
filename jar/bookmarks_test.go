@@ -1,7 +1,7 @@
 package jar
 
 import (
-	"github.com/headzoo/ut"
+	"github.com/emgfc/ut"
 	"os"
 	"testing"
 )
