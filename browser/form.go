@@ -12,6 +12,7 @@ type Submittable interface {
 	Method() string
 	Action() string
 	Input(name, value string) error
+	Set(name, value string) error
 	Click(button string) error
 	Submit() error
 	Dom() *goquery.Selection
@@ -61,6 +62,16 @@ func (f *Form) Input(name, value string) error {
 	}
 	return errors.NewElementNotFound(
 		"No input found with name '%s'.", name)
+}
+
+// Set will set the value of a form field if it exists,
+// or create and set it if it does not.
+func (f *Form) Set(name, value string) error {
+	if _, ok := f.fields[name]; !ok {
+		f.fields.Add(name, value)
+		return nil
+	}
+	return f.Input(name, value)
 }
 
 // Submit submits the form.
