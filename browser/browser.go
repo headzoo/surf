@@ -560,7 +560,7 @@ func (bow *Browser) buildRequest(method, url string, ref *url.URL, body io.Reade
 	if err != nil {
 		return nil, err
 	}
-	req.Header = bow.headers
+	req.Header = copyHeaders(bow.headers)
 	req.Header.Set("User-Agent", bow.userAgent)
 	if bow.attributes[SendReferer] && ref != nil {
 		req.Header.Set("Referer", ref.String())
@@ -572,6 +572,17 @@ func (bow *Browser) buildRequest(method, url string, ref *url.URL, body io.Reade
 	}
 
 	return req, nil
+}
+
+func copyHeaders(h http.Header) http.Header {
+	if h == nil {
+		return nil
+	}
+	h2 := make(http.Header, len(h))
+	for k, v := range h {
+		h2[k] = v
+	}
+	return h2
 }
 
 // httpGET makes an HTTP GET request for the given URL.
