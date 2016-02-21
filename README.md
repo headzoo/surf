@@ -50,7 +50,7 @@ func main() {
 
 ### Documentation
 
-Complete documentation is available on [Read the Docs](http://www.gosurf.io).
+Complete documentation is available on [Read the Docs](http://surf.readthedocs.org/).
 
 
 ### Credits
