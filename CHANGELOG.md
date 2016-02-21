@@ -1,5 +1,13 @@
+#### v0.5.7 - 2016/02/21
+* Add the ability to set form fields that weren't present in the form. [#36](https://github.com/headzoo/surf/pull/36)
+* Added Form.ClickByValue. [#31](https://github.com/headzoo/surf/pull/31)
+* Copy request headers to avoid mixing across requests. [#29](https://github.com/headzoo/surf/pull/29)
+* Allow input fields without values. [#28](https://github.com/headzoo/surf/pull/28)
+
+
 #### v0.5.6 - 2016/02/21
 * Updated documentation.
+
 
 #### v0.5.5 - 2014/05/24
 * Added Browser.Head() method. [#24](https://github.com/headzoo/surf/pull/24)
