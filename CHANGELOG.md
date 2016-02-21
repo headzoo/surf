@@ -1,3 +1,6 @@
+#### v0.5.6 - 2016/02/21
+* Updated documentation.
+
 #### v0.5.5 - 2014/05/24
 * Added Browser.Head() method. [#24](https://github.com/headzoo/surf/pull/24)
 
