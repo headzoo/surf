@@ -14,6 +14,7 @@ type Submittable interface {
 	Input(name, value string) error
 	Set(name, value string) error
 	Click(button string) error
+	ClickByValue(name, value string) error
 	Submit() error
 	Dom() *goquery.Selection
 }
@@ -93,6 +94,26 @@ func (f *Form) Click(button string) error {
 			"Form does not contain a button with the name '%s'.", button)
 	}
 	return f.send(button, f.buttons[button][0])
+}
+
+// Click submits the form by clicking the button with the given name and value.
+func (f *Form) ClickByValue(name, value string) error {
+	if _, ok := f.buttons[name]; !ok {
+		return errors.NewInvalidFormValue(
+			"Form does not contain a button with the name '%s'.", name)
+	}
+	valueNotFound := true
+	for _, val := range f.buttons[name] {
+		if val == value {
+			valueNotFound = false
+			break
+		}
+	}
+	if valueNotFound {
+		return errors.NewInvalidFormValue(
+			"Form does not contain a button with the name '%s' and value '%s'.", name, value)
+	}
+	return f.send(name, value)
 }
 
 // Dom returns the inner *goquery.Selection.
