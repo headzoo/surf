@@ -74,6 +74,10 @@ Contributions have been made to Surf by the following awesome developers:
 * [Carl Henrik Lunde](https://github.com/chlunde)
 * [cornerot](https://github.com/cornerot)
 * [lennyxc](https://github.com/lennyxc)
+* [tlianza](https://github.com/tlianza)
+* [joshuamorris3](https://github.com/joshuamorris3)
+* [sqs](https://github.com/sqs)
+* [nicot](https://github.com/nicot)
 
 
 ### Contributing
