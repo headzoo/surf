@@ -561,7 +561,6 @@ func (bow *Browser) buildRequest(method, url string, ref *url.URL, body io.Reade
 		return nil, err
 	}
 	req.Header = copyHeaders(bow.headers)
-	req.Header = bow.headers
 
 	if host := req.Header.Get("Host"); host != "" {
 		req.Host = host
