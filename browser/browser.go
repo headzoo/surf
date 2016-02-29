@@ -14,8 +14,24 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/headzoo/surf/errors"
-	"github.com/headzoo/surf/jar"
+
+	"github.com/emgfc/surf/agent"
+	"github.com/emgfc/surf/errors"
+	"github.com/emgfc/surf/jar"
+)
+
+var (
+	// DefaultUserAgent is the global user agent value.
+	DefaultUserAgent = agent.Create()
+
+	// DefaultSendReferer is the global value for the AttributeSendReferer attribute.
+	DefaultSendReferer = true
+
+	// DefaultMetaRefreshHandling is the global value for the AttributeHandleRefresh attribute.
+	DefaultMetaRefreshHandling = true
+
+	// DefaultFollowRedirects is the global value for the AttributeFollowRedirects attribute.
+	DefaultFollowRedirects = true
 )
 
 // Attribute represents a Browser capability.
@@ -159,6 +175,9 @@ type Browsable interface {
 
 // Default is the default Browser implementation.
 type Browser struct {
+	// HTTP client
+	client *http.Client
+
 	// state is the current browser state.
 	state *jar.State
 
@@ -174,10 +193,6 @@ type Browser struct {
 	// history stores the visited pages.
 	history jar.History
 
-	// transport specifies the mechanism by which individual HTTP
-	// requests are made.
-	transport *http.Transport
-
 	// headers are additional headers to send with each request.
 	headers http.Header
 
@@ -189,6 +204,29 @@ type Browser struct {
 
 	// body of the current page.
 	body []byte
+}
+
+func NewBrowser() *Browser {
+	bow := &Browser{}
+
+	bow.client = &http.Client{
+		Jar:           bow.cookies,
+		CheckRedirect: bow.shouldRedirect,
+	}
+
+	bow.SetUserAgent(DefaultUserAgent)
+	bow.SetState(&jar.State{})
+	bow.SetCookieJar(jar.NewMemoryCookies())
+	bow.SetBookmarksJar(jar.NewMemoryBookmarks())
+	bow.SetHistoryJar(jar.NewMemoryHistory())
+	bow.SetHeadersJar(jar.NewMemoryHeaders())
+	bow.SetAttributes(AttributeMap{
+		SendReferer:         DefaultSendReferer,
+		MetaRefreshHandling: DefaultMetaRefreshHandling,
+		FollowRedirects:     DefaultFollowRedirects,
+	})
+
+	return bow
 }
 
 // Open requests the given URL using the GET method.
@@ -460,7 +498,7 @@ func (bow *Browser) SetHeadersJar(h http.Header) {
 
 // SetTransport sets the http library transport mechanism for each request.
 func (bow *Browser) SetTransport(t *http.Transport) {
-	bow.transport = t
+	bow.client.Transport = t
 }
 
 // AddRequestHeader sets a header the browser sends with each request.
@@ -539,20 +577,6 @@ func (bow *Browser) Find(expr string) *goquery.Selection {
 	return bow.state.Dom.Find(expr)
 }
 
-// -- Unexported methods --
-
-// buildClient creates, configures, and returns a *http.Client type.
-func (bow *Browser) buildClient() *http.Client {
-	client := &http.Client{}
-	client.Jar = bow.cookies
-	client.CheckRedirect = bow.shouldRedirect
-	if bow.transport != nil {
-		client.Transport = bow.transport
-	}
-
-	return client
-}
-
 // buildRequest creates and returns a *http.Request type.
 // Sets any headers that need to be sent with the request.
 func (bow *Browser) buildRequest(method, url string, ref *url.URL, body io.Reader) (*http.Request, error) {
@@ -626,10 +650,11 @@ func (bow *Browser) httpPOST(u *url.URL, ref *url.URL, contentType string, body 
 // send uses the given *http.Request to make an HTTP request.
 func (bow *Browser) httpRequest(req *http.Request) error {
 	bow.preSend()
-	resp, err := bow.buildClient().Do(req)
+	resp, err := bow.client.Do(req)
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
 	bow.body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
