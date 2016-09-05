@@ -67,7 +67,7 @@ type Browsable interface {
 	SetHeadersJar(h http.Header)
 
 	// SetTransport sets the http library transport mechanism for each request.
-	SetTransport(t *http.Transport)
+	SetTransport(rt http.RoundTripper)
 
 	// AddRequestHeader adds a header the browser sends with each request.
 	AddRequestHeader(name, value string)
@@ -176,7 +176,7 @@ type Browser struct {
 
 	// transport specifies the mechanism by which individual HTTP
 	// requests are made.
-	transport *http.Transport
+	transport http.RoundTripper
 
 	// headers are additional headers to send with each request.
 	headers http.Header
@@ -459,8 +459,8 @@ func (bow *Browser) SetHeadersJar(h http.Header) {
 }
 
 // SetTransport sets the http library transport mechanism for each request.
-func (bow *Browser) SetTransport(t *http.Transport) {
-	bow.transport = t
+func (bow *Browser) SetTransport(rt http.RoundTripper) {
+	bow.transport = rt
 }
 
 // AddRequestHeader sets a header the browser sends with each request.
