@@ -1,10 +1,13 @@
 package browser
 
 import (
-	"github.com/PuerkitoBio/goquery"
-	"github.com/headzoo/surf/errors"
 	"net/url"
 	"strings"
+
+	"io"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/headzoo/surf/errors"
 )
 
 // Submittable represents an element that may be submitted, such as a form.
@@ -13,6 +16,8 @@ type Submittable interface {
 	Action() string
 	Input(name, value string) error
 	Set(name, value string) error
+	File(name string, fileName string, data io.Reader) error
+	SetFile(name string, fileName string, data io.Reader)
 	Click(button string) error
 	ClickByValue(name, value string) error
 	Submit() error
@@ -27,11 +32,12 @@ type Form struct {
 	action    string
 	fields    url.Values
 	buttons   url.Values
+	files     FileSet
 }
 
 // NewForm creates and returns a *Form type.
 func NewForm(bow Browsable, s *goquery.Selection) *Form {
-	fields, buttons := serializeForm(s)
+	fields, buttons, files := serializeForm(s)
 	method, action := formAttributes(bow, s)
 
 	return &Form{
@@ -41,6 +47,7 @@ func NewForm(bow Browsable, s *goquery.Selection) *Form {
 		action:    action,
 		fields:    fields,
 		buttons:   buttons,
+		files:     files,
 	}
 }
 
@@ -56,6 +63,7 @@ func (f *Form) Action() string {
 }
 
 // Input sets the value of a form field.
+// it returns an ElementNotFound error if the field does not exists
 func (f *Form) Input(name, value string) error {
 	if _, ok := f.fields[name]; ok {
 		f.fields.Set(name, value)
@@ -63,6 +71,24 @@ func (f *Form) Input(name, value string) error {
 	}
 	return errors.NewElementNotFound(
 		"No input found with name '%s'.", name)
+}
+
+// File sets the value for an form input type file,
+// it returns an ElementNotFound error if the field does not exists
+func (f *Form) File(name string, fileName string, data io.Reader) error {
+
+	if _, ok := f.files[name]; ok {
+		f.files[name] = &File{fileName: fileName, data: data}
+		return nil
+	}
+	return errors.NewElementNotFound(
+		"No input type 'file' found with name '%s'.", name)
+}
+
+// SetFile sets the value for an form input type file,
+// It adds the field to the form if necessary
+func (f *Form) SetFile(name string, fileName string, data io.Reader) {
+	f.files[name] = &File{fileName: fileName, data: data}
 }
 
 // Set will set the value of a form field if it exists,
@@ -147,41 +173,47 @@ func (f *Form) send(buttonName, buttonValue string) error {
 
 	if strings.ToUpper(method) == "GET" {
 		return f.bow.OpenForm(aurl.String(), values)
-	} else {
-		enctype, _ := f.selection.Attr("enctype")
-		if enctype == "multipart/form-data" {
-			return f.bow.PostMultipart(aurl.String(), values)
-		}
-		return f.bow.PostForm(aurl.String(), values)
 	}
-
-	return nil
+	enctype, _ := f.selection.Attr("enctype")
+	if enctype == "multipart/form-data" {
+		return f.bow.PostMultipart(aurl.String(), values, f.files)
+	}
+	return f.bow.PostForm(aurl.String(), values)
 }
 
-// Serialize converts the form fields into a url.Values type.
+// serializeForm converts the form fields into a url.Values type.
 // Returns two url.Value types. The first is the form field values, and the
 // second is the form button values.
-func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
-	input := sel.Find("input,button,textarea")
+func serializeForm(sel *goquery.Selection) (url.Values, url.Values, FileSet) {
+	input := sel.Find("input,button,textarea,select")
 	if input.Length() == 0 {
-		return url.Values{}, url.Values{}
+		return url.Values{}, url.Values{}, FileSet{}
 	}
-
 	fields := make(url.Values)
 	buttons := make(url.Values)
+	files := make(FileSet)
 	input.Each(func(_ int, s *goquery.Selection) {
-		name, ok := s.Attr("name")
-		if ok {
-			val, _ := s.Attr("value")
-			if t, _ := s.Attr("type"); t == "submit" {
+		if name, ok := s.Attr("name"); ok {
+			t, _ := s.Attr("type")
+			if t == "submit" {
+				val, _ := s.Attr("value")
 				buttons.Add(name, val)
+			} else if t == "file" {
+				files[name] = &File{}
 			} else {
-				fields.Add(name, val)
+				elementName := s.First().Nodes[0].Data
+				switch elementName {
+				case "input", "textarea":
+					val, _ := s.Attr("value")
+					fields.Add(name, val)
+				case "select":
+					val, _ := s.Find("option:first-child").Attr("value")
+					fields.Add(name, val)
+				}
 			}
 		}
 	})
-
-	return fields, buttons
+	return fields, buttons, files
 }
 
 func formAttributes(bow Browsable, s *goquery.Selection) (string, string) {
