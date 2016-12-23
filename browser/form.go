@@ -178,6 +178,7 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values) {
 			} else {
 				fields.Add(name, val)
 			}
+
 		}
 	})
 
