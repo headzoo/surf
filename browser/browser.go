@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
+
 	"github.com/headzoo/surf/errors"
 	"github.com/headzoo/surf/jar"
 )
@@ -34,17 +35,17 @@ type File struct {
 type FileSet map[string]*File
 
 const (
-	// SendRefererAttribute instructs a Browser to send the Referer header.
+	// SendReferer instructs a Browser to send the Referer header.
 	SendReferer Attribute = iota
 
-	// MetaRefreshHandlingAttribute instructs a Browser to handle the refresh meta tag.
+	// MetaRefreshHandling instructs a Browser to handle the refresh meta tag.
 	MetaRefreshHandling
 
-	// FollowRedirectsAttribute instructs a Browser to follow Location headers.
+	// FollowRedirects instructs a Browser to follow Location headers.
 	FollowRedirects
 )
 
-// InitialAssetsArraySize is the initial size when allocating a slice of page
+// InitialAssetsSliceSize is the initial size when allocating a slice of page
 // assets. Increasing this size may lead to a very small performance increase
 // when downloading assets from a page with a lot of assets.
 var InitialAssetsSliceSize = 20
@@ -166,26 +167,22 @@ type Browsable interface {
 	Find(expr string) *goquery.Selection
 }
 
-// Default is the default Browser implementation.
+// Browser is the default Browser implementation.
 type Browser struct {
+	// HTTP client
+	client *http.Client
+
 	// state is the current browser state.
 	state *jar.State
 
 	// userAgent is the User-Agent header value sent with requests.
 	userAgent string
 
-	// cookies stores cookies for every site visited by the browser.
-	cookies http.CookieJar
-
 	// bookmarks stores the saved bookmarks.
 	bookmarks jar.BookmarksJar
 
 	// history stores the visited pages.
 	history jar.History
-
-	// transport specifies the mechanism by which individual HTTP
-	// requests are made.
-	transport http.RoundTripper
 
 	// headers are additional headers to send with each request.
 	headers http.Header
@@ -198,6 +195,19 @@ type Browser struct {
 
 	// body of the current page.
 	body []byte
+}
+
+// httpClient returns the *http.Client used by the browser
+func (bow *Browser) httpClient() *http.Client {
+	if bow.client != nil {
+		return bow.client
+	}
+
+	bow.client = &http.Client{
+		CheckRedirect: bow.shouldRedirect,
+	}
+
+	return bow.client
 }
 
 // Open requests the given URL using the GET method.
@@ -436,7 +446,7 @@ func (bow *Browser) Scripts() []*Script {
 
 // SiteCookies returns the cookies for the current site.
 func (bow *Browser) SiteCookies() []*http.Cookie {
-	return bow.cookies.Cookies(bow.Url())
+	return bow.httpClient().Jar.Cookies(bow.Url())
 }
 
 // SetState sets the browser state.
@@ -446,7 +456,7 @@ func (bow *Browser) SetState(sj *jar.State) {
 
 // SetCookieJar is used to set the cookie jar the browser uses.
 func (bow *Browser) SetCookieJar(cj http.CookieJar) {
-	bow.cookies = cj
+	bow.httpClient().Jar = cj
 }
 
 // SetUserAgent sets the user agent.
@@ -481,7 +491,7 @@ func (bow *Browser) SetHeadersJar(h http.Header) {
 
 // SetTransport sets the http library transport mechanism for each request.
 func (bow *Browser) SetTransport(rt http.RoundTripper) {
-	bow.transport = rt
+	bow.httpClient().Transport = rt
 }
 
 // AddRequestHeader sets a header the browser sends with each request.
@@ -560,20 +570,6 @@ func (bow *Browser) Find(expr string) *goquery.Selection {
 	return bow.state.Dom.Find(expr)
 }
 
-// -- Unexported methods --
-
-// buildClient creates, configures, and returns a *http.Client type.
-func (bow *Browser) buildClient() *http.Client {
-	client := &http.Client{}
-	client.Jar = bow.cookies
-	client.CheckRedirect = bow.shouldRedirect
-	if bow.transport != nil {
-		client.Transport = bow.transport
-	}
-
-	return client
-}
-
 // buildRequest creates and returns a *http.Request type.
 // Sets any headers that need to be sent with the request.
 func (bow *Browser) buildRequest(method, url string, ref *url.URL, body io.Reader) (*http.Request, error) {
@@ -647,10 +643,11 @@ func (bow *Browser) httpPOST(u *url.URL, ref *url.URL, contentType string, body 
 // send uses the given *http.Request to make an HTTP request.
 func (bow *Browser) httpRequest(req *http.Request) error {
 	bow.preSend()
-	resp, err := bow.buildClient().Do(req)
+	resp, err := bow.httpClient().Do(req)
 	if err != nil {
 		return err
 	}
+	defer resp.Body.Close()
 
 	bow.body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
