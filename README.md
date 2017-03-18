@@ -11,6 +11,9 @@ like web browser, and includes: cookie management, history, bookmarking, user ag
 (with a nifty user agent builder), submitting forms, DOM selection and traversal via jQuery style
 CSS selectors, scraping assets like images, stylesheets, and other features.
 
+**NOTE: DEVELOPMENT ON THIS PROJECT IS VERY SLOW!**  
+I'm accepting pull requests and fixing bugs at a snail's pace right now. Partially because Surf has taken a backseat to projects which are more important to me, and the way Go handles vendoring makes me hesitant to make changes. Development will pick up again when I have more free time.
+
 * [Installation](#installation)
 * [General Usage](#quick-start)
 * [Documentation](#documentation)
