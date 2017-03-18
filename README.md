@@ -25,10 +25,10 @@ I'm accepting pull requests and fixing bugs at a snail's pace right now. Partial
 
 ### Installation
 Download the library using go.  
-`go get github.com/headzoo/surf`
+`go get gopkg.in/headzoo/surf.v1`
 
 Import the library into your project.  
-`import "github.com/headzoo/surf"`
+`import "gopkg.in/headzoo/surf.v1"`
 
 
 ### Quick Start
@@ -36,7 +36,7 @@ Import the library into your project.
 package main
 
 import (
-	"github.com/headzoo/surf"
+	"gopkg.in/headzoo/surf.v1"
 	"fmt"
 )
 

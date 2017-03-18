@@ -16,13 +16,13 @@ stylesheets, and other features.
 Download Surf using go.
 
 ```sh
-$ go get github.com/headzoo/surf
+$ go get gopkg.in/headzoo/surf.v1
 ```
 
 Import the library into your project.
 
 ```go
-import "github.com/headzoo/surf"
+import "gopkg.in/headzoo/surf.v1"
 ```
 
 
@@ -32,7 +32,7 @@ import "github.com/headzoo/surf"
 package main
 
 import (
-	"github.com/headzoo/surf"
+	"gopkg.in/headzoo/surf.v1"
 	"fmt"
 )
 

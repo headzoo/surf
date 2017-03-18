@@ -193,11 +193,17 @@ type Browsable interface {
 	// SetHeadersJar sets the headers the browser sends with each request.
 	SetHeadersJar(h http.Header)
 
+	// SetTransport sets the http library transport mechanism for each request.
+	SetTransport(rt http.RoundTripper)
+
 	// AddRequestHeader adds a header the browser sends with each request.
 	AddRequestHeader(name, value string)
 
 	// Open requests the given URL using the GET method.
 	Open(url string) error
+
+	// Open requests the given URL using the HEAD method.
+	Head(url string) error
 
 	// OpenForm appends the data values to the given URL and sends a GET request.
 	OpenForm(url string, data url.Values) error
@@ -212,7 +218,7 @@ type Browsable interface {
 	PostForm(url string, data url.Values) error
 
 	// PostMultipart requests the given URL using the POST method with the given data using multipart/form-data format.
-	PostMultipart(u string, data url.Values) error
+	PostMultipart(u string, fields url.Values, files FileSet) error
 
 	// Back loads the previously requested page.
 	Back() bool
@@ -375,6 +381,13 @@ func (bow *Browser) Forms() []Submittable
 ```
 Forms returns an array of every form in the page.
 
+#### func (*Browser) Head
+
+```go
+func (bow *Browser) Head(u string) error
+```
+Open requests the given URL using the HEAD method.
+
 #### func (*Browser) Images
 
 ```go
@@ -427,7 +440,7 @@ PostForm requests the given URL using the POST method with the given data.
 #### func (*Browser) PostMultipart
 
 ```go
-func (bow *Browser) PostMultipart(u string, data url.Values) error
+func (bow *Browser) PostMultipart(u string, fields url.Values, files FileSet) error
 ```
 PostMultipart requests the given URL using the POST method with the given data
 using multipart/form-data format.
@@ -517,6 +530,13 @@ func (bow *Browser) SetState(sj *jar.State)
 ```
 SetState sets the browser state.
 
+#### func (*Browser) SetTransport
+
+```go
+func (bow *Browser) SetTransport(rt http.RoundTripper)
+```
+SetTransport sets the http library transport mechanism for each request.
+
 #### func (*Browser) SetUserAgent
 
 ```go
@@ -604,6 +624,23 @@ func (at *DownloadableAsset) DownloadAsync(out io.Writer, ch AsyncDownloadChanne
 ```
 DownloadAsync downloads the asset asynchronously.
 
+#### type File
+
+```go
+type File struct {
+}
+```
+
+File represents a input type file, that includes the fileName and a io.reader
+
+#### type FileSet
+
+```go
+type FileSet map[string]*File
+```
+
+FileSet represents a map of files used to port multipart
+
 #### type Form
 
 ```go
@@ -634,6 +671,13 @@ func (f *Form) Click(button string) error
 ```
 Click submits the form by clicking the button with the given name.
 
+#### func (*Form) ClickByValue
+
+```go
+func (f *Form) ClickByValue(name, value string) error
+```
+Click submits the form by clicking the button with the given name and value.
+
 #### func (*Form) Dom
 
 ```go
@@ -641,12 +685,21 @@ func (f *Form) Dom() *goquery.Selection
 ```
 Dom returns the inner *goquery.Selection.
 
+#### func (*Form) File
+
+```go
+func (f *Form) File(name string, fileName string, data io.Reader) error
+```
+File sets the value for an form input type file, it returns an ElementNotFound
+error if the field does not exists
+
 #### func (*Form) Input
 
 ```go
 func (f *Form) Input(name, value string) error
 ```
-Input sets the value of a form field.
+Input sets the value of a form field. it returns an ElementNotFound error if the
+field does not exists
 
 #### func (*Form) Method
 
@@ -654,6 +707,22 @@ Input sets the value of a form field.
 func (f *Form) Method() string
 ```
 Method returns the form method, eg "GET" or "POST".
+
+#### func (*Form) Set
+
+```go
+func (f *Form) Set(name, value string) error
+```
+Set will set the value of a form field if it exists, or create and set it if it
+does not.
+
+#### func (*Form) SetFile
+
+```go
+func (f *Form) SetFile(name string, fileName string, data io.Reader)
+```
+SetFile sets the value for an form input type file, It adds the field to the
+form if necessary
 
 #### func (*Form) Submit
 
@@ -756,7 +825,11 @@ type Submittable interface {
 	Method() string
 	Action() string
 	Input(name, value string) error
+	Set(name, value string) error
+	File(name string, fileName string, data io.Reader) error
+	SetFile(name string, fileName string, data io.Reader)
 	Click(button string) error
+	ClickByValue(name, value string) error
 	Submit() error
 	Dom() *goquery.Selection
 }

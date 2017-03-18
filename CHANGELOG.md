@@ -1,3 +1,8 @@
+#### v1.0 - 2017/03/18
+* Officially tags v1.0.
+* Changes docs to show importing gopkg.in/headzoo/surf.v1.
+
+
 #### v0.5.7 - 2016/02/21
 * Add the ability to set form fields that weren't present in the form. [#36](https://github.com/headzoo/surf/pull/36)
 * Added Form.ClickByValue. [#31](https://github.com/headzoo/surf/pull/31)
