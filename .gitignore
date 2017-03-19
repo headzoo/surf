@@ -1,4 +1,2 @@
-.idea/
-surf.iml
+.idea
 site
-build_docs.sh

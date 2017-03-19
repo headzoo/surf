@@ -1,4 +1,4 @@
-package browser
+package surf
 
 import (
 	"net/url"
@@ -9,6 +9,15 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/headzoo/surf/errors"
 )
+
+// File represents a input type file, that includes the fileName and a io.reader
+type File struct {
+	fileName string
+	data     io.Reader
+}
+
+// FileSet represents a map of files used to port multipart
+type FileSet map[string]*File
 
 // Submittable represents an element that may be submitted, such as a form.
 type Submittable interface {
@@ -26,7 +35,7 @@ type Submittable interface {
 
 // Form is the default form element.
 type Form struct {
-	bow       Browsable
+	browser   Browser
 	selection *goquery.Selection
 	method    string
 	action    string
@@ -36,12 +45,12 @@ type Form struct {
 }
 
 // NewForm creates and returns a *Form type.
-func NewForm(bow Browsable, s *goquery.Selection) *Form {
+func NewForm(b Browser, s *goquery.Selection) *Form {
 	fields, buttons, files := serializeForm(s)
-	method, action := formAttributes(bow, s)
+	method, action := formAttributes(b, s)
 
 	return &Form{
-		bow:       bow,
+		browser:   b,
 		selection: s,
 		method:    method,
 		action:    action,
@@ -155,13 +164,13 @@ func (f *Form) send(buttonName, buttonValue string) error {
 	}
 	action, ok := f.selection.Attr("action")
 	if !ok {
-		action = f.bow.Url().String()
+		action = f.browser.Location.String()
 	}
 	aurl, err := url.Parse(action)
 	if err != nil {
 		return err
 	}
-	aurl = f.bow.ResolveUrl(aurl)
+	aurl = f.browser.resolveUrl(aurl)
 
 	values := make(url.Values, len(f.fields)+1)
 	for name, vals := range f.fields {
@@ -172,13 +181,13 @@ func (f *Form) send(buttonName, buttonValue string) error {
 	}
 
 	if strings.ToUpper(method) == "GET" {
-		return f.bow.OpenForm(aurl.String(), values)
+		return f.browser.SendFormGET(aurl.String(), values)
 	}
 	enctype, _ := f.selection.Attr("enctype")
 	if enctype == "multipart/form-data" {
-		return f.bow.PostMultipart(aurl.String(), values, f.files)
+		return f.browser.SendMultipartPOST(aurl.String(), values, f.files)
 	}
-	return f.bow.PostForm(aurl.String(), values)
+	return f.browser.SendFormPOST(aurl.String(), values)
 }
 
 // serializeForm converts the form fields into a url.Values type.
@@ -216,20 +225,20 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values, FileSet) {
 	return fields, buttons, files
 }
 
-func formAttributes(bow Browsable, s *goquery.Selection) (string, string) {
+func formAttributes(b Browser, s *goquery.Selection) (string, string) {
 	method, ok := s.Attr("method")
 	if !ok {
 		method = "GET"
 	}
 	action, ok := s.Attr("action")
 	if !ok {
-		action = bow.Url().String()
+		action = b.Location.String()
 	}
 	aurl, err := url.Parse(action)
 	if err != nil {
 		return "", ""
 	}
-	aurl = bow.ResolveUrl(aurl)
+	aurl = b.resolveUrl(aurl)
 
 	return strings.ToUpper(method), aurl.String()
 }

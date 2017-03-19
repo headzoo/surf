@@ -14,14 +14,12 @@ import (
 )
 
 var (
-	// Name is the name of the browser.
-	Name = "Surf"
-	// Version is the browser version.
-	Version = "1.0"
 	// OSName is the operating system name.
 	OSName = osName()
+
 	// OSVersion is the operating system version.
 	OSVersion = osVersion()
+
 	// Comments are additional comments to add to a user agent string.
 	Comments = []string{runtime.Version()}
 )
@@ -29,8 +27,10 @@ var (
 const (
 	// Windows operating system.
 	Windows int = iota
+
 	// Linux based operating system.
 	Linux
+
 	// Macintosh/OS X operating system.
 	Macintosh
 )
@@ -272,8 +272,8 @@ func YahooBot() string {
 }
 
 // Create generates and returns a complete user agent string.
-func Create() string {
-	return createFromDetails(Name, Version, OSName, OSVersion, Comments)
+func Create(name, version string) string {
+	return createFromDetails(name, version, OSName, OSVersion, Comments)
 }
 
 // CreateVersion generates and returns a complete user agent string for a specific browser version.

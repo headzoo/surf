@@ -13,11 +13,10 @@ type State struct {
 }
 
 // NewHistoryState creates and returns a new *State type.
-func NewHistoryState(req *http.Request, resp *http.Response, dom *goquery.Document) *State {
+func NewHistoryState(req *http.Request, resp *http.Response) *State {
 	return &State{
 		Request:  req,
 		Response: resp,
-		Dom:      dom,
 	}
 }
 

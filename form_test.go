@@ -1,4 +1,4 @@
-package browser
+package surf
 
 import (
 	"fmt"
@@ -25,7 +25,7 @@ func TestBrowserForm(t *testing.T) {
 
 	bow := &Browser{}
 	bow.headers = make(http.Header, 10)
-	bow.history = jar.NewMemoryHistory()
+	bow.JarHistory = jar.NewMemoryHistory()
 
 	err := bow.Open(ts.URL)
 	ut.AssertNil(err)
@@ -49,7 +49,7 @@ func TestSubmitMultipart(t *testing.T) {
 
 	bow := &Browser{}
 	bow.headers = make(http.Header, 10)
-	bow.history = jar.NewMemoryHistory()
+	bow.JarHistory = jar.NewMemoryHistory()
 
 	err := bow.Open(ts.URL)
 	ut.AssertNil(err)
@@ -73,7 +73,7 @@ func TestBrowserFormClickByValue(t *testing.T) {
 
 	bow := &Browser{}
 	bow.headers = make(http.Header, 10)
-	bow.history = jar.NewMemoryHistory()
+	bow.JarHistory = jar.NewMemoryHistory()
 
 	err := bow.Open(ts.URL)
 	ut.AssertNil(err)

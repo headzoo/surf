@@ -1,5 +1,5 @@
-Surf
-====
+Surf v2.0
+=========
 
 [![Build Status](https://img.shields.io/travis/headzoo/surf/master.svg?style=flat-square)](https://travis-ci.org/headzoo/surf)
 [![GoDoc](https://godoc.org/github.com/headzoo/surf?status.svg)](http://godoc.org/github.com/headzoo/surf)
@@ -12,9 +12,6 @@ like web browser, and includes: cookie management, history, bookmarking, user ag
 (with a nifty user agent builder), submitting forms, DOM selection and traversal via jQuery style
 CSS selectors, scraping assets like images, stylesheets, and other features.
 
-**NOTE: DEVELOPMENT ON THIS PROJECT IS VERY SLOW!**  
-I'm accepting pull requests and fixing bugs at a snail's pace right now. Partially because Surf has taken a backseat to projects which are more important to me, and the way Go handles vendoring makes me hesitant to make changes. Development will pick up again when I have more free time.
-
 * [Installation](#installation)
 * [General Usage](#quick-start)
 * [Documentation](#documentation)
@@ -25,10 +22,10 @@ I'm accepting pull requests and fixing bugs at a snail's pace right now. Partial
 
 ### Installation
 Download the library using go.  
-`go get gopkg.in/headzoo/surf.v1`
+`go get gopkg.in/headzoo/surf.v2`
 
 Import the library into your project.  
-`import "gopkg.in/headzoo/surf.v1"`
+`import "gopkg.in/headzoo/surf.v2"`
 
 
 ### Quick Start
@@ -36,7 +33,7 @@ Import the library into your project.
 package main
 
 import (
-	"gopkg.in/headzoo/surf.v1"
+	"gopkg.in/headzoo/surf.v2"
 	"fmt"
 )
 
