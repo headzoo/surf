@@ -15,6 +15,8 @@ CSS selectors, scraping assets like images, stylesheets, and other features.
 **NOTE: DEVELOPMENT ON THIS PROJECT IS VERY SLOW!**  
 I'm accepting pull requests and fixing bugs at a snail's pace right now. Partially because Surf has taken a backseat to projects which are more important to me, and the way Go handles vendoring makes me hesitant to make changes. Development will pick up again when I have more free time.
 
+Work has started on v2.0 on the [v2 branch](https://github.com/headzoo/surf/tree/v2).
+
 * [Installation](#installation)
 * [General Usage](#quick-start)
 * [Documentation](#documentation)
