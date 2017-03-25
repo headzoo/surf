@@ -2,6 +2,7 @@ package browser
 
 import (
 	"bytes"
+	"crypto/tls"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -42,6 +43,9 @@ const (
 
 	// FollowRedirectsAttribute instructs a Browser to follow Location headers.
 	FollowRedirects
+
+	// MakeInsecureRequestsAttribute instructs the Browser to ignore ssl
+	MakeInsecureRequests
 )
 
 // InitialAssetsArraySize is the initial size when allocating a slice of page
@@ -564,7 +568,16 @@ func (bow *Browser) Find(expr string) *goquery.Selection {
 
 // buildClient creates, configures, and returns a *http.Client type.
 func (bow *Browser) buildClient() *http.Client {
-	client := &http.Client{}
+	var client *http.Client
+	if bow.attributes[MakeInsecureRequests] == true {
+		transporter := &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		}
+		client = &http.Client{Transport: transporter}
+	} else {
+		client = &http.Client{}
+	}
+
 	client.Jar = bow.cookies
 	client.CheckRedirect = bow.shouldRedirect
 	if bow.transport != nil {
