@@ -102,6 +102,9 @@ type Browsable interface {
 	// PostMultipart requests the given URL using the POST method with the given data using multipart/form-data format.
 	PostMultipart(u string, fields url.Values, files FileSet) error
 
+	// XHR makes a request with given method and url managing cookies as normal requests but not updating the history
+	XHR(method, u, contentType string, body io.Reader) ([]byte, int, string, error)
+
 	// Back loads the previously requested page.
 	Back() bool
 
@@ -280,6 +283,34 @@ func (bow *Browser) PostMultipart(u string, fields url.Values, files FileSet) er
 
 	}
 	return bow.Post(u, writer.FormDataContentType(), body)
+}
+
+// XHR mimics a xhr request by sending a request to the given URL using the method returning the response
+// body, content type and any error. XHR calls will use and update cookies but not history or navigation
+func (bow *Browser) XHR(method, u, contentType string, body io.Reader) ([]byte, int, string, error) {
+	ur, err := url.Parse(u)
+	if err != nil {
+		return nil, 0, "", err
+	}
+
+	req, err := bow.buildRequest(method, ur.String(), bow.Url(), body)
+	if err != nil {
+		return nil, 0, "", err
+	}
+	req.Header.Set("Content-Type", contentType)
+
+	bow.preSend()
+	resp, err := bow.buildClient().Do(req)
+	if err != nil {
+		return nil, 0, "", err
+	}
+
+	rBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, 0, "", err
+	}
+
+	return rBody, resp.StatusCode, resp.Header.Get("Content-Type"), nil
 }
 
 // Back loads the previously requested page.
