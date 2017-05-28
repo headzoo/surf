@@ -13,6 +13,8 @@ import (
 	"strings"
 	"time"
 
+	"golang.org/x/net/proxy"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/headzoo/surf/errors"
 	"github.com/headzoo/surf/jar"
@@ -77,6 +79,9 @@ type Browsable interface {
 
 	// SetTransport sets the http library transport mechanism for each request.
 	SetTransport(rt http.RoundTripper)
+
+	// Tor sets the proxy url for Tor
+	Tor(url *url.URL) (err error)
 
 	// AddRequestHeader adds a header the browser sends with each request.
 	AddRequestHeader(name, value string)
@@ -482,6 +487,17 @@ func (bow *Browser) SetHeadersJar(h http.Header) {
 // SetTransport sets the http library transport mechanism for each request.
 func (bow *Browser) SetTransport(rt http.RoundTripper) {
 	bow.transport = rt
+}
+
+// Tor sets the proxy url for Tor
+func (bow *Browser) Tor(url *url.URL) (err error) {
+	dialer, err := proxy.FromURL(url, proxy.Direct)
+	if err != nil {
+		return err
+	}
+	bow.SetTransport(&http.Transport{Dial: dialer.Dial})
+
+	return err
 }
 
 // AddRequestHeader sets a header the browser sends with each request.
