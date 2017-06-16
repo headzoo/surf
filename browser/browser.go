@@ -102,6 +102,9 @@ type Browsable interface {
 	// PostMultipart requests the given URL using the POST method with the given data using multipart/form-data format.
 	PostMultipart(u string, fields url.Values, files FileSet) error
 
+	// Call makes a request to u with method setting the headers and sending the reqBody and wont update history
+	Call(method, url string, headers map[string]string, reqBody io.Reader) (*http.Response, error)
+
 	// Back loads the previously requested page.
 	Back() bool
 
@@ -280,6 +283,27 @@ func (bow *Browser) PostMultipart(u string, fields url.Values, files FileSet) er
 
 	}
 	return bow.Post(u, writer.FormDataContentType(), body)
+}
+
+// Call can be used to execute a more generic request to the given URL using the method returning.
+// Call will use browser headers and update cookies but not touch history or navigation.
+func (bow *Browser) Call(method, u string, headers map[string]string, body io.Reader) (*http.Response, error) {
+	ur, err := url.Parse(u)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := bow.buildRequest(method, ur.String(), bow.Url(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	for k, v := range headers {
+		req.Header.Set(k, v)
+	}
+
+	bow.preSend()
+	return bow.buildClient().Do(req)
 }
 
 // Back loads the previously requested page.
