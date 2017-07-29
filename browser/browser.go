@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-
 	"github.com/headzoo/surf/errors"
 	"github.com/headzoo/surf/jar"
 )
@@ -197,17 +196,11 @@ type Browser struct {
 	body []byte
 }
 
-// httpClient returns the *http.Client used by the browser
-func (bow *Browser) httpClient() *http.Client {
-	if bow.client != nil {
-		return bow.client
-	}
-
-	bow.client = &http.Client{
+// buildClient instanciates the *http.Client used by the browser
+func (bow *Browser) buildClient() *http.Client {
+	return &http.Client{
 		CheckRedirect: bow.shouldRedirect,
 	}
-
-	return bow.client
 }
 
 // Open requests the given URL using the GET method.
@@ -219,7 +212,7 @@ func (bow *Browser) Open(u string) error {
 	return bow.httpGET(ur, nil)
 }
 
-// Open requests the given URL using the HEAD method.
+// Head requests the given URL using the HEAD method.
 func (bow *Browser) Head(u string) error {
 	ur, err := url.Parse(u)
 	if err != nil {
@@ -446,7 +439,10 @@ func (bow *Browser) Scripts() []*Script {
 
 // SiteCookies returns the cookies for the current site.
 func (bow *Browser) SiteCookies() []*http.Cookie {
-	return bow.httpClient().Jar.Cookies(bow.Url())
+	if bow.client == nil {
+		bow.client = bow.buildClient()
+	}
+	return bow.client.Jar.Cookies(bow.Url())
 }
 
 // SetState sets the browser state.
@@ -456,7 +452,10 @@ func (bow *Browser) SetState(sj *jar.State) {
 
 // SetCookieJar is used to set the cookie jar the browser uses.
 func (bow *Browser) SetCookieJar(cj http.CookieJar) {
-	bow.httpClient().Jar = cj
+	if bow.client == nil {
+		bow.client = bow.buildClient()
+	}
+	bow.client.Jar = cj
 }
 
 // SetUserAgent sets the user agent.
@@ -491,7 +490,10 @@ func (bow *Browser) SetHeadersJar(h http.Header) {
 
 // SetTransport sets the http library transport mechanism for each request.
 func (bow *Browser) SetTransport(rt http.RoundTripper) {
-	bow.httpClient().Transport = rt
+	if bow.client == nil {
+		bow.client = bow.buildClient()
+	}
+	bow.client.Transport = rt
 }
 
 // AddRequestHeader sets a header the browser sends with each request.
@@ -642,8 +644,11 @@ func (bow *Browser) httpPOST(u *url.URL, ref *url.URL, contentType string, body 
 
 // send uses the given *http.Request to make an HTTP request.
 func (bow *Browser) httpRequest(req *http.Request) error {
+	if bow.client == nil {
+		bow.client = bow.buildClient()
+	}
 	bow.preSend()
-	resp, err := bow.httpClient().Do(req)
+	resp, err := bow.client.Do(req)
 	if err != nil {
 		return err
 	}
