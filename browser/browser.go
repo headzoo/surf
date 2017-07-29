@@ -698,13 +698,17 @@ func (bow *Browser) postSend() {
 }
 
 // shouldRedirect is used as the value to http.Client.CheckRedirect.
-func (bow *Browser) shouldRedirect(req *http.Request, _ []*http.Request) error {
-	if bow.attributes[FollowRedirects] {
-		return nil
-	}
-	return errors.NewLocation(
-		"Redirects are disabled. Cannot follow '%s'.", req.URL.String())
+func (bow *Browser) shouldRedirect(req *http.Request, via []*http.Request) error {
+        if bow.attributes[FollowRedirects] {
+                // Copy User-Agent and Cookie from the original request
+                original := via[0]
+                req.Header.Set("User-Agent", original.UserAgent())
+        return nil
+        }
+        return errors.NewLocation(
+                "Redirects are disabled. Cannot follow '%s'.", req.URL.String())
 }
+
 
 // attributeToUrl reads an attribute from an element and returns a url.
 func (bow *Browser) attrToResolvedUrl(name string, sel *goquery.Selection) (*url.URL, error) {
