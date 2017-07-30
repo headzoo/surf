@@ -82,10 +82,7 @@ Contributions have been made to Surf by the following awesome developers:
 
 
 ### Contributing
-Issues and pull requests are _always_ welcome. Code changes are made to the
-[`dev`](https://github.com/headzoo/surf/tree/dev) branch. Once a milestone has been reached the branch will
-be merged in with `master`, and a new version tag created. **Do not** make your changes against the
-`master` branch, or they will _may_ be ignored.
+Issues and pull requests are _always_ welcome.
 
 See [CONTRIBUTING.md](https://raw.githubusercontent.com/headzoo/surf/master/CONTRIBUTING.md) for more information.
 
