@@ -60,17 +60,13 @@ Complete documentation is available on [Read the Docs](http://surf.readthedocs.i
 
 
 ### Credits
-Surf was started by [Sean Hickey](https://github.com/headzoo) (headzoo) to learn more about the Go programming language.
-The idea to create Surf was born in [this Reddit thread](http://www.reddit.com/r/golang/comments/2efw1q/mechanize_in_go/cjz4lze).
-
-[![Twitter](https://img.shields.io/badge/follow-%40WebSeanHickey-orange.svg?style=flat-square)](https://twitter.com/WebSeanHickey)
-
 Surf uses the awesome [goquery](https://github.com/PuerkitoBio/goquery) by Martin Angers, and
 was written using [Intellij](http://www.jetbrains.com/idea/) and
 the [golang plugin](http://plugins.jetbrains.com/plugin/5047).
 
 Contributions have been made to Surf by the following awesome developers:
 
+* [Sean Hickey](https://github.com/headzoo)
 * [Haruyama Seigo](https://github.com/haruyama)
 * [Tatsushi Demachi](https://github.com/tatsushid)
 * [Charl Matthee](https://github.com/charl)
@@ -84,6 +80,8 @@ Contributions have been made to Surf by the following awesome developers:
 * [joshuamorris3](https://github.com/joshuamorris3)
 * [sqs](https://github.com/sqs)
 * [nicot](https://github.com/nicot)
+
+The idea to create Surf was born in [this Reddit thread](http://www.reddit.com/r/golang/comments/2efw1q/mechanize_in_go/cjz4lze).
 
 
 ### Contributing
