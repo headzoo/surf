@@ -4,7 +4,6 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"net/url"
 	"testing"
 	"time"
 
@@ -145,11 +144,7 @@ func TestCookieHeader(t *testing.T) {
 // https://github.com/headzoo/surf/pull/56
 func TestSetProxyWillSetTransport(t *testing.T){
 	b := newDefaultTestBrowser()
-	u, err := url.Parse("socks5://127.0.0.1:9050")
-	if err != nil {
-		t.Fatal(err)
-	}
-	b.SetProxy(u)
+	b.SetProxy("socks5://127.0.0.1:9050")
 	if b.client.Transport == nil {
 		t.Errorf("no transport method")
 	}
