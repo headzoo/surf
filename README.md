@@ -24,12 +24,11 @@ Work has started on v2.0 on the [v2 branch](https://github.com/headzoo/surf/tree
 * [Contributing](#contributing)
 * [License](#license)
 
-
 ### Installation
-Download the library using go.  
+Download the library using go.
 `go get gopkg.in/headzoo/surf.v1`
 
-Import the library into your project.  
+Import the library into your project.
 `import "gopkg.in/headzoo/surf.v1"`
 
 
@@ -48,14 +47,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	// Outputs: "The Go Programming Language"
 	fmt.Println(bow.Title())
 }
 ```
 
 ### Documentation
-
 Complete documentation is available on [Read the Docs](http://surf.readthedocs.io/).
 
 
@@ -84,6 +82,8 @@ Contributions have been made to Surf by the following awesome developers:
 * [joshuamorris3](https://github.com/joshuamorris3)
 * [sqs](https://github.com/sqs)
 * [nicot](https://github.com/nicot)
+* [Joseph Watson](https://github.com/jtwatson)
+* [lxt2](https://github.com/lxt2)
 
 
 ### Contributing
