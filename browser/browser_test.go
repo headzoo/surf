@@ -150,7 +150,7 @@ func TestSetProxyWillSetTransport(t *testing.T){
 		t.Fatal(err)
 	}
 	b.SetProxy(u)
-	if b.transport == nil {
+	if b.client.Transport == nil {
 		t.Errorf("no transport method")
 	}
 }
