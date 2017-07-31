@@ -92,8 +92,8 @@ type Browsable interface {
 	// SetTransport sets the http library transport mechanism for each request.
 	SetTransport(rt http.RoundTripper)
 
-	// Tor sets the proxy url for Tor
-	Tor(url *url.URL) (err error)
+	// Set a proxy URL. You can use it with Tor
+	SetProxy(url *url.URL) (err error)
 
 	// AddRequestHeader adds a header the browser sends with each request.
 	AddRequestHeader(name, value string)
@@ -536,8 +536,8 @@ func (bow *Browser) SetTransport(rt http.RoundTripper) {
 	bow.client.Transport = rt
 }
 
-// Tor sets the proxy url for Tor
-func (bow *Browser) Tor(url *url.URL) (err error) {
+// Set a proxy url for Tor
+func (bow *Browser) SetProxy(url *url.URL) (err error) {
 	dialer, err := proxy.FromURL(url, proxy.Direct)
 	if err != nil {
 		return err
