@@ -12,11 +12,6 @@ like web browser, and includes: cookie management, history, bookmarking, user ag
 (with a nifty user agent builder), submitting forms, DOM selection and traversal via jQuery style
 CSS selectors, scraping assets like images, stylesheets, and other features.
 
-**NOTE: DEVELOPMENT ON THIS PROJECT IS VERY SLOW!**  
-I'm accepting pull requests and fixing bugs at a snail's pace right now. Partially because Surf has taken a backseat to projects which are more important to me, and the way Go handles vendoring makes me hesitant to make changes. Development will pick up again when I have more free time.
-
-Work has started on v2.0 on the [v2 branch](https://github.com/headzoo/surf/tree/v2).
-
 * [Installation](#installation)
 * [General Usage](#quick-start)
 * [Documentation](#documentation)
@@ -24,12 +19,11 @@ Work has started on v2.0 on the [v2 branch](https://github.com/headzoo/surf/tree
 * [Contributing](#contributing)
 * [License](#license)
 
-
 ### Installation
-Download the library using go.  
+Download the library using go.
 `go get gopkg.in/headzoo/surf.v1`
 
-Import the library into your project.  
+Import the library into your project.
 `import "gopkg.in/headzoo/surf.v1"`
 
 
@@ -48,14 +42,13 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	
+
 	// Outputs: "The Go Programming Language"
 	fmt.Println(bow.Title())
 }
 ```
 
 ### Documentation
-
 Complete documentation is available on [Read the Docs](http://surf.readthedocs.io/).
 
 
@@ -80,15 +73,14 @@ Contributions have been made to Surf by the following awesome developers:
 * [joshuamorris3](https://github.com/joshuamorris3)
 * [sqs](https://github.com/sqs)
 * [nicot](https://github.com/nicot)
+* [Joseph Watson](https://github.com/jtwatson)
+* [lxt2](https://github.com/lxt2)
 
 The idea to create Surf was born in [this Reddit thread](http://www.reddit.com/r/golang/comments/2efw1q/mechanize_in_go/cjz4lze).
 
 
 ### Contributing
-Issues and pull requests are _always_ welcome. Code changes are made to the
-[`dev`](https://github.com/headzoo/surf/tree/dev) branch. Once a milestone has been reached the branch will
-be merged in with `master`, and a new version tag created. **Do not** make your changes against the
-`master` branch, or they will _may_ be ignored.
+Issues and pull requests are _always_ welcome.
 
 See [CONTRIBUTING.md](https://raw.githubusercontent.com/headzoo/surf/master/CONTRIBUTING.md) for more information.
 
