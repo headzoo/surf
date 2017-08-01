@@ -12,11 +12,6 @@ like web browser, and includes: cookie management, history, bookmarking, user ag
 (with a nifty user agent builder), submitting forms, DOM selection and traversal via jQuery style
 CSS selectors, scraping assets like images, stylesheets, and other features.
 
-**NOTE: DEVELOPMENT ON THIS PROJECT IS VERY SLOW!**  
-I'm accepting pull requests and fixing bugs at a snail's pace right now. Partially because Surf has taken a backseat to projects which are more important to me, and the way Go handles vendoring makes me hesitant to make changes. Development will pick up again when I have more free time.
-
-Work has started on v2.0 on the [v2 branch](https://github.com/headzoo/surf/tree/v2).
-
 * [Installation](#installation)
 * [General Usage](#quick-start)
 * [Documentation](#documentation)
@@ -58,17 +53,13 @@ Complete documentation is available on [Read the Docs](http://surf.readthedocs.i
 
 
 ### Credits
-Surf was started by [Sean Hickey](https://github.com/headzoo) (headzoo) to learn more about the Go programming language.
-The idea to create Surf was born in [this Reddit thread](http://www.reddit.com/r/golang/comments/2efw1q/mechanize_in_go/cjz4lze).
-
-[![Twitter](https://img.shields.io/badge/follow-%40WebSeanHickey-orange.svg?style=flat-square)](https://twitter.com/WebSeanHickey)
-
 Surf uses the awesome [goquery](https://github.com/PuerkitoBio/goquery) by Martin Angers, and
 was written using [Intellij](http://www.jetbrains.com/idea/) and
 the [golang plugin](http://plugins.jetbrains.com/plugin/5047).
 
 Contributions have been made to Surf by the following awesome developers:
 
+* [Sean Hickey](https://github.com/headzoo)
 * [Haruyama Seigo](https://github.com/haruyama)
 * [Tatsushi Demachi](https://github.com/tatsushid)
 * [Charl Matthee](https://github.com/charl)
@@ -85,12 +76,11 @@ Contributions have been made to Surf by the following awesome developers:
 * [Joseph Watson](https://github.com/jtwatson)
 * [lxt2](https://github.com/lxt2)
 
+The idea to create Surf was born in [this Reddit thread](http://www.reddit.com/r/golang/comments/2efw1q/mechanize_in_go/cjz4lze).
+
 
 ### Contributing
-Issues and pull requests are _always_ welcome. Code changes are made to the
-[`dev`](https://github.com/headzoo/surf/tree/dev) branch. Once a milestone has been reached the branch will
-be merged in with `master`, and a new version tag created. **Do not** make your changes against the
-`master` branch, or they will _may_ be ignored.
+Issues and pull requests are _always_ welcome.
 
 See [CONTRIBUTING.md](https://raw.githubusercontent.com/headzoo/surf/master/CONTRIBUTING.md) for more information.
 
