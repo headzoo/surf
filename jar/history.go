@@ -1,8 +1,10 @@
 package jar
 
 import (
-	"github.com/PuerkitoBio/goquery"
+	"container/list"
 	"net/http"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 // State represents a point in time.
@@ -23,6 +25,8 @@ func NewHistoryState(req *http.Request, resp *http.Response, dom *goquery.Docume
 
 // History is a type that records browser state.
 type History interface {
+	Clear()
+	SetMax(max int)
 	Len() int
 	Push(p *State) int
 	Pop() *State
@@ -37,43 +41,58 @@ type Node struct {
 
 // MemoryHistory is an in-memory implementation of the History interface.
 type MemoryHistory struct {
-	top  *Node
-	size int
+	list    *list.List
+	maxHist int
 }
 
 // NewMemoryHistory creates and returns a new *StateHistory type.
 func NewMemoryHistory() *MemoryHistory {
-	return &MemoryHistory{}
+	return &MemoryHistory{list: list.New()}
 }
 
 // Len returns the number of states in the history.
 func (his *MemoryHistory) Len() int {
-	return his.size
+	return his.list.Len()
+}
+
+// SetMax sets the max history length.  Setting values
+// to 0 will disable history trimming, keeping a infinite list.
+func (his *MemoryHistory) SetMax(max int) {
+	his.maxHist = max
+}
+
+// Clear removes all history.
+func (his *MemoryHistory) Clear() {
+	his.list.Init()
 }
 
 // Push adds a new State at the front of the history.
 func (his *MemoryHistory) Push(p *State) int {
-	his.top = &Node{p, his.top}
-	his.size++
-	return his.size
+	his.list.PushFront(p)
+
+	// Trim history if maxHist is set
+	if his.maxHist > 0 {
+		if l := his.list.Len(); l > his.maxHist {
+			for i := 0; i < l-his.maxHist; i++ {
+				his.list.Remove(his.list.Back())
+			}
+		}
+	}
+	return his.list.Len()
 }
 
 // Pop removes and returns the State at the front of the history.
 func (his *MemoryHistory) Pop() *State {
-	if his.size > 0 {
-		value := his.top.Value
-		his.top = his.top.Next
-		his.size--
-		return value
+	if his.list.Len() > 0 {
+		return his.list.Remove(his.list.Front()).(*State)
 	}
-
 	return nil
 }
 
 // Top returns the State at the front of the history without removing it.
 func (his *MemoryHistory) Top() *State {
-	if his.size == 0 {
+	if his.list.Len() == 0 {
 		return nil
 	}
-	return his.top.Value
+	return his.list.Front().Value.(*State)
 }
