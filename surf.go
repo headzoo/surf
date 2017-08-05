@@ -19,6 +19,9 @@ var (
 
 	// DefaultFollowRedirects is the global value for the AttributeFollowRedirects attribute.
 	DefaultFollowRedirects = true
+
+	// DefaultMaxHistoryLength is the global value for max history length.
+	DefaultMaxHistoryLength = 0
 )
 
 // NewBrowser creates and returns a *browser.Browser type.
@@ -28,7 +31,9 @@ func NewBrowser() *browser.Browser {
 	bow.SetState(&jar.State{})
 	bow.SetCookieJar(jar.NewMemoryCookies())
 	bow.SetBookmarksJar(jar.NewMemoryBookmarks())
-	bow.SetHistoryJar(jar.NewMemoryHistory())
+	hist := jar.NewMemoryHistory()
+	hist.SetMax(DefaultMaxHistoryLength)
+	bow.SetHistoryJar(hist)
 	bow.SetHeadersJar(jar.NewMemoryHeaders())
 	bow.SetAttributes(browser.AttributeMap{
 		browser.SendReferer:         DefaultSendReferer,

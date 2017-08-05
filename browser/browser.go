@@ -63,14 +63,26 @@ type Browsable interface {
 	// SetState sets the init browser state.
 	SetState(sj *jar.State)
 
+	// State returns the browser state.
+	State() *jar.State
+
 	// SetBookmarksJar sets the bookmarks jar the browser uses.
 	SetBookmarksJar(bj jar.BookmarksJar)
+
+	// BookmarksJar returns the bookmarks jar the browser uses.
+	BookmarksJar() jar.BookmarksJar
 
 	// SetCookieJar is used to set the cookie jar the browser uses.
 	SetCookieJar(cj http.CookieJar)
 
+	// CookieJar returns the cookie jar the browser uses.
+	CookieJar() http.CookieJar
+
 	// SetHistoryJar is used to set the history jar the browser uses.
 	SetHistoryJar(hj jar.History)
+
+	// HistoryJar returns the history jar the browser uses.
+	HistoryJar() jar.History
 
 	// SetHeadersJar sets the headers the browser sends with each request.
 	SetHeadersJar(h http.Header)
@@ -450,12 +462,25 @@ func (bow *Browser) SetState(sj *jar.State) {
 	bow.state = sj
 }
 
+// State returns the browser state.
+func (bow *Browser) State() *jar.State {
+	return bow.state
+}
+
 // SetCookieJar is used to set the cookie jar the browser uses.
 func (bow *Browser) SetCookieJar(cj http.CookieJar) {
 	if bow.client == nil {
 		bow.client = bow.buildClient()
 	}
 	bow.client.Jar = cj
+}
+
+// CookieJar returns the cookie jar the browser uses.
+func (bow *Browser) CookieJar() http.CookieJar {
+	if bow.client == nil {
+		bow.client = bow.buildClient()
+	}
+	return bow.client.Jar
 }
 
 // SetUserAgent sets the user agent.
@@ -478,9 +503,19 @@ func (bow *Browser) SetBookmarksJar(bj jar.BookmarksJar) {
 	bow.bookmarks = bj
 }
 
+// BookmarksJar returns the bookmarks jar the browser uses.
+func (bow *Browser) BookmarksJar() jar.BookmarksJar {
+	return bow.bookmarks
+}
+
 // SetHistoryJar is used to set the history jar the browser uses.
 func (bow *Browser) SetHistoryJar(hj jar.History) {
 	bow.history = hj
+}
+
+// HistoryJar returns the history jar the browser uses.
+func (bow *Browser) HistoryJar() jar.History {
+	return bow.history
 }
 
 // SetHeadersJar sets the headers the browser sends with each request.
