@@ -139,3 +139,13 @@ func TestCookieHeader(t *testing.T) {
 		t.Errorf("got %d calls, want %d", calls, want)
 	}
 }
+
+// Test proxy
+// https://github.com/headzoo/surf/pull/56
+func TestSetProxyWillSetTransport(t *testing.T){
+	b := newDefaultTestBrowser()
+	b.SetProxy("socks5://127.0.0.1:9050")
+	if b.client.Transport == nil {
+		t.Errorf("no transport method")
+	}
+}
