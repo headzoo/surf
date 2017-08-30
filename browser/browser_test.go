@@ -139,3 +139,71 @@ func TestCookieHeader(t *testing.T) {
 		t.Errorf("got %d calls, want %d", calls, want)
 	}
 }
+
+// Should inherit the configuration into a new instance
+func TestTabInheritance(t *testing.T){
+	bow1 := newDefaultTestBrowser()
+	bow2 := newDefaultTestBrowser()
+
+	// Set different options and properties
+	bow1.SetUserAgent("Mozilla/5.0 (X11; U; Linux; cs-CZ) AppleWebKit/527+ (KHTML, like Gecko, Safari/419.3) rekonq")
+	bow1.SetAttributes(AttributeMap{
+		SendReferer:         true,
+		MetaRefreshHandling: false,
+		FollowRedirects:     true,
+	})
+	bow1.SetAttribute(1, true)
+	bow1.SetAttribute(2, false)
+	bow1.SetAttribute(3, true)
+	bow1.SetState(&jar.State{})
+	bow1.SetBookmarksJar(jar.NewMemoryBookmarks())
+	bow1.SetCookieJar(jar.NewMemoryCookies())
+	bow1.SetHistoryJar(jar.NewMemoryHistory())
+	bow1.SetHeadersJar(make(http.Header, 20))
+
+	// Create a new browser
+	bow3 := bow1.NewTab()
+	if bow1 == bow3{
+		t.Fatal("Tab did not create a new browser")
+	}
+
+	bow2 = bow1.NewTab()
+	if bow1 == bow2 {
+		t.Fatal("Tab did not create a new clone, just a reference")
+	}
+
+	// Check properties
+	if bow1.userAgent != bow2.userAgent {
+		t.Fatal("Tab did not copy the userAgent")
+	}
+
+	for k,v := range bow1.attributes {
+		if bow1.attributes[k] != bow2.attributes[k]{
+			t.Errorf("Tab did not copy the %v attribute", v)
+		}
+	}
+
+	if bow1.State() != bow2.State(){
+		t.Fatal("Tab did not copy the state")
+	}
+
+	if bow1.BookmarksJar() != bow2.BookmarksJar(){
+		t.Fatal("Tab did not copy the BookmarksJar")
+	}
+
+	if bow1.CookieJar() != bow2.CookieJar(){
+		t.Fatal("Tab did not copy the CookieJar")
+	}
+
+	if bow1.HistoryJar() != bow2.HistoryJar(){
+		t.Fatal("Tab did not copy the HistoryJar")
+	}
+
+	if len(bow1.headers) != len(bow2.headers){
+		t.Fatal("Tab did not copy the HeadersJar")
+	}
+
+	if bow1.client.Transport != bow2.client.Transport {
+		t.Fatal("Tab did not copy the transport method")
+	}
+}
