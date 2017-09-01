@@ -87,6 +87,9 @@ type Browsable interface {
 	// SetHeadersJar sets the headers the browser sends with each request.
 	SetHeadersJar(h http.Header)
 
+	// SetTimeout sets the timeout for requests.
+	SetTimeout(t time.Duration)
+
 	// SetTransport sets the http library transport mechanism for each request.
 	SetTransport(rt http.RoundTripper)
 
@@ -206,6 +209,9 @@ type Browser struct {
 
 	// body of the current page.
 	body []byte
+
+	// timeout of the request
+	timeout time.Duration
 }
 
 // buildClient instanciates the *http.Client used by the browser
@@ -521,6 +527,12 @@ func (bow *Browser) HistoryJar() jar.History {
 // SetHeadersJar sets the headers the browser sends with each request.
 func (bow *Browser) SetHeadersJar(h http.Header) {
 	bow.headers = h
+}
+
+// SetTransport sets the http library transport mechanism for each request.
+// SetTimeout sets the timeout for requests.
+func (bow *Browser) SetTimeout(t time.Duration) {
+	bow.timeout = t
 }
 
 // SetTransport sets the http library transport mechanism for each request.
