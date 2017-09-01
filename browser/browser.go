@@ -179,6 +179,10 @@ type Browsable interface {
 
 	// Find returns the dom selections matching the given expression.
 	Find(expr string) *goquery.Selection
+
+	// Create a new Browser instance and inherit the configuration
+	// Read more: https://github.com/headzoo/surf/issues/23
+	NewTab() (b *Browser)
 }
 
 // Browser is the default Browser implementation.
@@ -617,6 +621,13 @@ func (bow *Browser) Dom() *goquery.Selection {
 // Find returns the dom selections matching the given expression.
 func (bow *Browser) Find(expr string) *goquery.Selection {
 	return bow.state.Dom.Find(expr)
+}
+
+func (bow *Browser) NewTab() (b *Browser) {
+	b = &Browser{}
+	*b = *bow
+
+	return b
 }
 
 // buildRequest creates and returns a *http.Request type.
