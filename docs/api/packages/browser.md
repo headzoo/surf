@@ -193,6 +193,9 @@ type Browsable interface {
 	// SetHeadersJar sets the headers the browser sends with each request.
 	SetHeadersJar(h http.Header)
 
+	// SetTimeout sets the timeout for requests.
+	SetTimeout(t time.Duration)
+
 	// SetTransport sets the http library transport mechanism for each request.
 	SetTransport(rt http.RoundTripper)
 
@@ -529,6 +532,13 @@ SetHistoryJar is used to set the history jar the browser uses.
 func (bow *Browser) SetState(sj *jar.State)
 ```
 SetState sets the browser state.
+
+#### func (*Browser) SetTimeout
+
+```go
+func (bow *Browser) SetTimeout(t time.Duration)
+```
+SetTimeout sets the timeout for requests.
 
 #### func (*Browser) SetTransport
 

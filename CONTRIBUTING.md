@@ -36,13 +36,5 @@ case to convince the project's developers of the merits of this feature. Please
 provide as much detail and context as possible.
 
 
-## Pull Requests
-
-Code changes are made to the [`dev`](https://github.com/headzoo/surf/tree/dev) branch.
-Once a milestone has been reached the branch will be merged in with `master`, and a new
-version tag created. **Do not** make your changes against the `master` branch, or they
-will more than likely be ignored.
-
-
 **IMPORTANT**: By submitting a patch, you agree to allow the project owners to
 license your work under the terms of the [MIT License](LICENSE.md).

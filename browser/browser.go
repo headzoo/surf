@@ -89,6 +89,9 @@ type Browsable interface {
 	// SetHeadersJar sets the headers the browser sends with each request.
 	SetHeadersJar(h http.Header)
 
+	// SetTimeout sets the timeout for requests.
+	SetTimeout(t time.Duration)
+
 	// SetTransport sets the http library transport mechanism for each request.
 	SetTransport(rt http.RoundTripper)
 
@@ -181,6 +184,10 @@ type Browsable interface {
 
 	// Find returns the dom selections matching the given expression.
 	Find(expr string) *goquery.Selection
+
+	// Create a new Browser instance and inherit the configuration
+	// Read more: https://github.com/headzoo/surf/issues/23
+	NewTab() (b *Browser)
 }
 
 // Browser is the default Browser implementation.
@@ -211,6 +218,9 @@ type Browser struct {
 
 	// body of the current page.
 	body []byte
+
+	// timeout of the request
+	timeout time.Duration
 }
 
 // buildClient instanciates the *http.Client used by the browser
@@ -529,6 +539,12 @@ func (bow *Browser) SetHeadersJar(h http.Header) {
 }
 
 // SetTransport sets the http library transport mechanism for each request.
+// SetTimeout sets the timeout for requests.
+func (bow *Browser) SetTimeout(t time.Duration) {
+	bow.timeout = t
+}
+
+// SetTransport sets the http library transport mechanism for each request.
 func (bow *Browser) SetTransport(rt http.RoundTripper) {
 	if bow.client == nil {
 		bow.client = bow.buildClient()
@@ -625,6 +641,13 @@ func (bow *Browser) Dom() *goquery.Selection {
 // Find returns the dom selections matching the given expression.
 func (bow *Browser) Find(expr string) *goquery.Selection {
 	return bow.state.Dom.Find(expr)
+}
+
+func (bow *Browser) NewTab() (b *Browser) {
+	b = &Browser{}
+	*b = *bow
+
+	return b
 }
 
 // buildRequest creates and returns a *http.Request type.
