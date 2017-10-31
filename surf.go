@@ -21,7 +21,7 @@ var (
 	DefaultFollowRedirects = true
 
 	// DefaultMaxHistoryLength is the global value for max history length.
-	DefaultMaxHistoryLength = 0
+	DefaultMaxHistoryLength = 100
 )
 
 // NewBrowser creates and returns a *browser.Browser type.
