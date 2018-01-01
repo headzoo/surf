@@ -57,7 +57,7 @@ func main() {
     fm, _ := bow.Form("form.login-form")
     fm.Input("user", "JoeRedditor")
     fm.Input("passwd", "d234rlkasd")
-    if fm.Submit() != nil {
+    if err := fm.Submit(); err != nil {
     	panic(err)
     }
     
