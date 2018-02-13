@@ -222,6 +222,7 @@ type Browser struct {
 func (bow *Browser) buildClient() *http.Client {
 	return &http.Client{
 		CheckRedirect: bow.shouldRedirect,
+		Timeout:       bow.timeout,
 	}
 }
 
