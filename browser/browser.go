@@ -599,7 +599,7 @@ func (bow *Browser) StatusCode() int {
 
 // Title returns the page title.
 func (bow *Browser) Title() string {
-	return bow.state.Dom.Find("title").Text()
+	return bow.state.Dom.Find("head > title").Text()
 }
 
 // ResponseHeaders returns the page headers.
