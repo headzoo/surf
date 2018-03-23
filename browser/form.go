@@ -365,7 +365,7 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values, url.Values, 
 	checkboxs := make(url.Values)
 	selects := make(selects)
 	files := make(FileSet)
-	sel.Find("input,button,textarea").Each(func(_ int, s *goquery.Selection) {
+	sel.Find("input,button").Each(func(_ int, s *goquery.Selection) {
 		if v, ok := s.Attr("disabled"); ok && strings.ToLower(v) == "disabled" {
 			return
 		}
@@ -390,6 +390,12 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values, url.Values, 
 		}
 	})
 
+	sel.Find("textarea").Each(func(_ int, s *goquery.Selection) {
+		name, _ := s.Attr("name")
+		val := s.Text()
+		fields.Add(name, val)
+	})
+
 	sel.Find("select").Each(func(_ int, s *goquery.Selection) {
 		if v, ok := s.Attr("disabled"); ok && strings.ToLower(v) == "disabled" {
 			return
@@ -407,7 +413,7 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values, url.Values, 
 				l, _ := ss.Html()
 				selects[name].values.Add(val, strings.TrimSpace(html.UnescapeString(l)))
 				selects[name].labels.Add(strings.TrimSpace(html.UnescapeString(l)), val)
-				if sel, _ := ss.Attr("selected"); strings.ToLower(sel) != "selected" || foundSelected {
+				if _, exists := ss.Attr("selected"); !exists || foundSelected {
 					return
 				}
 				fields.Add(name, val)
