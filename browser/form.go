@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	"io"
-
 	"github.com/PuerkitoBio/goquery"
 	"github.com/headzoo/surf/errors"
 )
@@ -369,24 +368,24 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values, url.Values, 
 		if v, ok := s.Attr("disabled"); ok && strings.ToLower(v) == "disabled" {
 			return
 		}
-		if name, ok := s.Attr("name"); ok {
-			val, _ := s.Attr("value")
-			t, _ := s.Attr("type")
-			t = strings.ToLower(t)
-			if t == "submit" {
-				buttons.Add(name, val)
-			} else if t == "checkbox" || t == "radio" {
-				if c, found := s.Attr("checked"); found && strings.ToLower(c) == "checked" {
-					fields.Add(name, val)
-				}
-				if t == "checkbox" {
-					checkboxs.Add(name, val)
-				}
-			} else if t == "file" {
-				files[name] = &File{}
-			} else {
+
+		name, _ := s.Attr("name")
+		val, _ := s.Attr("value")
+		t, _ := s.Attr("type")
+		t = strings.ToLower(t)
+		if t == "submit" {
+			buttons.Add(name, val)
+		} else if t == "checkbox" || t == "radio" {
+			if _, found := s.Attr("checked"); found {
 				fields.Add(name, val)
 			}
+			if t == "checkbox" {
+				checkboxs.Add(name, val)
+			}
+		} else if t == "file" {
+			files[name] = &File{}
+		} else {
+			fields.Add(name, val)
 		}
 	})
 
@@ -425,6 +424,7 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values, url.Values, 
 		}
 	})
 
+	//fmt.Printf("%#v", fields)
 	return fields, buttons, checkboxs, selects, files
 }
 
