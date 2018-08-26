@@ -2,6 +2,8 @@ package browser
 
 import (
 	"bytes"
+	"compress/flate"
+	"compress/gzip"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -712,7 +714,21 @@ func (bow *Browser) httpRequest(req *http.Request) error {
 	}
 	defer resp.Body.Close()
 
-	bow.body, err = ioutil.ReadAll(resp.Body)
+	var reader io.Reader
+	switch resp.Header.Get("Content-Encoding") {
+	case "gzip":
+		reader, err = gzip.NewReader(resp.Body)
+		if err != nil {
+			return err
+		}
+	case "deflate":
+		reader = flate.NewReader(resp.Body)
+
+	default:
+		reader = resp.Body
+	}
+
+	bow.body, err = ioutil.ReadAll(reader)
 	if err != nil {
 		return err
 	}
