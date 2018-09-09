@@ -177,6 +177,43 @@ func TestBrowserFormDefaultNotSelected(t *testing.T) {
 	ut.AssertEquals(surferrors.NewElementNotFound("The select element with name 'count' is not a select miltiple."), err)
 }
 
+func TestBrowserFormSelected(t *testing.T) {
+	ts := setupTestServer(`
+<!doctype html>
+<html>
+
+<head>
+	<title>Echo Form</title>
+</head>
+
+<body>
+	<form method="post" name="default">
+		<select name="count">
+            <option value="1">One</option>
+            <option value="2" Selected>Two</option>
+        </select>
+		<input type="submit" name="submit" value="submitted" />
+	</form>
+</body>
+
+</html>`, t)
+	defer ts.Close()
+
+	bow := newBrowser()
+	err := bow.Open(ts.URL)
+	ut.AssertNil(err)
+
+	f, err := bow.Form("[name='default']")
+	ut.AssertNil(err)
+
+	ut.AssertEquals(false, f.(*Form).selects["count"].multiple)
+
+	// Initial state should have defaults selected
+	err = f.Submit()
+	ut.AssertNil(err)
+	ut.AssertEquals("count=2&submit=submitted", string(bow.body))
+}
+
 func TestBrowserFormDefaultsSelected(t *testing.T) {
 	ts := setupTestServer(`
 <!doctype html>
