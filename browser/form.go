@@ -69,6 +69,9 @@ type Submittable interface {
 	// It will add the field to the form if necessary
 	SetFile(name string, fileName string, data io.Reader)
 
+	// AddButton adds a new button to the collection of buttons in the form, with the given name and value.
+	AddButton(name, value string)
+
 	Click(button string) error
 	ClickByValue(name, value string) error
 	Submit() error
@@ -306,6 +309,11 @@ func (f *Form) Submit() error {
 		}
 	}
 	return f.send("", "")
+}
+
+// AddButton adds a new button to the collection of buttons in the form, with the given name and value.
+func (f *Form) AddButton(button, value string) {
+	f.buttons.Add(button, value)
 }
 
 // Click submits the form by clicking the button with the given name.
