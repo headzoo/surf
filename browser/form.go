@@ -412,7 +412,15 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values, url.Values, 
 				l, _ := ss.Html()
 				selects[name].values.Add(val, strings.TrimSpace(html.UnescapeString(l)))
 				selects[name].labels.Add(strings.TrimSpace(html.UnescapeString(l)), val)
-				if _, exists := ss.Attr("selected"); !exists || foundSelected {
+
+				if foundSelected {
+					return
+				}
+				sel, ok := ss.Attr("selected")
+				if !ok {
+					return
+				}
+				if sel != "" && strings.ToLower(sel) != "selected" {
 					return
 				}
 				fields.Add(name, val)
