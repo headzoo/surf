@@ -69,6 +69,9 @@ type Submittable interface {
 	ClickByValue(name, value string) error
 	Submit() error
 	Dom() *goquery.Selection
+
+	// GetFields returns all the form fields
+	GetFields() url.Values
 }
 
 // Form is the default form element.
@@ -320,6 +323,11 @@ func (f *Form) ClickByValue(name, value string) error {
 // Dom returns the inner *goquery.Selection.
 func (f *Form) Dom() *goquery.Selection {
 	return f.selection
+}
+
+// GetFields returns all the form fields
+func (f *Form) GetFields() url.Values {
+	return f.fields
 }
 
 // send submits the form.

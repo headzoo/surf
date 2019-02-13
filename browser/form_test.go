@@ -409,6 +409,39 @@ func TestSubmitMultipart(t *testing.T) {
 	ut.AssertContains(fmt.Sprintf("profile.png=%s", url.QueryEscape(image)), bow.Body())
 }
 
+func TestGetFormFields(t *testing.T) {
+	ts := setupTestServer(`
+<!doctype html>
+<html>
+	<head>
+		<title>Echo Form</title>
+	</head>
+	<body>
+		<form method="post" action="/" name="default">
+			<input type="text" name="comment" value="" />
+			<input type="submit" name="submit" value="Submit" />
+			<input type="hidden" name="hidden-1" value="Hidden Value 1" />
+		</form>
+	</body>
+</html>`, t)
+	defer ts.Close()
+
+	bow := newBrowser()
+
+	err := bow.Open(ts.URL)
+	ut.AssertNil(err)
+
+	f, err := bow.Form("[name='default']")
+	ut.AssertNil(err)
+
+	err = f.Input("comment", "Set by f.Input")
+	ut.AssertNil(err)
+	fields := f.GetFields()
+	ut.AssertEquals(len(fields), 2)
+	ut.AssertEquals(fields["comment"], []string{"Set by f.Input"})
+	ut.AssertEquals(fields["hidden-1"], []string{"Hidden Value 1"})
+}
+
 func setupTestServer(html string, t *testing.T) *httptest.Server {
 	ut.Run(t)
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
