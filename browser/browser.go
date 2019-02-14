@@ -9,6 +9,7 @@ import (
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
+	"net/http/httptrace"
 	"net/http/httputil"
 	"net/url"
 	"os"
@@ -94,6 +95,9 @@ type Browsable interface {
 
 	// SetTransport sets the http library transport mechanism for each request.
 	SetTransport(rt http.RoundTripper)
+
+	// SetHTTPTrace sets the agent that traces the events within http client requests.
+	SetHTTPTrace(ct *httptrace.ClientTrace)
 
 	// AddRequestHeader adds a header the browser sends with each request.
 	AddRequestHeader(name, value string)
@@ -215,6 +219,9 @@ type Browser struct {
 
 	// body of the current page.
 	body []byte
+
+	// http event tracer
+	clientTrace *httptrace.ClientTrace
 }
 
 // buildClient instanciates the *http.Client used by the browser
@@ -549,6 +556,11 @@ func (bow *Browser) SetTransport(rt http.RoundTripper) {
 	bow.client.Transport = rt
 }
 
+// SetHTTPTrace sets the agent that traces the events within http client requests.
+func (bow *Browser) SetHTTPTrace(ct *httptrace.ClientTrace) {
+	bow.clientTrace = ct
+}
+
 // AddRequestHeader sets a header the browser sends with each request.
 func (bow *Browser) AddRequestHeader(name, value string) {
 	bow.headers.Set(name, value)
@@ -639,6 +651,12 @@ func (bow *Browser) buildRequest(method, url string, ref *url.URL, body io.Reade
 	if err != nil {
 		return nil, err
 	}
+
+	// Enable tracing if requested
+	if bow.clientTrace != nil {
+		req = req.WithContext(httptrace.WithClientTrace(req.Context(), bow.clientTrace))
+	}
+
 	req.Header = copyHeaders(bow.headers)
 
 	if host := req.Header.Get("Host"); host != "" {
