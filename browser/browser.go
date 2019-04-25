@@ -306,6 +306,24 @@ func (bow *Browser) PostMultipart(u string, fields url.Values, files FileSet) er
 	return bow.Post(u, writer.FormDataContentType(), body)
 }
 
+// Put requests the given URL using the PUT method.
+func (bow *Browser) Put(u string, contentType string, body io.Reader) error {
+	ur, err := url.Parse(u)
+	if err != nil {
+		return err
+	}
+	return bow.httpPUT(ur, bow.Url(), contentType, body)
+}
+
+// Delete requests the given URL using the DELETE method.
+func (bow *Browser) Delete(u string) error {
+	ur, err := url.Parse(u)
+	if err != nil {
+		return err
+	}
+	return bow.httpDELETE(ur, nil)
+}
+
 // Back loads the previously requested page.
 //
 // Returns a boolean value indicating whether a previous page existed, and was
@@ -699,6 +717,30 @@ func (bow *Browser) httpPOST(u *url.URL, ref *url.URL, contentType string, body 
 	}
 	req.Header.Set("Content-Type", contentType)
 
+	return bow.httpRequest(req)
+}
+
+// httpPUT makes an HTTP PUT request for the given URL.
+// When via is not nil, and AttributeSendReferer is true, the Referer header will
+// be set to ref.
+func (bow *Browser) httpPUT(u *url.URL, ref *url.URL, contentType string, body io.Reader) error {
+	req, err := bow.buildRequest("PUT", u.String(), ref, body)
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", contentType)
+
+	return bow.httpRequest(req)
+}
+
+// httpDELETE makes an HTTP DELETE request for the given URL.
+// When via is not nil, and AttributeSendReferer is true, the Referer header will
+// be set to ref.
+func (bow *Browser) httpDELETE(u *url.URL, ref *url.URL) error {
+	req, err := bow.buildRequest("DELETE", u.String(), ref, nil)
+	if err != nil {
+		return err
+	}
 	return bow.httpRequest(req)
 }
 
