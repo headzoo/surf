@@ -373,7 +373,7 @@ func serializeForm(sel *goquery.Selection) (url.Values, url.Values, url.Values, 
 			val, _ := s.Attr("value")
 			t, _ := s.Attr("type")
 			t = strings.ToLower(t)
-			if t == "submit" {
+			if t == "submit" || t == "button" {
 				buttons.Add(name, val)
 			} else if t == "checkbox" || t == "radio" {
 				if c, found := s.Attr("checked"); found && strings.ToLower(c) == "checked" {
