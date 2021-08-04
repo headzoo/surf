@@ -151,6 +151,11 @@ func (f *Form) Set(name, value string) error {
 	return f.Input(name, value)
 }
 
+// Get will return the value of a form field and `ok` - whether the field exists or not
+func (f *Form) Get(name) string {
+	return f.fields[name]
+}
+
 // Check sets the checkbox value to its active state.
 func (f *Form) Check(name string) error {
 	if _, ok := f.checkboxs[name]; ok {
