@@ -152,7 +152,7 @@ func (f *Form) Set(name, value string) error {
 }
 
 // Get will return the value of a form field and `ok` - whether the field exists or not
-func (f *Form) Get(name) string {
+func (f *Form) Get(name string) []string {
 	return f.fields[name]
 }
 
