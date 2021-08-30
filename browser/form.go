@@ -15,6 +15,10 @@ import (
 type Submittable interface {
 	Method() string
 	Action() string
+
+	// SetAction will change the forms Action to the provided url
+	SetAction(url string) error
+
 	Input(name, value string) error
 	Set(name, value string) error
 
@@ -111,6 +115,17 @@ func (f *Form) Method() string {
 // The URL will always be absolute.
 func (f *Form) Action() string {
 	return f.action
+}
+
+// SetAction sets the form action URL.
+// The provided URL may be relitive or absolute
+func (f *Form) SetAction(url string) error {
+	action, err := f.bow.ResolveStringUrl(url)
+	if err != nil {
+		return err
+	}
+	f.action = action
+	return nil
 }
 
 // Input sets the value of a form field.
@@ -333,8 +348,8 @@ func (f *Form) send(buttonName, buttonValue string) error {
 	if !ok {
 		method = "GET"
 	}
-	action, ok := f.selection.Attr("action")
-	if !ok {
+	action := f.action
+	if action == "" {
 		action = f.bow.Url().String()
 	}
 	aurl, err := url.Parse(action)

@@ -532,7 +532,6 @@ func (bow *Browser) SetHeadersJar(h http.Header) {
 	bow.headers = h
 }
 
-// SetTransport sets the http library transport mechanism for each request.
 // SetTimeout sets the timeout for requests.
 func (bow *Browser) SetTimeout(t time.Duration) {
 	if bow.client == nil {
