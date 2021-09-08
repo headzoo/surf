@@ -213,6 +213,9 @@ type Browser struct {
 	// refresh is a timer used to meta refresh pages.
 	refresh *time.Timer
 
+	// relativeUrl makes from <base> or page url
+	relativeUrl *url.URL
+
 	// body of the current page.
 	body []byte
 }
@@ -561,7 +564,7 @@ func (bow *Browser) DelRequestHeader(name string) {
 
 // ResolveUrl returns an absolute URL for a possibly relative URL.
 func (bow *Browser) ResolveUrl(u *url.URL) *url.URL {
-	return bow.Url().ResolveReference(u)
+	return bow.RelativeUrl().ResolveReference(u)
 }
 
 // ResolveStringUrl works just like ResolveUrl, but the argument and return value are strings.
@@ -570,8 +573,17 @@ func (bow *Browser) ResolveStringUrl(u string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	pu = bow.Url().ResolveReference(pu)
+	pu = bow.RelativeUrl().ResolveReference(pu)
 	return pu.String(), nil
+}
+
+// RelativeUrl returns URL relative to which all the others work
+func (bow *Browser) RelativeUrl() *url.URL {
+	if bow.relativeUrl == nil {
+		return bow.Url()
+	}
+
+	return bow.relativeUrl
 }
 
 // Download writes the contents of the document to the given writer.
@@ -767,6 +779,17 @@ func (bow *Browser) postSend() {
 						<-bow.refresh.C
 						bow.Reload()
 					}()
+				}
+			}
+		}
+
+		baseTag := bow.Find("base[href]")
+		if baseTag.Length() > 0 {
+			if href, exists := baseTag.Attr("href"); exists {
+				baseUrl, err := url.Parse(href)
+
+				if err == nil {
+					bow.relativeUrl = bow.ResolveUrl(baseUrl)
 				}
 			}
 		}

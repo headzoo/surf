@@ -207,3 +207,59 @@ func TestTabInheritance(t *testing.T){
 		t.Fatal("Tab did not copy the transport method")
 	}
 }
+
+
+// TestLinksWithBaseTag checks <base> tag processing
+func TestLinksWithBaseTag(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-type", "text/html")
+
+		switch r.URL.Path {
+		case "/with_base/":
+			io.WriteString(w, `<html><head>
+			<base href="/">
+				</head><body>
+				<a href="page.html">Link</a>
+			</body></html>`)
+			break
+
+		case "/without_base/":
+			io.WriteString(w, `<html><body>
+				<a href="page.html">Link</a>
+			</body></html>`)
+		}
+	}))
+	defer ts.Close()
+
+	b := newDefaultTestBrowser()
+
+	// Default behavior
+	if err := b.Open(ts.URL + "/without_base/"); err != nil {
+		t.Fatal(err)
+	}
+
+	links1 := b.Links()
+
+	if len(links1) != 1 {
+		t.Fatal("Error: not found link in document")
+	}
+
+	if links1[0].URL.String() != ts.URL + "/without_base/page.html" {
+		t.Fatal("Tag base not processed")
+	}
+
+	// Behavior with base tag
+	if err := b.Open(ts.URL + "/with_base/"); err != nil {
+		t.Fatal(err)
+	}
+
+	links2 := b.Links()
+
+	if len(links2) != 1 {
+		t.Fatal("Error: not found link in document")
+	}
+
+	if links2[0].URL.String() != ts.URL + "/page.html" {
+		t.Fatal("Tag base not processed")
+	}
+}
