@@ -32,8 +32,10 @@ import "gopkg.in/headzoo/surf.v1"
 package main
 
 import (
-	"gopkg.in/headzoo/surf.v1"
 	"fmt"
+	
+	"github.com/PuerkitoBio/goquery"
+	"gopkg.in/headzoo/surf.v1"
 )
 
 func main() {
