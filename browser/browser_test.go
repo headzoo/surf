@@ -140,6 +140,14 @@ func TestCookieHeader(t *testing.T) {
 	}
 }
 
+// Test proxy
+// https://github.com/headzoo/surf/pull/56
+func TestSetProxyWillSetTransport(t *testing.T){
+	b := newDefaultTestBrowser()
+	b.SetProxy("socks5://127.0.0.1:9050")
+	if b.client.Transport == nil {
+		t.Errorf("no transport method")
+
 // Should inherit the configuration into a new instance
 func TestTabInheritance(t *testing.T){
 	bow1 := newDefaultTestBrowser()

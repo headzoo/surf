@@ -75,6 +75,7 @@ Contributions have been made to Surf by the following awesome developers:
 * [nicot](https://github.com/nicot)
 * [Joseph Watson](https://github.com/jtwatson)
 * [lxt2](https://github.com/lxt2)
+* [shavit](https://github.com/shavit)
 
 The idea to create Surf was born in [this Reddit thread](http://www.reddit.com/r/golang/comments/2efw1q/mechanize_in_go/cjz4lze).
 
