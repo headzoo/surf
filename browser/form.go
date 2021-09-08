@@ -15,6 +15,10 @@ import (
 type Submittable interface {
 	Method() string
 	Action() string
+
+	// SetAction will change the forms Action to the provided url
+	SetAction(url string) error
+
 	Input(name, value string) error
 	Set(name, value string) error
 
@@ -65,6 +69,9 @@ type Submittable interface {
 	// It will add the field to the form if necessary
 	SetFile(name string, fileName string, data io.Reader)
 
+	// AddButton adds a new button to the collection of buttons in the form, with the given name and value.
+	AddButton(name, value string)
+
 	Click(button string) error
 	ClickByValue(name, value string) error
 	Submit() error
@@ -111,6 +118,17 @@ func (f *Form) Method() string {
 // The URL will always be absolute.
 func (f *Form) Action() string {
 	return f.action
+}
+
+// SetAction sets the form action URL.
+// The provided URL may be relitive or absolute
+func (f *Form) SetAction(url string) error {
+	action, err := f.bow.ResolveStringUrl(url)
+	if err != nil {
+		return err
+	}
+	f.action = action
+	return nil
 }
 
 // Input sets the value of a form field.
@@ -293,6 +311,11 @@ func (f *Form) Submit() error {
 	return f.send("", "")
 }
 
+// AddButton adds a new button to the collection of buttons in the form, with the given name and value.
+func (f *Form) AddButton(button, value string) {
+	f.buttons.Add(button, value)
+}
+
 // Click submits the form by clicking the button with the given name.
 func (f *Form) Click(button string) error {
 	if _, ok := f.buttons[button]; !ok {
@@ -333,8 +356,8 @@ func (f *Form) send(buttonName, buttonValue string) error {
 	if !ok {
 		method = "GET"
 	}
-	action, ok := f.selection.Attr("action")
-	if !ok {
+	action := f.action
+	if action == "" {
 		action = f.bow.Url().String()
 	}
 	aurl, err := url.Parse(action)
