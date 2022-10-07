@@ -38,6 +38,20 @@ surf.DefaultMetaRefreshHandling = false
 surf.DefaultFollowRedirects = false
 ```
 
+# Disabling TLS validation
+For private websites with self-signed certificates, the client will need
+to be configured to disable TLS validation. This can be done like so:
+
+```go
+import "crypto/tls"
+import "net/http"
+tr := &http.Transport{
+    TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+    }
+bow := surf.NewBrowser()
+bow.SetTransport(tr)
+```
+
 # Storage Jars
 Override the build in cookie jar. Surf uses cookiejar.Jar by default.
 ```go
