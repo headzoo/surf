@@ -1,6 +1,7 @@
 // +build linux
 // +build !appengine
 // +build !arm
+// +build !ppc64le
 
 package agent
 
