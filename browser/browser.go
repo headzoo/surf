@@ -190,7 +190,7 @@ type Browsable interface {
 // Browser is the default Browser implementation.
 type Browser struct {
 	// HTTP client
-	client *http.Client
+	Client *http.Client
 
 	// state is the current browser state.
 	state *jar.State
